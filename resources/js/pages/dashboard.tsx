@@ -5,11 +5,11 @@ import { DollarSign, TrendingUp, Users } from "lucide-react"
 
 import AppLayout from "@/layouts/app-layout"
 import { type BreadcrumbItem } from "@/types"
-import MonthlyIncidentsLineChart from "@/pages/chart/monthly-incidents-linechart";
-import MonthlyIncidentsBarChart from "@/pages/chart/monthly-incidents-barchart";
-import DataTable from "./datatable/data-table"
-import { paymentData } from "./datatable/columns/payment-data";
-import { paymentColumns } from "./datatable/columns/payment-columns";
+import MonthlyIncidentsLineChart from "@/components/chart/monthly-incidents-linechart";
+import MonthlyIncidentsBarChart from "@/components/chart/monthly-incidents-barchart";
+import DataTable from "../components/datatable/data-table"
+import { paymentData } from "../components/datatable/payment/payment-data";
+import { paymentColumns } from "../components/datatable/payment/payment-columns";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: "Dashboard", href: "/dashboard" },
