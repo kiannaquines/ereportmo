@@ -11,6 +11,7 @@ import DataTable from "../components/datatable/data-table"
 import { ReportedIncidentsData } from "../components/datatable/payment/reported-incidents-data";
 import { ReportedIncidentsColumns } from "../components/datatable/payment/reported-incidents-columns";
 import DashboardCard from "@/components/card/dashboard-card"
+import { Button } from "@/components/ui/button"
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: "Dashboard", href: "/dashboard" },
@@ -21,6 +22,11 @@ export default function Dashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+                <div className="flex items-center justify-end gap-2">
+                    <Button variant="outline" size="sm">
+                        <span>Reload Page</span>
+                    </Button>
+                </div>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-4">
                     <DashboardCard
                         title="Total Registered Users"
@@ -60,8 +66,8 @@ export default function Dashboard() {
                     <DataTable
                         data={ReportedIncidentsData}
                         columns={ReportedIncidentsColumns}
-                        filterColumn="email"
-                        filterPlaceholder="Filter by email..."
+                        filterColumn="reported"
+                        filterPlaceholder="Filter by reported by..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."
                     />

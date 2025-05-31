@@ -1,7 +1,7 @@
-import { ColumnDef } from "@tanstack/react-table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -29,7 +29,7 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
         aria-label="Select row"
       />
     ),
-    enableSorting: true,
+    enableSorting: false,
     enableHiding: true,
   },
   {
@@ -40,38 +40,56 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
     ),
   },
   {
-    accessorKey: "email",
+    accessorKey: "reported",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Email
+        Reported By
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("email")}</div>
+      <div className="lowercase">{row.getValue("reported")}</div>
     ),
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "date",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Date
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const amount = row.getValue("amount") as number
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
+      const dateStr = row.getValue("date") as string;
+      const formattedDate = new Date(dateStr).toLocaleDateString("en-US");
+      return <div className="text-right">{formattedDate}</div>;
     },
+  },
+  {
+    accessorKey: "title",
+    header: "Incident Title",
+    cell: ({ row }) => <div className="font-semibold">{row.getValue("title")}</div>,
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
+    cell: ({ row }) => (
+      <div className="truncate max-w-xs" title={row.getValue("description")}>
+        {row.getValue("description")}
+      </div>
+    ),
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const incident = row.original;
 
       return (
         <DropdownMenu>
@@ -84,16 +102,16 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(incident.id)}
             >
-              Copy payment ID
+              Copy Incident ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>View reporter details</DropdownMenuItem>
+            <DropdownMenuItem>View incident details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];

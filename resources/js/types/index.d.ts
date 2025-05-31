@@ -46,11 +46,13 @@ export interface User {
 }
 
 export type ReportedIncidents = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
+    id: string;
+    title: string;
+    description: string;
+    status: "investigating" | "confirmed" | "resolved" | "under review";
+    reported: string;
+    date: string;
+};
 
 export type DashboardCard = {
     title: string;
