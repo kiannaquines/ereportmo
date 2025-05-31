@@ -4,41 +4,68 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { KeyRound, SunMoon, Gauge, MessageCircleWarning, CableCar, UserPen } from 'lucide-react';
+import { KeyRound, SunMoon, Gauge, MessageCircleWarning, CableCar, UserPen, Building, Printer } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const modulesPath: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
+        type: 'Main Module',
         icon: Gauge,
     },
     {
         title: 'Incidents',
         href: '/incidents',
+        type: 'Main Module',
         icon: CableCar,
     },
     {
         title: 'Reports',
         href: '/reports',
+        type: 'Main Module',
         icon: MessageCircleWarning,
     },
-];
-
-const footerNavItems: NavItem[] = [
+    {
+        title: 'Offices',
+        href: '/offices',
+        type: 'Main Module',
+        icon: Building,
+    },
+    {
+        title: 'Incident Reports',
+        href: '/settings',
+        type: 'Report Module',
+        icon: Printer,
+    },
+    {
+        title: 'Report Reports',
+        href: '/docs',
+        type: 'Report Module',
+        icon: Printer,
+    },
+    {
+        title: 'Office Reports',
+        href: '/office-reports',
+        type: 'Report Module',
+        icon: Printer,
+    },
     {
         title: 'Profile',
         href: '/settings/profile',
+        type: 'Settings',
         icon: UserPen,
     },
     {
         title: 'Password',
         href: '/settings/password',
+        type: 'Settings',
         icon: KeyRound,
     },
     {
         title: 'Appearance',
         href: '/settings/appearance',
+        type: 'Settings',
         icon: SunMoon,
     },
 ];
@@ -59,11 +86,10 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={modulesPath} />
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

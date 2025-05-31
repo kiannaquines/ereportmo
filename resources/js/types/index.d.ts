@@ -18,6 +18,7 @@ export interface NavGroup {
 export interface NavItem {
     title: string;
     href: string;
+    type: 'Main Module' | 'Report Module' | 'Settings' | null;
     icon?: LucideIcon | null;
     isActive?: boolean;
 }
