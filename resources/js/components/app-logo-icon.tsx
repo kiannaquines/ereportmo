@@ -1,13 +1,18 @@
 import { SVGAttributes } from 'react';
 
-export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
-    return (
-        <svg {...props} viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M17.2 5.63325L8.6 0.855469L0 5.63325V32.1434L16.2 41.1434L32.4 32.1434V23.699L40 19.4767V9.85547L31.4 5.07769L22.8 9.85547V18.2999L17.2 21.411V5.63325ZM38 18.2999L32.4 21.411V15.2545L38 12.1434V18.2999ZM36.9409 10.4439L31.4 13.5221L25.8591 10.4439L31.4 7.36561L36.9409 10.4439ZM24.8 18.2999V12.1434L30.4 15.2545V21.411L24.8 18.2999ZM23.8 20.0323L29.3409 23.1105L16.2 30.411L10.6591 27.3328L23.8 20.0323ZM7.6 27.9212L15.2 32.1434V38.2999L2 30.9666V7.92116L7.6 11.0323V27.9212ZM8.6 9.29991L3.05913 6.22165L8.6 3.14339L14.1409 6.22165L8.6 9.29991ZM30.4 24.8101L17.2 32.1434V38.2999L30.4 30.9666V24.8101ZM9.6 11.0323L15.2 7.92117V22.5221L9.6 25.6333V11.0323Z"
-            />
-        </svg>
-    );
+export default function PolicePhoneIcon(props: SVGAttributes<SVGElement>) {
+  return (
+    <svg {...props} viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
+      {/* Police Hat */}
+      <path d="M10 2H30V6H27L25 9H15L13 6H10V2Z" fill="#1A237E"/>
+      <circle cx="20" cy="5" r="1.5" fill="#FFC107"/>
+      <rect x="19" y="2" width="2" height="1.5" fill="#FFC107"/>
+      
+      {/* Simplified Phone Body */}
+      <rect x="8" y="9" width="24" height="30" rx="2" fill="#37474F"/>
+      <rect x="13" y="11" width="14" height="3" rx="1" fill="#78909C"/>
+      <circle cx="20" cy="32" r="3" fill="#455A64"/>
+      <rect x="18" y="37" width="4" height="2" rx="1" fill="#455A64"/>
+    </svg>
+  );
 }
