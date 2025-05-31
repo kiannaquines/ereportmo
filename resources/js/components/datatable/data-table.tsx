@@ -34,6 +34,8 @@ type DataTableProps<T> = {
     columns: ColumnDef<T>[];
     filterColumn?: keyof T;
     filterPlaceholder?: string;
+    tableTitle?: string;
+    tableDescription?: string;
 };
 
 const DataTable = <T,>({
@@ -41,6 +43,8 @@ const DataTable = <T,>({
     columns,
     filterColumn,
     filterPlaceholder = "Filter...",
+    tableTitle = "Data Table",
+    tableDescription = "This table displays data with various functionalities such as sorting, filtering, and pagination.",
 }: DataTableProps<T>) => {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -68,6 +72,12 @@ const DataTable = <T,>({
 
     return (
         <>
+            <div className="mb-4">
+                <h2 className="text-lg font-semibold">{tableTitle}</h2>
+                <p className="text-sm text-muted-foreground">
+                    {tableDescription || "Manage your data efficiently with this table."}
+                </p>
+            </div>
             <div className="flex items-center py-4 gap-2">
                 {filterColumn && (
                     <Input

@@ -1,6 +1,6 @@
-import { Payment } from "@/types";
+import { ReportedIncidents } from "@/types";
 
-export const paymentData: Payment[] = [
+export const ReportedIncidentsData: ReportedIncidents[] = [
     {
         id: "pymt001",
         amount: 250.00,

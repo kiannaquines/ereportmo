@@ -8,8 +8,9 @@ import { type BreadcrumbItem } from "@/types"
 import MonthlyIncidentsLineChart from "@/components/chart/monthly-incidents-linechart";
 import MonthlyIncidentsBarChart from "@/components/chart/monthly-incidents-barchart";
 import DataTable from "../components/datatable/data-table"
-import { paymentData } from "../components/datatable/payment/payment-data";
-import { paymentColumns } from "../components/datatable/payment/payment-columns";
+import { ReportedIncidentsData } from "../components/datatable/payment/reported-incidents-data";
+import { ReportedIncidentsColumns } from "../components/datatable/payment/reported-incidents-columns";
+import DashboardCard from "@/components/card/dashboard-card"
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: "Dashboard", href: "/dashboard" },
@@ -21,63 +22,48 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-4">
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative h-36 overflow-hidden rounded-xl border p-4">
-                        <div className="flex flex-col justify-between h-full">
-                            <div className="flex items-center justify-between text-sm font-medium text-muted-foreground">
-                                Total Users
-                                <Users className="h-4 w-4" />
-                            </div>
-                            <div className="text-3xl font-bold">1,245</div>
-                            <p className="text-xs text-muted-foreground">All-time registered users</p>
-                        </div>
-                    </div>
+                    <DashboardCard
+                        title="Total Registered Users"
+                        value="1,245"
+                        description="All-time registered users"
+                        icon={Users}
+                    />
 
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative h-36 overflow-hidden rounded-xl border p-4">
-                        <div className="flex flex-col justify-between h-full">
-                            <div className="flex items-center justify-between text-sm font-medium text-muted-foreground">
-                                New Signups
-                                <TrendingUp className="h-4 w-4" />
-                            </div>
-                            <div className="text-3xl font-bold">57</div>
-                            <p className="text-xs text-muted-foreground">This week ↑ 8%</p>
-                        </div>
-                    </div>
+                    <DashboardCard
+                        title="New Users This Month"
+                        value="57"
+                        description="This week ↑ 8%"
+                        icon={TrendingUp}
+                    />
+                    <DashboardCard
+                        title="Incidents"
+                        value="12,300"
+                        description="↑ 2,500 from last month"
+                        icon={DollarSign}
+                    />
 
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative h-36 overflow-hidden rounded-xl border p-4">
-                        <div className="flex flex-col justify-between h-full">
-                            <div className="flex items-center justify-between text-sm font-medium text-muted-foreground">
-                                Incidents
-                                <DollarSign className="h-4 w-4" />
-                            </div>
-                            <div className="text-3xl font-bold">12,300</div>
-                            <p className="text-xs text-muted-foreground">↑ 2,500 from last month</p>
-                        </div>
-                    </div>
-
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative h-36 overflow-hidden rounded-xl border p-4">
-                        <div className="flex flex-col justify-between h-full">
-                            <div className="flex items-center justify-between text-sm font-medium text-muted-foreground">
-                                Incidents
-                                <DollarSign className="h-4 w-4" />
-                            </div>
-                            <div className="text-3xl font-bold">12,300</div>
-                            <p className="text-xs text-muted-foreground">↑ 2,500 from last month</p>
-                        </div>
-                    </div>
+                    <DashboardCard
+                        title="Reported Incidents"
+                        value="12,300"
+                        description="↑ 2,500 from last month"
+                        icon={DollarSign}
+                    />
 
                 </div>
 
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                    <MonthlyIncidentsLineChart/>
-                    <MonthlyIncidentsBarChart/>
+                    <MonthlyIncidentsLineChart />
+                    <MonthlyIncidentsBarChart />
                 </div>
 
                 <div className="w-full h-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-6 bg-background flex flex-col">
                     <DataTable
-                        data={paymentData}
-                        columns={paymentColumns}
+                        data={ReportedIncidentsData}
+                        columns={ReportedIncidentsColumns}
                         filterColumn="email"
                         filterPlaceholder="Filter by email..."
+                        tableTitle="Reported Incidents"
+                        tableDescription="This table displays reported incidents."
                     />
                 </div>
             </div>

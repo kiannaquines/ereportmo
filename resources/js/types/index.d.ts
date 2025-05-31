@@ -45,9 +45,16 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
-export type Payment = {
+export type ReportedIncidents = {
   id: string
   amount: number
   status: "pending" | "processing" | "success" | "failed"
   email: string
+}
+
+export type DashboardCard = {
+    title: string;
+    description: string;
+    value: number | string;
+    icon: LucideIcon;
 }

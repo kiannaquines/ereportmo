@@ -10,9 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Payment } from "@/types";
+import { ReportedIncidents } from "@/types";
 
-export const paymentColumns: ColumnDef<Payment>[] = [
+export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
   {
     id: "select",
     header: ({ table }) => (
