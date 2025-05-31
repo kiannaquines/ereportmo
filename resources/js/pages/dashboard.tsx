@@ -62,7 +62,7 @@ export default function Dashboard() {
                     <MonthlyIncidentsBarChart />
                 </div>
 
-                <div className="w-full h-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-6 bg-background flex flex-col">
+                <div className="w-full h-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-4 md:p-6 bg-background flex flex-col">
                     <DataTable
                         data={ReportedIncidentsData}
                         columns={ReportedIncidentsColumns}

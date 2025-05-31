@@ -55,23 +55,6 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
     ),
   },
   {
-    accessorKey: "date",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Date
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const dateStr = row.getValue("date") as string;
-      const formattedDate = new Date(dateStr).toLocaleDateString("en-US");
-      return <div className="text-right">{formattedDate}</div>;
-    },
-  },
-  {
     accessorKey: "title",
     header: "Incident Title",
     cell: ({ row }) => <div className="font-semibold">{row.getValue("title")}</div>,

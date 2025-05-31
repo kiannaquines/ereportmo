@@ -51,7 +51,6 @@ export type ReportedIncidents = {
     description: string;
     status: "investigating" | "confirmed" | "resolved" | "under review";
     reported: string;
-    date: string;
 };
 
 export type DashboardCard = {

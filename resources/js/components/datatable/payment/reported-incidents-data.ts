@@ -7,7 +7,6 @@ export const ReportedIncidentsData: ReportedIncidents[] = [
         description: "Multiple failed login attempts detected on admin portal.",
         status: "investigating",
         reported: "alice@example.com",
-        date: "2025-05-28",
     },
     {
         id: "inc002",
@@ -15,7 +14,6 @@ export const ReportedIncidentsData: ReportedIncidents[] = [
         description: "Sensitive customer data may have been exposed.",
         status: "confirmed",
         reported: "bob@example.com",
-        date: "2025-05-25",
     },
     {
         id: "inc003",
@@ -23,7 +21,6 @@ export const ReportedIncidentsData: ReportedIncidents[] = [
         description: "Service downtime in region AP-SOUTHEAST-1.",
         status: "resolved",
         reported: "carol@example.com",
-        date: "2025-05-22",
     },
     {
         id: "inc004",
@@ -31,7 +28,6 @@ export const ReportedIncidentsData: ReportedIncidents[] = [
         description: "A potentially malicious file was uploaded to the server.",
         status: "under review",
         reported: "dave@example.com",
-        date: "2025-05-20",
     },
     {
         id: "inc005",
@@ -39,7 +35,6 @@ export const ReportedIncidentsData: ReportedIncidents[] = [
         description: "Users received a fake internal email requesting credentials.",
         status: "resolved",
         reported: "eve@example.com",
-        date: "2025-05-18",
     },
     {
         id: "inc006",
@@ -47,7 +42,6 @@ export const ReportedIncidentsData: ReportedIncidents[] = [
         description: "Open ports detected during routine audit.",
         status: "confirmed",
         reported: "frank@example.com",
-        date: "2025-05-17",
     },
     {
         id: "inc007",
@@ -55,6 +49,5 @@ export const ReportedIncidentsData: ReportedIncidents[] = [
         description: "Detected transmission of sensitive data over HTTP.",
         status: "investigating",
         reported: "grace@example.com",
-        date: "2025-05-15",
     },
 ];
