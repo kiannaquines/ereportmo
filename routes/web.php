@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Incident\IncidentController;
 use App\Http\Controllers\Report\ReportController;
+use App\Http\Controllers\Office\OfficeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth'])->group(function() {
     Route::get('incidents',[IncidentController::class,'index'])->name('incidents');
     Route::get('reports',[ReportController::class,'index'])->name('reports');
+    Route::get('offices',[OfficeController::class,'index'])->name('offices');
 });
 
 require __DIR__.'/settings.php';

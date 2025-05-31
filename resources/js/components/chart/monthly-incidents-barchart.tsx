@@ -42,7 +42,7 @@ const MonthlyIncidentsBarChart = () => {
             <ChartContainer config={BarchartConfig} className="h-[calc(100%-56px)]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart accessibilityLayer data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="4 4" stroke="var(--grid-line)" />
+                        <CartesianGrid strokeDasharray="4 4" />
                         <XAxis
                             dataKey="month"
                             tickLine={false}
