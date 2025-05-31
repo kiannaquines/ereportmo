@@ -28,6 +28,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationLink,
+    PaginationEllipsis,
+} from "@/components/ui/pagination";
 
 type DataTableProps<T> = {
     data: T[];
@@ -69,6 +85,65 @@ const DataTable = <T,>({
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
     });
+
+    // Compute page numbers for PaginationLinks
+    const pageCount = table.getPageCount();
+    const currentPage = table.getState().pagination.pageIndex;
+
+    // Helper to generate page buttons (you can customize logic here)
+    const renderPageNumbers = () => {
+        const pages = [];
+
+        // Simple example: show first page, current page, last page with ellipsis
+        if (pageCount <= 5) {
+            for (let i = 0; i < pageCount; i++) {
+                pages.push(i);
+            }
+        } else {
+            pages.push(0); // first page
+
+            if (currentPage > 2) {
+                pages.push(-1); // ellipsis
+            }
+
+            const startPage = Math.max(1, currentPage - 1);
+            const endPage = Math.min(pageCount - 2, currentPage + 1);
+
+            for (let i = startPage; i <= endPage; i++) {
+                pages.push(i);
+            }
+
+            if (currentPage < pageCount - 3) {
+                pages.push(-1); // ellipsis
+            }
+
+            pages.push(pageCount - 1); // last page
+        }
+
+        return pages.map((page, index) => {
+            if (page === -1) {
+                return (
+                    <PaginationItem key={"ellipsis-" + index}>
+                        <PaginationEllipsis />
+                    </PaginationItem>
+                );
+            }
+            return (
+                <PaginationItem key={page}>
+                    <PaginationLink
+                        href="#"
+                        aria-current={page === currentPage ? "page" : undefined}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            table.setPageIndex(page);
+                        }}
+                    >
+                        {page + 1}
+                    </PaginationLink>
+                </PaginationItem>
+            );
+        });
+    };
 
     return (
         <>
@@ -150,30 +225,60 @@ const DataTable = <T,>({
                 </Table>
             </div>
 
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="text-muted-foreground flex-1 text-sm">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+            <div className="flex items-center justify-evenly py-4 max-w-full gap-4 flex-wrap md:flex-nowrap">
+                <div className="text-muted-foreground text-sm whitespace-nowrap">
+                    Page {currentPage + 1} of {pageCount} — {table.getFilteredRowModel().rows.length} results
                 </div>
-                <div className="space-x-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        Previous
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        Next
-                    </Button>
-                </div>
+
+                <Pagination>
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    table.previousPage();
+                                }}
+                                aria-disabled={!table.getCanPreviousPage()}
+                                tabIndex={table.getCanPreviousPage() ? 0 : -1}
+                            />
+                        </PaginationItem>
+
+                        {renderPageNumbers()}
+
+                        <PaginationItem>
+                            <PaginationNext
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    table.nextPage();
+                                }}
+                                aria-disabled={!table.getCanNextPage()}
+                                tabIndex={table.getCanNextPage() ? 0 : -1}
+                            />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+
+                <Select
+                    value={String(table.getState().pagination.pageSize)}
+                    onValueChange={(value) => {
+                        table.setPageSize(Number(value));
+                    }}
+                >
+                    <SelectTrigger className="ml-4 rounded border p-1 w-[180px]">
+                        <SelectValue placeholder="Show page size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {[10, 20, 30, 40, 50].map((pageSize) => (
+                            <SelectItem key={pageSize} value={String(pageSize)}>
+                                Show {pageSize}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
+
         </>
     );
 };
