@@ -37,6 +37,7 @@ import {
     PaginationLink,
     PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { FormDialog } from "../dialog/form-dialog";
 
 type DataTableProps<T> = {
     data: T[];
@@ -45,6 +46,7 @@ type DataTableProps<T> = {
     filterPlaceholder?: string;
     tableTitle?: string;
     tableDescription?: string;
+    formDialog?: React.ReactNode;    
 };
 
 const DataTable = <T,>({
@@ -54,6 +56,7 @@ const DataTable = <T,>({
     filterPlaceholder = "Filter...",
     tableTitle = "Data Table",
     tableDescription = "This table displays data with various functionalities such as sorting, filtering, and pagination.",
+    formDialog,
 }: DataTableProps<T>) => {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -143,13 +146,9 @@ const DataTable = <T,>({
                     <p className="text-sm text-muted-foreground">{tableDescription}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="outline"
-                        onClick={() => table.setColumnVisibility({})}
-                        className="h-8 px-4"
-                    >
-                        Add New Data
-                    </Button>
+                    {formDialog && (
+                        <>{formDialog}</>
+                    )}
                 </div>
             </div>
             <div className="flex items-center py-4 gap-2">

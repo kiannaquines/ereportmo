@@ -4,13 +4,32 @@ import { ReportedIncidentsData } from '@/components/datatable/report/reported-in
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-
+import { FormDialog } from '@/components/dialog/form-dialog';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Offices',
         href: '/office',
     },
 ];
+
+function OfficeFormDialog() {
+    return (
+        <div>
+            <FormDialog
+                title="Add New Office"
+                triggerLabel="Add Office"
+                fields={[
+                    { id: "name", label: "Office Name", placeholder: "Enter office name", required: true },
+                    { id: "location", label: "Location", placeholder: "Enter location", required: true },
+                ]}
+                onSubmit={(data) => {
+                    console.log("Form submitted:", data);
+                }}
+            />
+        </div>
+    );
+}
+
 
 export default function Office() {
     return (
@@ -25,6 +44,7 @@ export default function Office() {
                         filterPlaceholder="Filter by reported by..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."
+                        formDialog={<OfficeFormDialog />}
                     />
                 </div>
             </div>

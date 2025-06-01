@@ -4,6 +4,7 @@ import { ReportedIncidentsData } from '@/components/datatable/report/reported-in
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { FormDialog } from '@/components/dialog/form-dialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -11,6 +12,22 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/incidents',
     },
 ];
+
+function ReportFormDialog() {
+    return (
+        <FormDialog
+            title="Add New Incident Report"
+            triggerLabel="Add Incident Report"
+            fields={[
+                { id: "title", label: "Title", placeholder: "Enter report title", required: true },
+                { id: "description", label: "Description", placeholder: "Enter report description", required: true },
+            ]}
+            onSubmit={(data) => {
+                console.log("Form submitted:", data);
+            }}
+        />
+    );
+}
 
 export default function Report() {
     return (
@@ -25,6 +42,7 @@ export default function Report() {
                         filterPlaceholder="Filter by reported by..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."
+                        formDialog={<ReportFormDialog />}
                     />
                 </div>
             </div>
