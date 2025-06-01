@@ -42,7 +42,7 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+    [key: string]: unknown;
 }
 
 export type ReportedIncidents = {
@@ -53,9 +53,22 @@ export type ReportedIncidents = {
     reported: string;
 };
 
+export type Incidents = {
+    id: string;
+    incident: string;
+    office: string;
+    created_at: string;
+    updated_at: string;
+};
+
 export type DashboardCard = {
     title: string;
     description: string;
     value: number | string;
     icon: LucideIcon;
 }
+
+export type PageProps<T = {}> = T & {
+    auth?: any;
+    errors?: any;
+};

@@ -2,27 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Incident extends Model
+class Report extends Model
 {
     use HasFactory;
 
-    protected $table = 'incidents';
+    protected $table = 'reports';
 
     protected $fillable = [
+        'user_id',
+        'reported_by',
         'incident',
-        'office',
+        'image',
+        'incident_response_status',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    public function office()
-    {
-        return $this->belongsTo(Office::class, 'office_id');
-    }
 }

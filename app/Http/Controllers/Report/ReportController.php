@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 
+use App\Models\User;
+use App\Models\Role;
+
 class ReportController extends Controller
 {
     /**
@@ -13,7 +16,14 @@ class ReportController extends Controller
      */
     public function index()
     {
-        return Inertia::render('report/report');
+        $roleId = Role::where('role', 'user')->value('id');
+        $reportedBy = User::where('role', $roleId)
+            ->select('id', 'name')
+            ->get();
+
+        return Inertia::render('report/report', [
+            'reportedBy' => $reportedBy,
+        ]);
     }
 
     /**

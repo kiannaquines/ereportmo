@@ -13,14 +13,47 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-function ReportFormDialog() {
+type UserProps = {
+    id: string;
+    name: string;
+}
+
+type ReportedByProps = {
+    reportedBy: UserProps[];
+}
+
+function ReportFormDialog({ reportedBy }: ReportedByProps) {
     return (
         <FormDialog
             title="Add New Incident Report"
             triggerLabel="Add Incident Report"
             fields={[
-                { id: "title", label: "Title", placeholder: "Enter report title", required: true },
-                { id: "description", label: "Description", placeholder: "Enter report description", required: true },
+                {
+                    id: "reported_by",
+                    type: "select",
+                    label: "Reported by",
+                    placeholder: "Select who reported the incident",
+                    required: true,
+                    options: reportedBy.map(user => {
+                        return {
+                            label: user.name,
+                            value: String(user.id),
+                        };
+                    })
+                },
+                { 
+                    id: "image",
+                    type: "file",
+                    label: "Image",
+                    placeholder: "Upload an image (optional)"
+                },
+                { 
+                    id: "description",
+                    type: "textarea",
+                    label: "Description (Optional)",
+                    placeholder: "Enter report description",
+                    required: true
+                },
             ]}
             onSubmit={(data) => {
                 console.log("Form submitted:", data);
@@ -29,7 +62,7 @@ function ReportFormDialog() {
     );
 }
 
-export default function Report() {
+export default function Report({ reportedBy }: ReportedByProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Reports" />
@@ -42,7 +75,7 @@ export default function Report() {
                         filterPlaceholder="Filter by reported by..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."
-                        formDialog={<ReportFormDialog />}
+                        formDialog={<ReportFormDialog reportedBy={reportedBy} />}
                     />
                 </div>
             </div>

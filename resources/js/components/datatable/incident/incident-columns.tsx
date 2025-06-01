@@ -10,9 +10,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { ReportedIncidents } from "@/types";
+import { Incidents } from "@/types";
+import { Badge } from "@/components/ui/badge"
 
-export const IncidentsColumns: ColumnDef<ReportedIncidents>[] = [
+export const IncidentsColumns: ColumnDef<Incidents>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -33,38 +34,58 @@ export const IncidentsColumns: ColumnDef<ReportedIncidents>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
-  {
-    accessorKey: "reported",
+    accessorKey: "office",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Reported By
+        Office
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("reported")}</div>
+      <Badge variant="default">
+        {row.getValue("office")}
+      </Badge>
     ),
   },
   {
-    accessorKey: "title",
+    accessorKey: "incident",
     header: "Incident Title",
-    cell: ({ row }) => <div className="font-semibold">{row.getValue("title")}</div>,
+    cell: ({ row }) => <div className="font-normal">{row.getValue("incident")}</div>,
   },
   {
-    accessorKey: "description",
-    header: "Description",
+    accessorKey: "created_at",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Created At
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => (
-      <div className="truncate max-w-xs" title={row.getValue("description")}>
-        {row.getValue("description")}
+      <div className="truncate max-w-xs" title={row.getValue("created_at")}>
+        {row.getValue("created_at")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "updated_at",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Updated At
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="truncate max-w-xs" title={row.getValue("updated_at")}>
+        {row.getValue("updated_at")}
       </div>
     ),
   },

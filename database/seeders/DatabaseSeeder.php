@@ -18,97 +18,136 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Office::factory()->create([
-            'office' => 'VAWC',
-        ]);
+        $offices = [
+            'MSWDO (VAWC)',
+            'PNP',
+            'MDRRMO',
+        ];
 
-        Office::factory()->create([
-            'office' => 'PNP',
-        ]);
-
-        Office::factory()->create([
-            'office' => 'MDRRMO (VAWC)',
-        ]);
-
-        Role::factory()->create([
-            'role' => 'admin',
-        ]);
-
-        Role::factory()->create([
-            'role' => 'user',
-        ]);
-
-        Role::factory()->create([
-            'role' => 'pnp',
-        ]);
-
-        Role::factory()->create([
-            'role' => 'mdrrmo',
-        ]);
-
-        Role::factory()->create([
-            'role' => 'vawc',
-        ]);
-
+        foreach ($offices as $office) {
+            Office::factory()->create([
+                'office' => $office,
+            ]);
+        }
+        $roles = [
+            'admin',
+            'user',
+            'pnp',
+            'mdrrmo',
+            'vawc',
+        ];
+        foreach ($roles as $role) {
+            Role::factory()->create([
+                'role' => $role,
+            ]);
+        }
+       
         User::factory()->create([
             'name' => 'Kurt Lugagay',
             'email' => 'kurth@ereportmo.com',
             'municipality' => 'Makilala',
             'barangay' => 'Kisante',
             'role' => Role::where('role', 'admin')->first()->id,
-            'office_id' => Office::where('office', 'VAWC')->first()->id,
+            'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
             'password' => Hash::make('kurth@ereportmo.com'),
         ]);
 
 
-        $VAWCincidents = [
-            'Physical abuse (domestic violence, battery, assault)',
-            'Sexual abuse (rape, harassment, molestation)',
-            'Psychological abuse (emotional/verbal abuse, threats, manipulation)',
-            'Economic abuse (withholding financial support, controlling resources)',
-            'Stalking or harassment (including online abuse or surveillance)',
-        ];
-
-        foreach ($VAWCincidents as $incident) {
-            Incident::factory()->create([
-                'incident' => $incident,
-                'office' => Office::where('office', 'VAWC')->first()->id,
-            ]);
-        }
-
-        $PNPincidents = [
-            'Crimes (theft, robbery, murder, physical injury, illegal drugs, fraud)',
-            'Traffic-related incidents (accidents, violations, hit-and-run)',
-            'Missing persons reports',
-            'Illegal possession of firearms or weapons',
-            'Domestic disputes (especially if they involve criminal acts)',
-            'Child protection cases in collaboration with DSWD and VAWC units',
-            'Riots, public disturbances, and protests',
-            'Emergency responses related to criminal activities',
-        ];
-
-        foreach ($PNPincidents as $incident) {
-            Incident::factory()->create([
-                'incident' => $incident,
+        $incidents = [
+            [
+                'incident' => 'Physical abuse (domestic violence, battery, assault)',
+                'office' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Sexual abuse (rape, harassment, molestation)',
+                'office' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Psychological abuse (emotional/verbal abuse, threats, manipulation)',
+                'office' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Economic abuse (withholding financial support, controlling resources)',
+                'office' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Stalking or harassment (including online abuse or surveillance)',
+                'office' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Child protection cases in collaboration with DSWD and VAWC units',
+                'office' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Crimes (theft, robbery, murder, physical injury, illegal drugs, fraud)',
                 'office' => Office::where('office', 'PNP')->first()->id,
-            ]);
-        }
-
-        $MDRRMOincidents = [
-            'Natural disasters (earthquakes, typhoons, floods, landslides)',
-            'Fire incidents',
-            'Road accidents or mass casualty events',
-            'Evacuations and rescue operations',
-            'Hazardous material spills',
-            'Infrastructure damage due to disasters',
-            'Early warning alerts and preparedness training',
-            'Coordination during pandemics or biological threats',
+            ],
+            [
+                'incident' => 'Traffic-related incidents (accidents, violations, hit-and-run)',
+                'office' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Missing persons reports',
+                'office' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Illegal possession of firearms or weapons',
+                'office' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Domestic disputes (especially if they involve criminal acts)',
+                'office' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Child protection cases in collaboration with DSWD and VAWC units',
+                'office' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Riots, public disturbances, and protests',
+                'office' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Emergency responses related to criminal activities',
+                'office' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Natural disasters (earthquakes, typhoons, floods, landslides)',
+                'office' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Fire incidents',
+                'office' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Road accidents or mass casualty events',
+                'office' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Evacuations and rescue operations',
+                'office' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Hazardous material spills',
+                'office' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Infrastructure damage due to disasters',
+                'office' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Early warning alerts and preparedness training',
+                'office' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Coordination during pandemics or biological threats',
+                'office' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
         ];
 
-        foreach ($MDRRMOincidents as $incident) {
+        foreach ($incidents as $incident) {
             Incident::factory()->create([
-                'incident' => $incident,
-                'office' => Office::where('office', 'MDRRMO (VAWC)')->first()->id,
+                'incident' => $incident['incident'],
+                'office' => $incident['office'],
             ]);
         }
     }

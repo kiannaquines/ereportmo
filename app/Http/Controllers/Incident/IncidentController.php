@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Incident;
+
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Incident;
+use App\Models\Office;
 
 class IncidentController extends Controller
 {
@@ -13,15 +16,20 @@ class IncidentController extends Controller
      */
     public function index()
     {
-        return Inertia::render('incident/incident');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return Inertia::render('incident/incident', [
+            'offices' => Office::select('id', 'office')->get(),
+            'incidents' => Incident::with('office:id,office')
+                ->get()
+                ->map(function ($incident) {
+                    return [
+                        'id' => $incident->id,
+                        'incident' => $incident->incident,
+                        'office' => $incident->office ? $incident->office->office : null,
+                        'created_at' => $incident->created_at->toDateTimeString(),
+                        'updated_at' => $incident->updated_at->toDateTimeString(),
+                    ];
+                }),
+        ]);
     }
 
     /**
@@ -29,7 +37,15 @@ class IncidentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'office_id' => 'required|exists:offices,id',
+            'offices' => 'required|string|max:255',
+            'incident' => 'required|string|max:1000',
+        ]);
+
+        \App\Models\Incident::create($request->all());
+
+        return redirect()->route('incident.index')->with('success', 'Incident created successfully.');
     }
 
     /**

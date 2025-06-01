@@ -24,7 +24,7 @@ import {
 type FormField = {
   id: string
   label: string
-  type?: "text" | "email" | "password" | "textarea" | "select"
+  type?: "text" | "email" | "password" | "textarea" | "select" | "file"
   placeholder?: string
   required?: boolean
   defaultValue?: string
@@ -115,7 +115,7 @@ export function FormDialog({
                   <Input
                     id={field.id}
                     name={field.id}
-                    type={field.type || "text"}
+                    type={field.type || "text" || "file" }
                     placeholder={field.placeholder}
                     required={field.required}
                     value={formData[field.id]}

@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('incidents', function (Blueprint $table) {
-            $table->id();
-            $table->string('incident');
-            $table->foreignId('office')->references('id')->on('offices')->cascadeOnDelete();
-            $table->timestamps();
+        Schema::table('reports', function (Blueprint $table) {
+            $table->decimal('latitude', 10, 7)->after('incident_response_status');
+            $table->decimal('longitude', 10, 7)->after('latitude');
         });
     }
 
@@ -24,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('incidents');
+        Schema::table('reports', function (Blueprint $table) {
+            //
+        });
     }
 };
