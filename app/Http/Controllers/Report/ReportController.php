@@ -8,6 +8,8 @@ use Inertia\Inertia;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Incident;
+use App\Models\Report;
 
 class ReportController extends Controller
 {
@@ -17,12 +19,30 @@ class ReportController extends Controller
     public function index()
     {
         $roleId = Role::where('role', 'user')->value('id');
+        
         $reportedBy = User::where('role', $roleId)
             ->select('id', 'name')
             ->get();
 
+        $reportedIncidents = Report::with('incident', 'user')->get()->map(function ($report) {
+            return [
+                'id' => $report->id,
+                'incident' => $report->incident->incident ?? 'Unknown Incident',
+                'description' => $report->description,
+                'office' => $report->incident->office->office ?? 'Unknown Office',
+                'source' => $report->user->name ?? 'Unknown User',
+                'image' => $report->image,
+                'status' => $report->incident_response_status,
+                'latitude' => $report->latitude,
+                'longitude' => $report->longitude,
+                'created_at' => $report->created_at->format('Y-m-d H:i:s'),
+                'updated_at' => $report->updated_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
         return Inertia::render('report/report', [
             'reportedBy' => $reportedBy,
+            'reportedIncidents' => $reportedIncidents
         ]);
     }
 

@@ -1,6 +1,5 @@
 import DataTable from '@/components/datatable/data-table';
-import { ReportedIncidentsColumns } from '@/components/datatable/report/reported-incidents-columns';
-import { ReportedIncidentsData } from '@/components/datatable/report/reported-incidents-data';
+import { OfficeColumns } from '@/components/datatable/office/office-columns';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -12,15 +11,25 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+type OfficeDataProps = {
+    id: string;
+    office: string;
+    created_at: string;
+    updated_at: string;
+};
+
+type OfficeProps = {
+    offices: OfficeDataProps[];
+}
+
 function OfficeFormDialog() {
     return (
         <div>
             <FormDialog
-                title="Add New Office"
-                triggerLabel="Add Office"
+                title="Add New Authorities"
+                triggerLabel="Add Authorities"
                 fields={[
-                    { id: "name", label: "Office Name", placeholder: "Enter office name", required: true },
-                    { id: "location", label: "Location", placeholder: "Enter location", required: true },
+                    { id: "office", label: "Office Name", placeholder: "Enter office name", required: true },
                 ]}
                 onSubmit={(data) => {
                     console.log("Form submitted:", data);
@@ -31,19 +40,19 @@ function OfficeFormDialog() {
 }
 
 
-export default function Office() {
+export default function Office({ offices }: OfficeProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Offices" />
+            <Head title="Authorities" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min p-4">
                     <DataTable
-                        data={ReportedIncidentsData}
-                        columns={ReportedIncidentsColumns}
-                        filterColumn="reported"
-                        filterPlaceholder="Filter by reported by..."
-                        tableTitle="Reported Incidents"
-                        tableDescription="This table displays reported incidents."
+                        data={offices}
+                        columns={OfficeColumns}
+                        filterColumn="office"
+                        filterPlaceholder="Filter by office..."
+                        tableTitle="Authorities"
+                        tableDescription="This table displays authorities."
                         formDialog={<OfficeFormDialog />}
                     />
                 </div>

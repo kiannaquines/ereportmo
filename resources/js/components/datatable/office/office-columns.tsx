@@ -8,12 +8,11 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Incidents } from "@/types";
-import { Badge } from "@/components/ui/badge"
+import { Office } from "@/types";
+import { Badge } from "@/components/ui/badge";
 
-export const IncidentsColumns: ColumnDef<Incidents>[] = [
+export const OfficeColumns: ColumnDef<Office>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -45,56 +44,24 @@ export const IncidentsColumns: ColumnDef<Incidents>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <Badge variant="outline" className="capitalize">
-        {row.getValue("office")}
-      </Badge>
+      <Badge variant={'outline'}>{row.getValue("office")}</Badge>
     ),
-  },
-  {
-    accessorKey: "incident",
-    header: "Incident Title",
-    cell: ({ row }) => <div className="font-normal">{row.getValue("incident")}</div>,
   },
   {
     accessorKey: "created_at",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Created At
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="truncate max-w-xs" title={row.getValue("created_at")}>
-        {row.getValue("created_at")}
-      </div>
-    ),
+    header: "Created At",
+    cell: ({ row }) => <div className="lowercase">{row.getValue("created_at")}</div>,
   },
   {
     accessorKey: "updated_at",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Updated At
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="truncate max-w-xs" title={row.getValue("updated_at")}>
-        {row.getValue("updated_at")}
-      </div>
-    ),
+    header: "Updated At",
+    cell: ({ row }) => <div className="lowercase">{row.getValue("updated_at")}</div>,
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const incident = row.original;
-
+      const office = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

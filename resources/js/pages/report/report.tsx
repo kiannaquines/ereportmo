@@ -1,6 +1,5 @@
 import DataTable from '@/components/datatable/data-table';
 import { ReportedIncidentsColumns } from '@/components/datatable/report/reported-incidents-columns';
-import { ReportedIncidentsData } from '@/components/datatable/report/reported-incidents-data';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -20,6 +19,25 @@ type UserProps = {
 
 type ReportedByProps = {
     reportedBy: UserProps[];
+}
+
+type ReportedIncidentsProps = {
+    id: string;
+    incident: string;
+    description: string;
+    office: string;
+    source: string;
+    image: string;
+    status: string;
+    latitude: string;
+    longitude: string;
+    created_at: string;
+    updated_at: string;
+}
+
+type ReportProps = {
+    reportedBy: UserProps[];
+    reportedIncidents: ReportedIncidentsProps[];
 }
 
 function ReportFormDialog({ reportedBy }: ReportedByProps) {
@@ -76,17 +94,17 @@ function ReportFormDialog({ reportedBy }: ReportedByProps) {
     );
 }
 
-export default function Report({ reportedBy }: ReportedByProps) {
+export default function Report({ reportedBy, reportedIncidents }: ReportProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Reports" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min p-4">
                     <DataTable
-                        data={ReportedIncidentsData}
+                        data={reportedIncidents}
                         columns={ReportedIncidentsColumns}
-                        filterColumn="reported_by"
-                        filterPlaceholder="Filter by reported by..."
+                        filterColumn="source"
+                        filterPlaceholder="Filter by source..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."
                         formDialog={<ReportFormDialog reportedBy={reportedBy} />}

@@ -25,4 +25,13 @@ class Report extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    public function incident()
+    {
+        return $this->belongsTo(Incident::class, 'incident_id');
+    }
 }

@@ -33,31 +33,31 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "incident_response_status",
+    accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <Badge variant={'outline'} className="capitalize">{row.getValue("incident_response_status")}</Badge>
+      <Badge variant={'outline'} className="capitalize">{row.getValue("status")}</Badge>
     ),
   },
   {
-    accessorKey: "reported_by",
+    accessorKey: "source",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Reported By
+        Source
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("reported_by")}</div>
+      <div className="capitalize">{row.getValue("source")}</div>
     ),
   },
   {
-    accessorKey: "office_to_action",
-    header: "Office to Action",
-    cell: ({ row }) => <Badge variant={'outline'}>{row.getValue("office_to_action")}</Badge>,
+    accessorKey: "office",
+    header: "Authority",
+    cell: ({ row }) => <Badge variant={'outline'}>{row.getValue("office")}</Badge>,
   },
   {
     accessorKey: "incident",
@@ -94,8 +94,8 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>View</DropdownMenuItem>
-            <DropdownMenuItem>Edit Incident</DropdownMenuItem>
-            <DropdownMenuItem>Remove Incident</DropdownMenuItem>
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>Remove</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

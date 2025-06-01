@@ -37,7 +37,6 @@ import {
     PaginationLink,
     PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { FormDialog } from "../dialog/form-dialog";
 
 type DataTableProps<T> = {
     data: T[];
@@ -219,7 +218,7 @@ const DataTable = <T,>({
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                    Oppsiee.... No results.
                                 </TableCell>
                             </TableRow>
                         )}

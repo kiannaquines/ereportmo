@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Office;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\Controller;
+use App\Models\Office;
 
 class OfficeController extends Controller
 {
@@ -13,7 +14,16 @@ class OfficeController extends Controller
      */
     public function index()
     {
-        return Inertia::render('office/office');
+        return Inertia::render('office/office', [
+            'offices' => Office::get()->map(function ($office) {
+                return [
+                    'id' => $office->id,
+                    'office' => $office->office,
+                    'created_at' => $office->created_at->format('Y-m-d H:i:s'),
+                    'updated_at' => $office->updated_at->format('Y-m-d H:i:s'),
+                ];
+            }),
+        ]);
     }
 
     /**

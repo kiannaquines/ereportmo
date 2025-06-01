@@ -47,13 +47,16 @@ export interface User {
 
 export type ReportedIncidents = {
     id: string;
-    reported_by: string;
-    office_to_action: string;
     incident: string;
+    description: string;
+    office: string;
+    source: string;
     image: string;
-    incident_response_status: "New" | "Investigating" | "Resolved" | "Closed";
+    status: string | "New" | "Investigating" | "Resolved" | "Closed";
     latitude: string;
     longitude: string;
+    created_at: string;
+    updated_at: string;
 };
 
 export type Incidents = {
@@ -75,3 +78,10 @@ export type PageProps<T = {}> = T & {
     auth?: any;
     errors?: any;
 };
+
+export type Office = {
+    id: string;
+    office: string;
+    created_at: string;
+    updated_at: string;
+}
