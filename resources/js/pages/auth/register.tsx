@@ -76,23 +76,6 @@ export default function Register({ offices }: OfficeProps) {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="municipality">Municipality</Label>
-                        <Input
-                            id="municipality"
-                            type="text"
-                            required
-                            autoFocus
-                            tabIndex={1}
-                            autoComplete="municipality"
-                            value={data.municipality}
-                            onChange={(e) => setData('municipality', e.target.value)}
-                            disabled={processing}
-                            placeholder="Municipality"
-                        />
-                        <InputError message={errors.municipality} className="mt-2" />
-                    </div>
-
-                    <div className="grid gap-2">
                         <Label htmlFor="office_id">Office</Label>
                         <Select
                             value={data.office_id}
@@ -112,6 +95,23 @@ export default function Register({ offices }: OfficeProps) {
                         <InputError message={errors.office_id} className="mt-2" />
                     </div>
 
+                    <div className="grid gap-2">
+                        <Label htmlFor="municipality">Municipality</Label>
+                        <Input
+                            id="municipality"
+                            type="text"
+                            required
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="municipality"
+                            value={data.municipality}
+                            onChange={(e) => setData('municipality', e.target.value)}
+                            disabled={processing}
+                            placeholder="Municipality"
+                        />
+                        <InputError message={errors.municipality} className="mt-2" />
+                    </div>
+                    
                     <div className="grid gap-2">
                         <Label htmlFor="barangay">Barangay</Label>
                         <Input

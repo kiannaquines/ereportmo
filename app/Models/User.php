@@ -23,7 +23,7 @@ class User extends Authenticatable
         'municipality',
         'barangay',
         'email',
-        'office',
+        'office_id',
         'role',
         'password',
     ]; 
