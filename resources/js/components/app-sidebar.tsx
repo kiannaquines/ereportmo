@@ -33,20 +33,8 @@ const modulesPath: NavItem[] = [
         icon: Building,
     },
     {
-        title: 'Incident Reports',
-        href: '/settings',
-        type: 'Report Module',
-        icon: Printer,
-    },
-    {
         title: 'Report Reports',
         href: '/docs',
-        type: 'Report Module',
-        icon: Printer,
-    },
-    {
-        title: 'Office Reports',
-        href: '/office-reports',
         type: 'Report Module',
         icon: Printer,
     },
