@@ -45,7 +45,7 @@ export const IncidentsColumns: ColumnDef<Incidents>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <Badge variant="default">
+      <Badge variant="outline" className="capitalize">
         {row.getValue("office")}
       </Badge>
     ),

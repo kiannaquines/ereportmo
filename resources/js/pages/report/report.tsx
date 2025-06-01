@@ -34,12 +34,12 @@ function ReportFormDialog({ reportedBy }: ReportedByProps) {
                     label: "Reported by",
                     placeholder: "Select who reported the incident",
                     required: true,
-                    options: reportedBy.map(user => {
+                    options: reportedBy.length > 0 ? reportedBy.map(user => {
                         return {
                             label: user.name,
                             value: String(user.id),
                         };
-                    })
+                    }) : []
                 },
                 { 
                     id: "image",
@@ -54,6 +54,20 @@ function ReportFormDialog({ reportedBy }: ReportedByProps) {
                     placeholder: "Enter report description",
                     required: true
                 },
+                {
+                    id: "latitude",
+                    type: "text",
+                    label: "Latitude (Optional)",
+                    placeholder: "Enter latitude",
+                    required: false
+                },
+                {
+                    id: "longitude",
+                    type: "text",
+                    label: "Longitude (Optional)",
+                    placeholder: "Enter longitude",
+                    required: false
+                }
             ]}
             onSubmit={(data) => {
                 console.log("Form submitted:", data);
@@ -71,7 +85,7 @@ export default function Report({ reportedBy }: ReportedByProps) {
                     <DataTable
                         data={ReportedIncidentsData}
                         columns={ReportedIncidentsColumns}
-                        filterColumn="reported"
+                        filterColumn="reported_by"
                         filterPlaceholder="Filter by reported by..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."

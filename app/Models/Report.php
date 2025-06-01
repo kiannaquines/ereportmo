@@ -13,10 +13,12 @@ class Report extends Model
 
     protected $fillable = [
         'user_id',
-        'reported_by',
-        'incident',
+        'incident_id',
+        'description',
         'image',
         'incident_response_status',
+        'latitude',
+        'longitude'
     ];
 
     protected $casts = [

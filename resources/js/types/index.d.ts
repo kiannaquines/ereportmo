@@ -47,10 +47,13 @@ export interface User {
 
 export type ReportedIncidents = {
     id: string;
-    title: string;
-    description: string;
-    status: "investigating" | "confirmed" | "resolved" | "under review";
-    reported: string;
+    reported_by: string;
+    office_to_action: string;
+    incident: string;
+    image: string;
+    incident_response_status: "New" | "Investigating" | "Resolved" | "Closed";
+    latitude: string;
+    longitude: string;
 };
 
 export type Incidents = {

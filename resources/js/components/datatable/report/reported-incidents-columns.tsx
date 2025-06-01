@@ -8,9 +8,9 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { ReportedIncidents } from "@/types";
+import { Badge } from "@/components/ui/badge";
 
 export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
   {
@@ -33,14 +33,14 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "status",
+    accessorKey: "incident_response_status",
     header: "Status",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <Badge variant={'outline'} className="capitalize">{row.getValue("incident_response_status")}</Badge>
     ),
   },
   {
-    accessorKey: "reported",
+    accessorKey: "reported_by",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -51,29 +51,38 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("reported")}</div>
+      <div className="capitalize">{row.getValue("reported_by")}</div>
     ),
   },
   {
-    accessorKey: "title",
-    header: "Incident Title",
-    cell: ({ row }) => <div className="font-semibold">{row.getValue("title")}</div>,
+    accessorKey: "office_to_action",
+    header: "Office to Action",
+    cell: ({ row }) => <Badge variant={'outline'}>{row.getValue("office_to_action")}</Badge>,
   },
   {
-    accessorKey: "description",
-    header: "Description",
+    accessorKey: "incident",
+    header: "Incident",
     cell: ({ row }) => (
-      <div className="truncate max-w-xs" title={row.getValue("description")}>
-        {row.getValue("description")}
+      <div className="truncate max-w-xs" title={row.getValue("incident")}>
+        {row.getValue("incident")}
       </div>
     ),
+  },
+  {
+    accessorKey: "latitude",
+    header: "Latitude",
+    cell: ({ row }) => <div className="lowercase">{row.getValue("latitude")}</div>,
+  },
+  {
+    accessorKey: "longitude",
+    header: "Longitude",
+    cell: ({ row }) => <div className="lowercase">{row.getValue("longitude")}</div>,
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
       const incident = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -84,14 +93,9 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(incident.id)}
-            >
-              Copy Incident ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View reporter details</DropdownMenuItem>
-            <DropdownMenuItem>View incident details</DropdownMenuItem>
+            <DropdownMenuItem>View</DropdownMenuItem>
+            <DropdownMenuItem>Edit Incident</DropdownMenuItem>
+            <DropdownMenuItem>Remove Incident</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
