@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('municipality');
             $table->string('barangay');
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('office');
+            $table->foreignId('office_id')->references('id')->on('offices')->cascadeOnDelete();
             $table->string('password');
-            $table->string('role')->default('user');
+            $table->string('role')->default('user')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

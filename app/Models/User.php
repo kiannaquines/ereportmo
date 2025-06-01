@@ -26,7 +26,7 @@ class User extends Authenticatable
         'office',
         'role',
         'password',
-    ];
+    ]; 
 
     /**
      * The attributes that should be hidden for serialization.

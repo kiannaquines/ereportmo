@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Office;
 
 class RegisteredUserController extends Controller
 {
@@ -20,7 +21,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('auth/register');
+        return Inertia::render('auth/register',[
+            'offices' => Office::all(),
+        ]);
     }
 
     /**
@@ -34,7 +37,7 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'municipality' => 'required|string|max:255',
             'barangay' => 'required|string|max:255',
-            'office' => 'required|string|max:255',
+            'office_id' => 'required|int|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -43,8 +46,8 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'municipality' => $request->municipality,
-            'office' => $request->office,
-            'role' => strtolower($request->office),
+            'office_id' => $request->office_id,
+            'role' => null,
             'barangay' => $request->barangay,
             'password' => Hash::make($request->password),
         ]);

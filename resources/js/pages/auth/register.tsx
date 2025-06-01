@@ -21,18 +21,27 @@ type RegisterForm = {
     municipality: string,
     barangay: string,
     email: string;
-    office: string;
+    office_id: string;
     password: string;
     password_confirmation: string;
 };
 
-export default function Register() {
+type Office = {
+    id: string;
+    office: string;
+}
+
+interface OfficeProps {
+    offices: Office[]
+}
+
+export default function Register({ offices }: OfficeProps) {
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
         municipality: '',
         barangay: '',
         email: '',
-        office: '',
+        office_id: '',
         password: '',
         password_confirmation: '',
     });
@@ -84,18 +93,23 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="office">Office</Label>
-                        <Select onValueChange={(value) => setData('office', value)}>
+                        <Label htmlFor="office_id">Office</Label>
+                        <Select
+                            value={data.office_id}
+                            onValueChange={(value) => setData('office_id', value)}
+                        >
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select Office" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="PNP">PNP</SelectItem>
-                                <SelectItem value="MSWDO">MSWDO (VAWC)</SelectItem>
-                                <SelectItem value="MDRRMO">MDRRMO</SelectItem>
+                                {offices.map((office) => (
+                                    <SelectItem key={office.id} value={String(office.id)}>
+                                        {office.office}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
-                        <InputError message={errors.office} className="mt-2" />
+                        <InputError message={errors.office_id} className="mt-2" />
                     </div>
 
                     <div className="grid gap-2">

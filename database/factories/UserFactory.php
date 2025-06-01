@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Office;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -29,7 +30,7 @@ class UserFactory extends Factory
             'municipality' => fake()->address(),
             'barangay' => fake()->address(),
             'email_verified_at' => now(),
-            'office' => fake()->address(),
+            'office_id' => Office::factory(),
             'role' => 'user',
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
