@@ -27,14 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Search, ListFilter } from "lucide-react";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import { ChevronDown, Search } from "lucide-react";
 import {
     Pagination,
     PaginationContent,
@@ -144,11 +137,20 @@ const DataTable = <T,>({
 
     return (
         <>
-            <div className="mb-4">
-                <h2 className="text-lg font-semibold">{tableTitle}</h2>
-                <p className="text-sm text-muted-foreground">
-                    {tableDescription || "Manage your data efficiently with this table."}
-                </p>
+            <div className="mb-4 flex ">
+                <div className="flex-1">
+                    <h2 className="text-lg font-semibold">{tableTitle}</h2>
+                    <p className="text-sm text-muted-foreground">{tableDescription}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={() => table.setColumnVisibility({})}
+                        className="h-8 px-4"
+                    >
+                        Add New Data
+                    </Button>
+                </div>
             </div>
             <div className="flex items-center py-4 gap-2">
                 {filterColumn && (
