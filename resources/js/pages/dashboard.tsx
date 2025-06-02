@@ -8,7 +8,6 @@ import { type BreadcrumbItem } from "@/types"
 import MonthlyIncidentsLineChart from "@/components/chart/monthly-incidents-linechart";
 import MonthlyIncidentsBarChart from "@/components/chart/monthly-incidents-barchart";
 import DataTable from "@/components/datatable/data-table"
-import { ReportedIncidentsData } from "@/components/datatable/report/reported-incidents-data";
 import { ReportedIncidentsColumns } from "@/components/datatable/report/reported-incidents-columns";
 import DashboardCard from "@/components/card/dashboard-card"
 
@@ -16,7 +15,26 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: "Dashboard", href: "/dashboard" },
 ]
 
-export default function Dashboard() {
+type ReportedIncidentsProps = {
+    id: string;
+    incident: string;
+    description: string;
+    office: string;
+    source: string;
+    image: string;
+    status: string;
+    latitude: string;
+    longitude: string;
+    created_at: string;
+    updated_at: string;
+}
+
+type DashboardProps = {
+    reportedIncidents: ReportedIncidentsProps[];
+}
+
+
+export default function Dashboard({ reportedIncidents }: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -58,10 +76,10 @@ export default function Dashboard() {
 
                 <div className="w-full h-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-4 md:p-6 bg-background flex flex-col">
                     <DataTable
-                        data={ReportedIncidentsData}
+                        data={reportedIncidents}
                         columns={ReportedIncidentsColumns}
-                        filterColumn="reported"
-                        filterPlaceholder="Filter by reported by..."
+                        filterColumn="source"
+                        filterPlaceholder="Filter by source..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."
                     />
