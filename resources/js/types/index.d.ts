@@ -170,3 +170,10 @@ export type ReportProps = {
     reportedIncidents: ReportedIncidentsProps[];
     incidents: IncidentsProps[];
 }
+
+export type OfficeDataProps = {
+    id: string;
+    office: string;
+    created_at: string;
+    updated_at: string;
+};

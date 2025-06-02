@@ -10,7 +10,7 @@ function IncidentFormDialog({ offices }: IncidentFormDialogProp) {
     });
 
     const handleSubmit = (
-        formData: Record<string, string>,
+        formData: Record<string, any>,
         { onSuccess, onError }: { onSuccess: () => void; onError: () => void }
     ) => {
         router.post(
@@ -24,7 +24,7 @@ function IncidentFormDialog({ offices }: IncidentFormDialogProp) {
                 onSuccess: () => {
                     reset();
                     onSuccess();
-                    toast.message('Horayy, success', {
+                    toast.success('Horayy, success', {
                         description: 'You have successfully added new incident type.'
                     })
                 },
@@ -32,7 +32,7 @@ function IncidentFormDialog({ offices }: IncidentFormDialogProp) {
                     onError();
 
                     for (const [field, message] of Object.entries(e)) {
-                        toast.message('Oppss, please try again', {
+                        toast.error('Oppss, please try again', {
                             description: `${message}`,
                         })
                     }
@@ -46,6 +46,7 @@ function IncidentFormDialog({ offices }: IncidentFormDialogProp) {
         <FormDialog
             title="Add Incident"
             triggerLabel="Add New Incident"
+            isMultipart={false}
             disabled={processing}
             fields={[
                 {

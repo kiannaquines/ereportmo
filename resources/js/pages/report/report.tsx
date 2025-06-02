@@ -42,12 +42,17 @@ function ReportFormDialog({ reportedBy, incidents }: ReportedByProps) {
             onSuccess: () => {
                 reset();
                 onSuccess();
-                toast.message('Horayy, success', {
+                toast.success('Horayy, success', {
                     description: 'You have successfully added new incident report.'
                 })
             },
-            onError: () => {
+            onError: (e) => {
                 onError();
+                for (const [field, message] of Object.entries(e)) {
+                    toast.error('Oppss, please try again', {
+                        description: `${message}`,
+                    });
+                }
             }
         });
     };

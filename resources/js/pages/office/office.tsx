@@ -1,9 +1,15 @@
 import DataTable from '@/components/datatable/data-table';
 import { OfficeColumns } from '@/components/datatable/office/office-columns';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { OfficeDataProps, type BreadcrumbItem } from '@/types';
+import { router, Head, useForm } from '@inertiajs/react';
 import { FormDialog } from '@/components/dialog/form-dialog';
+import { toast } from "sonner"
+
+export type OfficeProps = {
+    offices: OfficeDataProps[];
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Offices',
@@ -11,32 +17,56 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-type OfficeDataProps = {
-    id: string;
-    office: string;
-    created_at: string;
-    updated_at: string;
-};
+export function OfficeFormDialog() {
+  const { data, setData, processing, reset } = useForm({
+    office: '',
+  });
 
-type OfficeProps = {
-    offices: OfficeDataProps[];
-}
+  const handleSubmit = (
+    formData: Record<string, any>,
+    { onSuccess, onError }: { onSuccess: () => void; onError: () => void }
+  ) => {
+    const payload = new FormData();
+    payload.append('office', formData.office);
 
-function OfficeFormDialog() {
-    return (
-        <div>
-            <FormDialog
-                title="Add New Authorities"
-                triggerLabel="Add Authorities"
-                fields={[
-                    { id: "office", label: "Office Name", placeholder: "Enter office name", required: true },
-                ]}
-                onSubmit={(data) => {
-                    console.log("Form submitted:", data);
-                }}
-            />
-        </div>
-    );
+    router.post(route('offices.store'), payload, {
+      preserveScroll: true,
+      onSuccess: () => {
+        reset();
+        onSuccess();
+        toast.success('Horayyy', {
+          description: 'You have successfully added a new authority office.',
+        });
+      },
+      onError: (e) => {
+        onError();
+        for (const [field, message] of Object.entries(e)) {
+          toast.error('Oppss, please try again', {
+            description: `${message}`,
+          });
+        }
+      },
+    });
+  };
+
+  return (
+    <FormDialog
+      title="Add New Authorities"
+      isMultipart={false}
+      disabled={processing}
+      triggerLabel="Add Authorities"
+      fields={[
+        {
+          id: 'office',
+          label: 'Office Name',
+          type: 'text',
+          placeholder: 'Enter office name',
+          value: data.office,
+        },
+      ]}
+      onSubmit={handleSubmit}
+    />
+  );
 }
 
 

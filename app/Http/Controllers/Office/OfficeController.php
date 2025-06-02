@@ -27,19 +27,17 @@ class OfficeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'office' => 'required|string|max:255'
+        ]);
+
+        Office::create($request->all());
+
+        return redirect()->route('offices.store')->with('success', 'You have successfully added you office autority.');
     }
 
     /**

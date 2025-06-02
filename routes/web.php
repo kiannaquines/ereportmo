@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
 
     Route::get('offices', [OfficeController::class, 'index'])->name('offices');
+    Route::post('offices', [OfficeController::class, 'store'])->name('offices.store');
 });
 
 require __DIR__ . '/settings.php';
