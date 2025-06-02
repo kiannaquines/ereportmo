@@ -19,7 +19,7 @@ class ReportController extends Controller
     public function index()
     {
         $roleId = Role::where('role', 'user')->value('id');
-        
+
         $reportedBy = User::where('role', $roleId)
             ->select('id', 'name')
             ->get();
@@ -40,9 +40,18 @@ class ReportController extends Controller
             ];
         });
 
+        $incidents = Incident::with('office')->get()->map(function ($incident) {
+            return [
+                'id' => $incident->id,
+                'office' => $incident->office->office,
+                'incident' => $incident->incident,
+            ];
+        });
+
         return Inertia::render('report/report', [
             'reportedBy' => $reportedBy,
-            'reportedIncidents' => $reportedIncidents
+            'reportedIncidents' => $reportedIncidents,
+            'incidents' => $incidents,
         ]);
     }
 
@@ -51,7 +60,32 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'reported_by' => 'required|string|max:255',
+            'incident_id' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:255',
+            'latitude' => 'nullable|string|max:255',
+            'longitude' => 'nullable|string|max:255',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('reported_incidents', 'public');
+        }
+        
+        Report::create([
+            'user_id' => $request->reported_by,
+            'incident_id' => $request->incident_id,
+            'description' => $request->description,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'image' => $imagePath
+        ]);
+
+        return redirect()->route('reports.store')->with('success', 'Reported Incident created successfully.');
     }
 
     /**

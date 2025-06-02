@@ -16,7 +16,6 @@ class Report extends Model
         'incident_id',
         'description',
         'image',
-        'incident_response_status',
         'latitude',
         'longitude'
     ];

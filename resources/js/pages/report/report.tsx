@@ -1,9 +1,10 @@
 import DataTable from '@/components/datatable/data-table';
 import { ReportedIncidentsColumns } from '@/components/datatable/report/reported-incidents-columns';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { type BreadcrumbItem, ReportedByProps, ReportProps } from '@/types';
+import { Head, useForm, router } from '@inertiajs/react';
 import { FormDialog } from '@/components/dialog/form-dialog';
+import { toast } from "sonner"
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,89 +13,108 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-type UserProps = {
-    id: string;
-    name: string;
+function truncate(text: string, maxLength: number): string {
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 }
 
-type ReportedByProps = {
-    reportedBy: UserProps[];
-}
+function ReportFormDialog({ reportedBy, incidents }: ReportedByProps) {
 
-type ReportedIncidentsProps = {
-    id: string;
-    incident: string;
-    description: string;
-    office: string;
-    source: string;
-    image: string;
-    status: string;
-    latitude: string;
-    longitude: string;
-    created_at: string;
-    updated_at: string;
-}
+    const { data, reset, processing } = useForm({
+        reported_by: '',
+        incident_id: '',
+        image: null,
+        description: '',
+        latitude: '',
+        longitude: ''
+    });
 
-type ReportProps = {
-    reportedBy: UserProps[];
-    reportedIncidents: ReportedIncidentsProps[];
-}
+    const handleSubmit = (formData: Record<string, any>, { onSuccess, onError }: { onSuccess: () => void; onError: () => void }) => {
+        const payload = new FormData();
 
-function ReportFormDialog({ reportedBy }: ReportedByProps) {
+        payload.append('reported_by', formData.reported_by);
+        payload.append('incident_id', formData.incident_id);
+        if (formData.image) payload.append('image', formData.image);
+        if (formData.description) payload.append('description', formData.description);
+        if (formData.latitude) payload.append('latitude', formData.latitude);
+        if (formData.longitude) payload.append('longitude', formData.longitude);
+
+        router.post(route('reports.store'), payload, {
+            onSuccess: () => {
+                reset();
+                onSuccess();
+                toast.message('Horayy, success', {
+                    description: 'You have successfully added new incident report.'
+                })
+            },
+            onError: () => {
+                onError();
+            }
+        });
+    };
+
     return (
         <FormDialog
-            title="Add New Incident Report"
-            triggerLabel="Add Incident Report"
+            title="Add New Reported Incident"
+            triggerLabel="Add Reported Incident"
+            isMultipart={true}
             fields={[
                 {
                     id: "reported_by",
                     type: "select",
                     label: "Reported by",
                     placeholder: "Select who reported the incident",
-                    required: true,
-                    options: reportedBy.length > 0 ? reportedBy.map(user => {
-                        return {
-                            label: user.name,
-                            value: String(user.id),
-                        };
-                    }) : []
+                    value: data.reported_by,
+                    options: reportedBy.map(user => ({
+                        label: user.name,
+                        value: String(user.id),
+                    }))
                 },
-                { 
+                {
+                    id: "incident_id",
+                    type: "select",
+                    label: "Incident Type",
+                    placeholder: "Select what kind of incident",
+                    value: data.incident_id,
+                    options: incidents.map(incident => ({
+                        label: `${incident.office} - ${truncate(incident.incident, 25)}`,
+                        value: String(incident.id),
+                    }))
+                },
+                {
                     id: "image",
                     type: "file",
                     label: "Image",
                     placeholder: "Upload an image (optional)"
                 },
-                { 
+                {
                     id: "description",
                     type: "textarea",
                     label: "Description (Optional)",
                     placeholder: "Enter report description",
-                    required: true
+                    value: data.description,
                 },
                 {
                     id: "latitude",
                     type: "text",
                     label: "Latitude (Optional)",
                     placeholder: "Enter latitude",
-                    required: false
+                    value: data.latitude,
                 },
                 {
                     id: "longitude",
                     type: "text",
                     label: "Longitude (Optional)",
                     placeholder: "Enter longitude",
-                    required: false
+                    value: data.longitude,
                 }
             ]}
-            onSubmit={(data) => {
-                console.log("Form submitted:", data);
-            }}
+            disabled={processing}
+            onSubmit={handleSubmit}
         />
     );
 }
 
-export default function Report({ reportedBy, reportedIncidents }: ReportProps) {
+export default function Report({ reportedBy, reportedIncidents, incidents }: ReportProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Reports" />
@@ -107,7 +127,7 @@ export default function Report({ reportedBy, reportedIncidents }: ReportProps) {
                         filterPlaceholder="Filter by source..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."
-                        formDialog={<ReportFormDialog reportedBy={reportedBy} />}
+                        formDialog={<ReportFormDialog reportedBy={reportedBy} incidents={incidents} />}
                     />
                 </div>
             </div>

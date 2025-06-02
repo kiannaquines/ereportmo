@@ -38,14 +38,16 @@ class IncidentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'office_id' => 'required|exists:offices,id',
-            'offices' => 'required|string|max:255',
+            'office_id' => 'required|string|max:255',
             'incident' => 'required|string|max:1000',
         ]);
 
-        \App\Models\Incident::create($request->all());
+        Incident::create([
+            'incident' => $request->incident,
+            'office_id' => $request->office_id
+        ]);
 
-        return redirect()->route('incident.index')->with('success', 'Incident created successfully.');
+        return redirect()->route('incidents.index')->with('success', 'Incident created successfully.');
     }
 
     /**

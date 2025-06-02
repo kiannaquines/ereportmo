@@ -1,10 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
-import { PageProps, type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import DataTable from '@/components/datatable/data-table';
 import { IncidentsColumns } from '@/components/datatable/incident/incident-columns';
-import { FormDialog } from '@/components/dialog/form-dialog';
-import { Incidents } from "@/types";
+import { IncidentPageProps } from "@/types";
+import IncidentFormDialog from './incident-form-dialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,61 +12,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/incidents',
     },
 ];
-
-type OfficeProps = {
-    id: string;
-    office: string;
-}
-
-type IncidentsProps = {
-    id: string;
-    incident: string;
-    office: string;
-    created_at: string;
-    updated_at: string;
-}
-
-type IncidentFormDialogProp = {
-    offices: OfficeProps[];
-}
-
-type IncidentPageProps = PageProps & {
-    offices: OfficeProps[];
-    incidents: IncidentsProps[];
-}
-
-function IncidentFormDialog({ offices }: IncidentFormDialogProp) {
-    console.log("Offices:", offices);
-    return (
-        <FormDialog
-            title="Add Reported Incident"
-            triggerLabel="Add New Reported Incident"
-            fields={[
-                {
-                    id: "office",
-                    type: "select",
-                    label: "Office",
-                    placeholder: "Select office",
-                    required: true,
-                    options: offices.map(office => ({
-                        label: office.office,
-                        value: String(office.id),
-                    })),
-                },
-                {
-                    id: "incident",
-                    type: "textarea",
-                    label: "Description",
-                    placeholder: "Enter description",
-                    required: true,
-                },
-            ]}
-            onSubmit={(data) => {
-                console.log("Form submitted with data:", data);
-            }}
-        />
-    )
-}
+ 
 
 export default function Incident({ offices, incidents }: IncidentPageProps) {
     return (

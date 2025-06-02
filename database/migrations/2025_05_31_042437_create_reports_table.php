@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('reported_by')->references('id')->on('users')->cascadeOnDelete();
             $table->foreignId('incident')->references('id')->on('incidents')->cascadeOnDelete();
             $table->string('image')->nullable();
-            $table->string('incident_response_status');
+            $table->string('incident_response_status')->default('New');
             $table->timestamps();
         });
     }

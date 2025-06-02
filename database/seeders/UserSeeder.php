@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'municipality' => 'Makilala',
             'barangay' => 'New Cebu',
             'password' => Hash::make('kiannaquines@ereportmo.com'),
-            'role' => Role::where('name', 'user')->first()->id,
+            'role' => Role::where('role', 'user')->first(),
         ]);
     }
 }

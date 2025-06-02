@@ -13,8 +13,11 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('incidents', [IncidentController::class, 'index'])->name('incidents');
+    Route::get('incidents', [IncidentController::class, 'index'])->name('incidents.index');
+    Route::post('incidents', [IncidentController::class, 'store'])->name('incidents.store');
     Route::get('reports', [ReportController::class, 'index'])->name('reports');
+    Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
+
     Route::get('offices', [OfficeController::class, 'index'])->name('offices');
 });
 

@@ -18,7 +18,7 @@ class IncidentFactory extends Factory
     {
         return [
             'incident' => $this->faker->sentence(),
-            'office' => $this->faker->word(),
+            'office_id' => $this->faker->word(),
         ];
     }
 }

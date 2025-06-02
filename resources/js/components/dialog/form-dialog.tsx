@@ -20,30 +20,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
-type FormField = {
-  id: string
-  label: string
-  type?: "text" | "email" | "password" | "textarea" | "select" | "file"
-  placeholder?: string
-  required?: boolean
-  defaultValue?: string
-  options?: { label: string; value: string }[]
-}
-
-type FormDialogProps = {
-  title: string
-  description?: string
-  triggerLabel: string
-  fields: FormField[]
-  onSubmit: (data: Record<string, string>) => void
-  submitLabel?: string
-  cancelLabel?: string
-  triggerVariant?: "default" | "outline" | "destructive" | "ghost"
-}
+import { FormDialogProps } from '@/types';
 
 export function FormDialog({
   title,
+  isMultipart,
   description,
   triggerLabel,
   fields,
@@ -51,32 +32,64 @@ export function FormDialog({
   submitLabel = "Submit",
   cancelLabel = "Cancel",
   triggerVariant = "default",
+  disabled = false,
+  onSuccess,
 }: FormDialogProps) {
-  const [formData, setFormData] = useState<Record<string, string>>(
-    Object.fromEntries(fields.map((field) => [field.id, field.defaultValue || ""]))
+  const [isOpen, setIsOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const getInitialFormData = () =>
+    Object.fromEntries(fields.map((field) => [field.id, field.value || field.defaultValue || ""]))
+
+  const [formData, setFormData] = useState<Record<string, string | File | null>>(
+    getInitialFormData()
   )
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, type, value, files } = e.target as HTMLInputElement;
+
+    if (type === "file") {
+      setFormData((prev) => ({ ...prev, [name]: files && files[0] ? files[0] : null }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
 
   const handleSelectChange = (id: string, value: string) => {
     setFormData((prev) => ({ ...prev, [id]: value }))
   }
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    onSubmit(formData)
-  }
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        onSubmit(formData, {
+          onSuccess: () => {
+            onSuccess?.();
+            setFormData(getInitialFormData());
+            setIsOpen(false);
+            resolve();
+          },
+          onError: () => {
+            reject(new Error("Form submission failed"));
+          },
+        });
+      });
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant={triggerVariant}>{triggerLabel}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} {...(isMultipart ? { encType: "multipart/form-data" } : {})}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             {description && <DialogDescription>{description}</DialogDescription>}
@@ -91,13 +104,12 @@ export function FormDialog({
                     id={field.id}
                     name={field.id}
                     placeholder={field.placeholder}
-                    required={field.required}
-                    value={formData[field.id]}
+                    value={formData[field.id] as string || ''}
                     onChange={handleChange}
                   />
                 ) : field.type === "select" && field.options ? (
                   <Select
-                    value={formData[field.id]}
+                    value={formData[field.id] as string || ''}
                     onValueChange={(val) => handleSelectChange(field.id, val)}
                   >
                     <SelectTrigger className="w-full">
@@ -105,20 +117,36 @@ export function FormDialog({
                     </SelectTrigger>
                     <SelectContent>
                       {field.options.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
+                        <SelectItem key={opt.value} value={opt.value} title={opt.label}>
                           {opt.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                ) : field.type === "file" ? (
+                  <>
+                    <Input
+                      id={field.id}
+                      name={field.id}
+                      type="file"
+                      placeholder={field.placeholder}
+                      onChange={handleChange}
+                    />
+                    {formData[field.id] instanceof File && (
+                      <img
+                        src={URL.createObjectURL(formData[field.id] as File)}
+                        alt="Preview"
+                        className="mt-2 h-24 w-auto rounded-md object-cover"
+                      />
+                    )}
+                  </>
                 ) : (
                   <Input
                     id={field.id}
                     name={field.id}
-                    type={field.type || "text" || "file" }
+                    type={field.type || "text"}
                     placeholder={field.placeholder}
-                    required={field.required}
-                    value={formData[field.id]}
+                    value={formData[field.id] as string || ''}
                     onChange={handleChange}
                   />
                 )}
@@ -131,7 +159,9 @@ export function FormDialog({
                 {cancelLabel}
               </Button>
             </DialogClose>
-            <Button type="submit">{submitLabel}</Button>
+            <Button type="submit" disabled={disabled || isSubmitting}>
+              {isSubmitting ? "Submitting..." : submitLabel}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

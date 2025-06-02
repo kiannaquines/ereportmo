@@ -13,7 +13,7 @@ class Incident extends Model
 
     protected $fillable = [
         'incident',
-        'office',
+        'office_id',
     ];
 
     protected $casts = [

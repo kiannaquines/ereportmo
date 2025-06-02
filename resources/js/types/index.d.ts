@@ -85,3 +85,88 @@ export type Office = {
     created_at: string;
     updated_at: string;
 }
+
+export type OfficeProps = {
+    id: string;
+    office: string;
+}
+
+export type IncidentsProps = {
+    id: string;
+    incident: string;
+    office: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export type IncidentFormDialogProp = {
+    offices: OfficeProps[];
+}
+
+export type IncidentPageProps = PageProps & {
+    offices: OfficeProps[];
+    incidents: IncidentsProps[];
+}
+
+export type FormField = {
+    id: string
+    label: string
+    type?: "text" | "email" | "password" | "textarea" | "select" | "file"
+    placeholder?: string
+    defaultValue?: string
+    value?: string
+    options?: { label: string; value: string }[],
+}
+
+export type FormDialogProps = {
+    title: string
+    isMultipart: boolean
+    description?: string
+    triggerLabel: string
+    fields: FormField[]
+    onSubmit: (
+        formData: Record<string, string | File | null>,
+        callbacks: { onSuccess: () => void; onError: () => void }
+    ) => void;
+    submitLabel?: string
+    cancelLabel?: string
+    triggerVariant?: "default" | "outline" | "destructive" | "ghost",
+    disabled: boolean
+    onSuccess?: () => void
+}
+
+export type UserProps = {
+    id: string;
+    name: string;
+}
+
+export type IncidentsProps = {
+    id: string;
+    office: string;
+    incident: string;
+}
+
+export type ReportedByProps = {
+    reportedBy: UserProps[];
+    incidents: IncidentsProps[];
+}
+
+export type ReportedIncidentsProps = {
+    id: string;
+    incident: string;
+    description: string;
+    office: string;
+    source: string;
+    image: string;
+    status: string;
+    latitude: string;
+    longitude: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export type ReportProps = {
+    reportedBy: UserProps[];
+    reportedIncidents: ReportedIncidentsProps[];
+    incidents: IncidentsProps[];
+}
