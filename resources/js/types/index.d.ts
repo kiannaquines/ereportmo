@@ -177,3 +177,17 @@ export type OfficeDataProps = {
     created_at: string;
     updated_at: string;
 };
+
+export type ProfileForm = {
+    name: string;
+    municipality: string;
+    barangay: string;
+    email: string;
+}
+
+export type ConfirmationDialogProps = {
+    id: string
+    title: string
+    description: string
+    path: string
+}

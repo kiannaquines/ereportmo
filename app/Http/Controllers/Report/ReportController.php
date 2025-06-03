@@ -75,7 +75,7 @@ class ReportController extends Controller
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('reported_incidents', 'public');
         }
-        
+
         Report::create([
             'user_id' => $request->reported_by,
             'incident_id' => $request->incident_id,
@@ -115,8 +115,15 @@ class ReportController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Report $report)
     {
-        //
+        try {
+            $report->delete();
+            return redirect()->route('reports.index')
+                ->with('success', 'Reported incident deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to delete reported incident: ' . $e->getMessage());
+        }
     }
 }

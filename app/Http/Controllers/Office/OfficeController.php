@@ -67,8 +67,15 @@ class OfficeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Office $office)
     {
-        //
+        try {
+            $office->delete();
+            return redirect()->route('offices.index')
+                ->with('success', 'Reported incident deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to delete reported incident: ' . $e->getMessage());
+        }
     }
 }

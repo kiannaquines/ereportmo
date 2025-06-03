@@ -77,8 +77,15 @@ class IncidentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Incident $incident)
     {
-        //
+        try {
+            $incident->delete();
+            return redirect()->route('incidents.index')
+                ->with('success', 'Incident deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to delete incident: ' . $e->getMessage());
+        }
     }
 }
