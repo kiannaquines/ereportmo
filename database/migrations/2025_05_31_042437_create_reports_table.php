@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reported_by')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreignId('incident')->references('id')->on('incidents')->cascadeOnDelete();
+            $table->foreignId('reported_by')->references('id')->on('users');
+            $table->foreignId('incident')->references('id')->on('incidents');
             $table->string('image')->nullable();
             $table->string('incident_response_status')->default('New');
             $table->timestamps();
