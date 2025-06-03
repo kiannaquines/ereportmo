@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::table('reports', function (Blueprint $table) {
             $table->renameColumn('incident', 'incident_id');
             $table->dropForeign(['incident']);
-            $table->foreign('incident_id')->references('id')->on('incidents')->cascadeOnDelete();
+            $table->foreign('incident_id')->references('id')->on('incidents');
             $table->renameColumn('reported_by', 'user_id');
             $table->dropForeign(['reported_by']);
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('incidents', function (Blueprint $table) {
             $table->renameColumn('office', 'office_id');
             $table->dropForeign(['office']);
-            $table->foreign('office_id')->references('id')->on('offices')->cascadeOnDelete();
+            $table->foreign('office_id')->references('id')->on('offices');
         });
     }
 

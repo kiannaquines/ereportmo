@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
             $table->string('incident');
-            $table->foreignId('office')->references('id')->on('offices')->cascadeOnDelete();
+            $table->foreignId('office')->references('id')->on('offices');
             $table->timestamps();
         });
     }

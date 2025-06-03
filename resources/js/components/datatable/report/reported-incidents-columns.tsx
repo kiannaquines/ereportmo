@@ -165,7 +165,7 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
               <AlertDialogHeader>
                 <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete this incident? This action cannot be undone.
+                  Are you sure you want to delete this reported incident? This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

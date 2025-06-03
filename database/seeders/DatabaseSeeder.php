@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($offices as $office) {
-            Office::factory()->create([
+            Office::create([
                 'office' => $office,
             ]);
         }
@@ -37,12 +37,12 @@ class DatabaseSeeder extends Seeder
             'vawc',
         ];
         foreach ($roles as $role) {
-            Role::factory()->create([
+            Role::create([
                 'role' => $role,
             ]);
         }
        
-        User::factory()->create([
+        User::create([
             'name' => 'Kurt Lugagay',
             'email' => 'kurth@ereportmo.com',
             'municipality' => 'Makilala',
@@ -145,7 +145,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($incidents as $incident) {
-            Incident::factory()->create([
+            Incident::create([
                 'incident' => $incident['incident'],
                 'office_id' => $incident['office_id'],
             ]);

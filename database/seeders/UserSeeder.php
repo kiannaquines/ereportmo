@@ -14,14 +14,15 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        User::create([
             'name' => 'Kian Naquines',
             'email' => 'kiannaquines@ereportmo.com',
             'email_verified_at' => now(),
             'municipality' => 'Makilala',
             'barangay' => 'New Cebu',
             'password' => Hash::make('kiannaquines@ereportmo.com'),
-            'role' => Role::where('role', 'user')->first(),
+            'office_id' => null,
+            'role' => Role::where('role', 'user')->first()->id,
         ]);
     }
 }
