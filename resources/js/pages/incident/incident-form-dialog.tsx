@@ -3,7 +3,8 @@ import { IncidentFormDialogProp } from '@/types';
 import { router, useForm } from "@inertiajs/react";
 import { toast } from "sonner"
 
-function IncidentFormDialog({ offices }: IncidentFormDialogProp) {
+
+function IncidentFormDialog({ offices, isOpen, setIsOpen }: IncidentFormDialogProp & { isOpen: boolean, setIsOpen: (open: boolean) => void }) {
     const { data, processing, errors, reset } = useForm({
         office_id: '',
         incident: '',
@@ -44,8 +45,9 @@ function IncidentFormDialog({ offices }: IncidentFormDialogProp) {
 
     return (
         <FormDialog
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
             title="Add Incident"
-            triggerLabel="Add New Incident"
             isMultipart={false}
             disabled={processing}
             fields={[

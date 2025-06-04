@@ -12,7 +12,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/incidents',
     },
 ];
- 
+
 
 export default function Incident({ offices, incidents }: IncidentPageProps) {
     return (
@@ -27,7 +27,14 @@ export default function Incident({ offices, incidents }: IncidentPageProps) {
                         filterPlaceholder="Filter by office..."
                         tableTitle="Incidents"
                         tableDescription="This table displays incidents."
-                        formDialog={<IncidentFormDialog offices={offices} />}
+                        addButtonName='Add New Incident'
+                        renderAddDialog={({ isOpen, setIsOpen }) => (
+                            <IncidentFormDialog
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                offices={offices}
+                            />
+                        )}
                     />
                 </div>
             </div>
