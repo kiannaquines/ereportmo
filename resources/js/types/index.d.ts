@@ -169,6 +169,8 @@ export type ReportedIncidentsProps = {
     longitude: string;
     created_at: string;
     updated_at: string;
+    source_id: string;
+    incident_id: string;
 }
 
 export type ReportProps = {
