@@ -25,6 +25,163 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { UserProps } from "@/types";
+
+type DialogIsOpenProps = {
+  isOpen: boolean,
+  setIsOpen: (open: boolean) => void,
+  handleAction?: () => void,
+  isDeleting?: boolean,
+  isUpdating?: boolean,
+  currentData?: Record<string, any>,
+  reportedBy?: UserProps[],
+}
+
+function UpdateDialog({ isOpen, setIsOpen, handleAction, isUpdating, currentData, reportedBy }: DialogIsOpenProps) {
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <form onSubmit={handleAction}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you&apos;re
+              done.
+            </DialogDescription>
+          </DialogHeader>
+
+
+          <div className="grid gap-4">
+            <Label htmlFor="">Reported by</Label>
+            <Select
+              value=""
+              onValueChange={() => { }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Reported by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Kian Naquines">Kian Naquines</SelectItem>
+                <SelectItem value="James Naquines">James Naquines</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid gap-4">
+            <Label htmlFor="">Incident Type</Label>
+            <Select
+              value=""
+              onValueChange={() => { }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Incident Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Kian Naquines">Kian Naquines</SelectItem>
+                <SelectItem value="James Naquines">James Naquines</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="image">Image</Label>
+            <Input
+              id="image"
+              type="file"
+              placeholder="Upload an image (optional)"
+            />
+          </div>
+
+          <div className="grid gap-4">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              placeholder="Enter report description"
+              value={currentData?.description || ""}
+              onChange={() => { }}
+            />
+          </div>
+
+          <div className="grid gap-4">
+            <Label htmlFor="latitude">Enter Latitude (Optional)</Label>
+            <Input
+              id="latitude"
+              name="latitude"
+              type="text"
+              placeholder="Enter latitude"
+              value={currentData?.latitude || ""}
+              onChange={() => { }}
+            />
+          </div>
+
+          <div className="grid gap-4">
+            <Label htmlFor="longitude">Enter Longitude (Optional)</Label>
+            <Input
+              id="longitude"
+              name="longitude"
+              type="text"
+              placeholder="Enter longitude"
+              value={currentData?.longitude || ""}
+              onChange={() => { }}
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="submit" disabled={isUpdating}>{isUpdating ? 'Please wait' : 'Save changes'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog >
+  );
+}
+
+
+function DeleteReportedAlertDialog({ isOpen, setIsOpen, handleAction, isDeleting }: DialogIsOpenProps) {
+  return (
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete this reported incident? This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-red-600 hover:bg-red-700"
+            onClick={handleAction}
+          >
+            {isDeleting ? "Deleting..." : "Delete Reported Incident"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
 
 export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
   {
@@ -100,6 +257,8 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
       const [isDeleting, setIsDeleting] = useState(false);
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
       const [dropdownOpen, setDropdownOpen] = useState(false);
+      const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+      const [isUpdating, setIsUpdating] = useState(false);
 
       const handleDelete = () => {
         setIsDeleting(true);
@@ -116,6 +275,10 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
         });
       };
 
+      const handleUpdateAction = () => {
+        setIsUpdating(true)
+      }
+
       return (
         <div className="flex justify-end">
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
@@ -128,23 +291,19 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link
-                  href={`/incidents/${report.id}`}
-                  className="flex items-center cursor-pointer"
-                >
-                  <Eye className="mr-2 h-4 w-4" />
-                  View
-                </Link>
+              <DropdownMenuItem>
+                <Eye className="mr-2 h-4 w-4" />
+                View
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  href={`/incidents/${report.id}/edit`}
-                  className="flex items-center cursor-pointer"
-                >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-                </Link>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.preventDefault()
+                  setDropdownOpen(false);
+                  setIsUpdateDialogOpen(true)
+                }}
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
@@ -159,27 +318,9 @@ export const ReportedIncidentsColumns: ColumnDef<ReportedIncidents>[] = [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete this reported incident? This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-red-600 hover:bg-red-700"
-                  onClick={handleDelete}
-                >
-                  {isDeleting ? "Deleting..." : "Delete Reported Incident"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+          <DeleteReportedAlertDialog isOpen={isDeleteDialogOpen} setIsOpen={setIsDeleteDialogOpen} handleAction={handleDelete} isDeleting={isDeleting} />
+          <UpdateDialog isOpen={isUpdateDialogOpen} setIsOpen={setIsUpdateDialogOpen} isUpdating={isUpdating} handleAction={handleUpdateAction} currentData={report} />
+        </div >
       );
     },
   },

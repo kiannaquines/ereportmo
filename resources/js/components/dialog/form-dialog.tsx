@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,80 +19,106 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { FormDialogProps } from '@/types';
+import { FormDialogProps } from '@/types'
 
 export function FormDialog({
   title,
-  isMultipart,
+  isMultipart = false,
   description,
-  triggerLabel,
   fields,
   onSubmit,
   submitLabel = "Submit",
   cancelLabel = "Cancel",
-  triggerVariant = "default",
   disabled = false,
   onSuccess,
-}: FormDialogProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  isOpen,
+  setIsOpen
+}: FormDialogProps & { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
 
   const getInitialFormData = () =>
     Object.fromEntries(fields.map((field) => [field.id, field.value || field.defaultValue || ""]))
 
-  const [formData, setFormData] = useState<Record<string, string | File | null>>(
-    getInitialFormData()
-  )
+  const [formData, setFormData] = useState<Record<string, string | File | null>>(getInitialFormData())
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [filePreviews, setFilePreviews] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData(getInitialFormData())
+      Object.values(filePreviews).forEach(URL.revokeObjectURL)
+      setFilePreviews({})
+    }
+  }, [isOpen])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, type, value, files } = e.target as HTMLInputElement;
+    const { name, type, value, files } = e.target as HTMLInputElement
 
     if (type === "file") {
-      setFormData((prev) => ({ ...prev, [name]: files && files[0] ? files[0] : null }));
+      const file = files && files[0] ? files[0] : null
+      setFormData((prev) => ({ ...prev, [name]: file }))
+
+      if (file) {
+        const newUrl = URL.createObjectURL(file)
+        setFilePreviews((prev) => {
+          if (prev[name]) {
+            URL.revokeObjectURL(prev[name])
+          }
+          return { ...prev, [name]: newUrl }
+        })
+      } else {
+
+        if (filePreviews[name]) {
+          URL.revokeObjectURL(filePreviews[name])
+          setFilePreviews((prev) => {
+            const copy = { ...prev }
+            delete copy[name]
+            return copy
+          })
+        }
+      }
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }))
     }
-  };
+  }
 
   const handleSelectChange = (id: string, value: string) => {
     setFormData((prev) => ({ ...prev, [id]: value }))
   }
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setIsSubmitting(true)
 
     try {
       await new Promise<void>((resolve, reject) => {
         onSubmit(formData, {
           onSuccess: () => {
-            onSuccess?.();
-            setFormData(getInitialFormData());
-            setIsOpen(false);
-            resolve();
+            onSuccess?.()
+            setFormData(getInitialFormData())
+            setIsOpen(false)
+            resolve()
           },
           onError: () => {
-            reject(new Error("Form submission failed"));
+            reject(new Error("Form submission failed"))
           },
-        });
-      });
+        })
+      })
     } catch (error) {
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant={triggerVariant}>{triggerLabel}</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit} {...(isMultipart ? { encType: "multipart/form-data" } : {})}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             {description && <DialogDescription>{description}</DialogDescription>}
           </DialogHeader>
+
           <div className="grid gap-4 py-4">
             {fields.map((field) => (
               <div key={field.id} className="grid gap-2">
@@ -104,12 +129,12 @@ export function FormDialog({
                     id={field.id}
                     name={field.id}
                     placeholder={field.placeholder}
-                    value={formData[field.id] as string || ''}
+                    value={(formData[field.id] as string) || ""}
                     onChange={handleChange}
                   />
                 ) : field.type === "select" && field.options ? (
                   <Select
-                    value={formData[field.id] as string || ''}
+                    value={(formData[field.id] as string) || ""}
                     onValueChange={(val) => handleSelectChange(field.id, val)}
                   >
                     <SelectTrigger className="w-full">
@@ -132,9 +157,9 @@ export function FormDialog({
                       placeholder={field.placeholder}
                       onChange={handleChange}
                     />
-                    {formData[field.id] instanceof File && (
+                    {formData[field.id] instanceof File && filePreviews[field.id] && (
                       <img
-                        src={URL.createObjectURL(formData[field.id] as File)}
+                        src={filePreviews[field.id]}
                         alt="Preview"
                         className="mt-2 h-24 w-auto rounded-md object-cover"
                       />
@@ -146,13 +171,14 @@ export function FormDialog({
                     name={field.id}
                     type={field.type || "text"}
                     placeholder={field.placeholder}
-                    value={formData[field.id] as string || ''}
+                    value={(formData[field.id] as string) || ""}
                     onChange={handleChange}
                   />
                 )}
               </div>
             ))}
           </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline" type="button">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -38,6 +38,11 @@ import {
     PaginationEllipsis,
 } from "@/components/ui/pagination";
 
+type RenderAddDialogProps = {
+    isOpen: boolean,
+    setIsOpen: (open: boolean) => void
+};
+
 type DataTableProps<T> = {
     data: T[];
     columns: ColumnDef<T>[];
@@ -45,7 +50,8 @@ type DataTableProps<T> = {
     filterPlaceholder?: string;
     tableTitle?: string;
     tableDescription?: string;
-    formDialog?: React.ReactNode;    
+    addButtonName?: string;
+    renderAddDialog?: (props: RenderAddDialogProps) => React.ReactNode
 };
 
 const DataTable = <T,>({
@@ -55,12 +61,15 @@ const DataTable = <T,>({
     filterPlaceholder = "Filter...",
     tableTitle = "Data Table",
     tableDescription = "This table displays data with various functionalities such as sorting, filtering, and pagination.",
-    formDialog,
+    addButtonName = "Add New Data",
+    renderAddDialog,
 }: DataTableProps<T>) => {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
+
+    const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
 
     const table = useReactTable({
         data,
@@ -145,9 +154,9 @@ const DataTable = <T,>({
                     <p className="text-sm text-muted-foreground">{tableDescription}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    {formDialog && (
-                        <>{formDialog}</>
-                    )}
+                    <Button onClick={() => setIsAddDialogOpen(true)}>{addButtonName}</Button>
+
+                    {renderAddDialog && isAddDialogOpen && renderAddDialog({ isOpen: isAddDialogOpen, setIsOpen: setIsAddDialogOpen })}
                 </div>
             </div>
             <div className="flex items-center py-4 gap-2">

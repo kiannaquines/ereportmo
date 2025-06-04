@@ -120,9 +120,8 @@ export type FormField = {
 
 export type FormDialogProps = {
     title: string
-    isMultipart: boolean
     description?: string
-    triggerLabel: string
+    isMultipart: boolean
     fields: FormField[]
     onSubmit: (
         formData: Record<string, string | File | null>,
@@ -130,8 +129,9 @@ export type FormDialogProps = {
     ) => void;
     submitLabel?: string
     cancelLabel?: string
-    triggerVariant?: "default" | "outline" | "destructive" | "ghost",
     disabled: boolean
+    isOpen: boolean
+    setIsOpen: (open: boolean) => void
     onSuccess?: () => void
 }
 
@@ -147,8 +147,10 @@ export type IncidentsProps = {
 }
 
 export type ReportedByProps = {
-    reportedBy: UserProps[];
-    incidents: IncidentsProps[];
+    isOpen?: boolean
+    setIsOpen?: (open: boolean) => void
+    reportedBy: UserProps[]
+    incidents: IncidentsProps[]
 }
 
 export type ReportedIncidentsProps = {
