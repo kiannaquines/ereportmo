@@ -28,8 +28,11 @@ class ReportController extends Controller
             return [
                 'id' => $report->id,
                 'incident' => $report->incident->incident ?? 'Unknown Incident',
+                'incident_id' => $report->incident->id,
+                'office_id' => $report->incident->office->id,
                 'description' => $report->description,
                 'office' => $report->incident->office->office ?? 'Unknown Office',
+                'source_id' => $report->user->id,
                 'source' => $report->user->name ?? 'Unknown User',
                 'image' => $report->image,
                 'status' => $report->incident_response_status,

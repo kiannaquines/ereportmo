@@ -7,7 +7,7 @@ import AppLayout from "@/layouts/app-layout"
 import { type BreadcrumbItem } from "@/types"
 import MonthlyIncidentsLineChart from "@/components/chart/monthly-incidents-linechart";
 import MonthlyIncidentsBarChart from "@/components/chart/monthly-incidents-barchart";
-import DataTable from "@/components/datatable/data-table"
+import DataTable from "@/components/datatable/datatable"
 import { ReportedIncidentsColumns } from "@/components/datatable/report/reported-incidents-columns";
 import DashboardCard from "@/components/card/dashboard-card"
 

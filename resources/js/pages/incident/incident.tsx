@@ -1,10 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import DataTable from '@/components/datatable/data-table';
+import DataTable from '@/components/datatable/datatable';
 import { IncidentsColumns } from '@/components/datatable/incident/incident-columns';
 import { IncidentPageProps } from "@/types";
 import IncidentFormDialog from './incident-form-dialog';
+import { EditIncidentReportDialog } from '../report/edit-report-form-dialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

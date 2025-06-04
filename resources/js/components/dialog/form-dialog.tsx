@@ -44,12 +44,12 @@ export function FormDialog({
   const [filePreviews, setFilePreviews] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       setFormData(getInitialFormData())
       Object.values(filePreviews).forEach(URL.revokeObjectURL)
       setFilePreviews({})
     }
-  }, [isOpen])
+  }, [isOpen, fields])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, type, value, files } = e.target as HTMLInputElement

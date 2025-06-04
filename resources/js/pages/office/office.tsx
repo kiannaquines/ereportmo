@@ -1,4 +1,4 @@
-import DataTable from '@/components/datatable/data-table';
+import DataTable from '@/components/datatable/datatable';
 import { OfficeColumns } from '@/components/datatable/office/office-columns';
 import AppLayout from '@/layouts/app-layout';
 import { OfficeDataProps, type BreadcrumbItem } from '@/types';

@@ -45,6 +45,19 @@ export interface User {
     [key: string]: unknown;
 }
 
+export type Incidents = {
+    id: string;
+    incident: string;
+    office: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type OfficeProps = {
+    id: string;
+    office: string;
+}
+
 export type ReportedIncidents = {
     id: string;
     incident: string;
@@ -57,15 +70,10 @@ export type ReportedIncidents = {
     longitude: string;
     created_at: string;
     updated_at: string;
+    source_id: string;
+    incident_id: string;
 };
 
-export type Incidents = {
-    id: string;
-    incident: string;
-    office: string;
-    created_at: string;
-    updated_at: string;
-};
 
 export type DashboardCard = {
     title: string;
@@ -86,10 +94,6 @@ export type Office = {
     updated_at: string;
 }
 
-export type OfficeProps = {
-    id: string;
-    office: string;
-}
 
 export type IncidentsProps = {
     id: string;

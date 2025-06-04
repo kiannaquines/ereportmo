@@ -38,7 +38,7 @@ import {
     PaginationEllipsis,
 } from "@/components/ui/pagination";
 
-type RenderAddDialogProps = {
+type DialogProps = {
     isOpen: boolean,
     setIsOpen: (open: boolean) => void
 };
@@ -51,7 +51,7 @@ type DataTableProps<T> = {
     tableTitle?: string;
     tableDescription?: string;
     addButtonName?: string;
-    renderAddDialog?: (props: RenderAddDialogProps) => React.ReactNode
+    renderAddDialog?: (props: DialogProps) => React.ReactNode;
 };
 
 const DataTable = <T,>({
@@ -68,7 +68,6 @@ const DataTable = <T,>({
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
-
     const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
 
     const table = useReactTable({
@@ -226,7 +225,7 @@ const DataTable = <T,>({
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                <TableCell colSpan={columns.length} className="h-20 text-center">
                                     Oppsiee.... No results.
                                 </TableCell>
                             </TableRow>
