@@ -1,5 +1,5 @@
 import { useForm, router } from '@inertiajs/react';
-import { FormDialog } from '@/components/dialog/form-dialog';
+import { FormDialog } from '@/pages/dialog/form-dialog';
 import { toast } from "sonner"
 import { ReportedByProps } from '@/types';
 

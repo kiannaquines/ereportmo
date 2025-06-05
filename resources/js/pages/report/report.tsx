@@ -1,5 +1,5 @@
-import DataTable from '@/components/datatable/datatable';
-import { getReportedIncidentsColumns } from '@/components/datatable/report/reported-incidents-columns';
+import DataTable from '../datatable/datatable';
+import { getReportedIncidentsColumns } from '../datatable/report/reported-incidents-columns';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, ReportProps } from '@/types';
 import { Head } from '@inertiajs/react';

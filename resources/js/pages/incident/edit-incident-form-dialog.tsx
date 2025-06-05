@@ -1,0 +1,77 @@
+import { FormDialog } from "@/pages/dialog/form-dialog";
+import { IncidentsProps, OfficeProps } from '@/types';
+import { router, useForm } from "@inertiajs/react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner"
+
+export type EditIncidentFormDialogProps = {
+    isOpen: boolean;
+    setIsOpen: (open: boolean) => void;
+    incident?: IncidentsProps;
+    offices?: OfficeProps[]
+};
+
+export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }: EditIncidentFormDialogProps) {
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const { data, setData, reset } = useForm({
+        office_id: '',
+        incident: '',
+    });
+
+    useEffect(() => {
+        if (isOpen && incident) {
+            setData({
+                office_id: incident.office_id,
+                incident: incident.incident ?? '',
+            });
+        }
+    }, [isOpen, incident]);
+
+
+    const handleSubmit = (
+        formData: Record<string, any>,
+        { onSuccess, onError }: { onSuccess: () => void; onError: () => void }
+    ) => {
+        setIsSubmitting(true);
+
+        if (!incident?.id) {
+            console.log('eror id')
+            toast.error('No incident ID available');
+            setIsSubmitting(false);
+            return;
+        }
+    };
+
+    return (
+        <FormDialog
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            title="Edit Incident"
+            isMultipart={false}
+            disabled={isSubmitting}
+            fields={[
+                {
+                    id: "office_id",
+                    type: "select",
+                    label: "Authority",
+                    placeholder: "Select Authority",
+                    value: String(data.office_id),
+                    options: offices?.map((office) => ({
+                        label: office.office,
+                        value: String(office.id),
+                    })),
+                },
+                {
+                    id: "incident",
+                    type: "textarea",
+                    label: "Description",
+                    placeholder: "Enter description",
+                    value: String(data.incident),
+                },
+            ]}
+            onSubmit={handleSubmit}
+        />
+    );
+}

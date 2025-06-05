@@ -1,6 +1,6 @@
 import { useForm, router } from "@inertiajs/react";
 import { toast } from "sonner";
-import { FormDialog } from "@/components/dialog/form-dialog";
+import { FormDialog } from "@/pages/dialog/form-dialog";
 
 export type OfficeFormDialogProps = {
     isOpen: boolean,

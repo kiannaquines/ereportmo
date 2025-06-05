@@ -1,11 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import DataTable from '@/components/datatable/datatable';
-import { IncidentsColumns } from '@/components/datatable/incident/incident-columns';
+import DataTable from '../datatable/datatable';
+import { getIncidentColumns } from '../datatable/incident/incident-columns';
 import { IncidentPageProps } from "@/types";
-import IncidentFormDialog from './incident-form-dialog';
-import { EditIncidentReportDialog } from '../report/edit-report-form-dialog';
+import IncidentFormDialog from './add-incident-form-dialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,7 +12,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/incidents',
     },
 ];
-
 
 export default function Incident({ offices, incidents }: IncidentPageProps) {
     return (
@@ -23,7 +21,7 @@ export default function Incident({ offices, incidents }: IncidentPageProps) {
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min p-4">
                     <DataTable
                         data={incidents}
-                        columns={IncidentsColumns}
+                        columns={getIncidentColumns(offices)}
                         filterColumn="office"
                         filterPlaceholder="Filter by office..."
                         tableTitle="Incidents"

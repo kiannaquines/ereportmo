@@ -45,14 +45,6 @@ export interface User {
     [key: string]: unknown;
 }
 
-export type Incidents = {
-    id: string;
-    incident: string;
-    office: string;
-    created_at: string;
-    updated_at: string;
-};
-
 export type OfficeProps = {
   id: string;
   office: string;
@@ -89,17 +81,19 @@ export type PageProps<T = {}> = T & {
     errors?: any;
 };
 
-
 export type IncidentsProps = {
-    id: string;
-    incident: string;
-    office: string;
-    created_at: string;
-    updated_at: string;
+    id: string
+    office_id: string
+    incident: string
+    office: string
+    created_at?: string
+    updated_at?: string
 }
 
+
 export type IncidentFormDialogProp = {
-    offices: OfficeProps[];
+    offices: OfficeProps[]
+    incident?: IncidentsProps
 }
 
 export type IncidentPageProps = PageProps & {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm, router } from '@inertiajs/react';
-import { FormDialog } from '@/components/dialog/form-dialog';
+import { FormDialog } from '@/pages/dialog/form-dialog';
 import { toast } from 'sonner';
 import { ReportedByProps } from '@/types';
 
@@ -41,10 +41,6 @@ export function EditIncidentReportDialog({
         latitude: String(report?.latitude ?? ''),
         longitude: String(report?.longitude ?? ''),
     });
-
-    console.log('Form data:', data);
-    console.log('Is submitting:', isSubmitting);
-    console.log('Dialog open:', isOpen);
 
     useEffect(() => {
         if (report && isOpen) {

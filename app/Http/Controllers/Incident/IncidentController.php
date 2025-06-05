@@ -24,7 +24,8 @@ class IncidentController extends Controller
                     return [
                         'id' => $incident->id,
                         'incident' => $incident->incident,
-                        'office' => $incident->office ? $incident->office->office : null,
+                        'office_id' => $incident->office->id,
+                        'office' => $incident?->office->office,
                         'created_at' => $incident->created_at->toDateTimeString(),
                         'updated_at' => $incident->updated_at->toDateTimeString(),
                     ];
@@ -59,19 +60,23 @@ class IncidentController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $incident = Incident::findOrFail($id);
+
+        $validated = $request->validate([
+            'office_id' => 'required|string|max:255|exist,office,id',
+            'incident' => 'required|string|max:1000',
+        ]);
+
+        $incident->office = $validated['office_id'];
+        $incident->incident = $validated['incident'];
+
+        $incident->save();
+
+        return back()->with('success', 'You have successfully updated incident type.');
     }
 
     /**
