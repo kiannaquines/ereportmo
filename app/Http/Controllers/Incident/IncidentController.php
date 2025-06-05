@@ -23,8 +23,8 @@ class IncidentController extends Controller
                 ->map(function ($incident) {
                     return [
                         'id' => $incident->id,
-                        'incident' => $incident->incident,
                         'office_id' => $incident->office->id,
+                        'incident' => $incident->incident,
                         'office' => $incident?->office->office,
                         'created_at' => $incident->created_at->toDateTimeString(),
                         'updated_at' => $incident->updated_at->toDateTimeString(),
@@ -64,19 +64,21 @@ class IncidentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $incident = Incident::findOrFail($id);
-
-        $validated = $request->validate([
-            'office_id' => 'required|string|max:255|exist,office,id',
+        
+        $request->validate([
+            'office_id' => 'required|string|max:255',
             'incident' => 'required|string|max:1000',
         ]);
 
-        $incident->office = $validated['office_id'];
-        $incident->incident = $validated['incident'];
+        dd($request->all());
 
-        $incident->save();
+        // $incident = Incident::findOrFail($id);
+        // $incident->office_id = $request->office_id;
+        // $incident->incident = $request->incident;
 
-        return back()->with('success', 'You have successfully updated incident type.');
+        // $incident->save();
+
+        // return back()->with('success', 'You have successfully updated incident type.');
     }
 
     /**

@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm, router } from "@inertiajs/react";
 import { toast } from "sonner";
 import { FormDialog } from "@/pages/dialog/form-dialog";
 import { OfficeProps } from "@/types";
 
 export type EditOfficeFormDialogProps = {
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-  office?: OfficeProps;
+    isOpen: boolean;
+    setIsOpen: (open: boolean) => void;
+    office?: OfficeProps;
 };
 
 export function EditOfficeFormDialog({ isOpen, setIsOpen, office }: EditOfficeFormDialogProps) {
@@ -16,8 +16,8 @@ export function EditOfficeFormDialog({ isOpen, setIsOpen, office }: EditOfficeFo
 
 
     const { data, setData, reset } = useForm({
-        id: office?.id,
-        office: office?.office,
+        id: '',
+        office: '',
     });
 
     useEffect(() => {
@@ -29,21 +29,22 @@ export function EditOfficeFormDialog({ isOpen, setIsOpen, office }: EditOfficeFo
         }
     }, [office, isOpen]);
 
-    const handleUpdate = (
+    const handleUpdate = useCallback((
         formData: Record<string, any>,
         { onSuccess, onError }: { onSuccess: () => void; onError: () => void }
     ) => {
+        if (isSubmitting) return;
+
         setIsSubmitting(true);
 
         if (!office?.id) {
-            console.log('eror id')
-            toast.error('No report ID available');
+            toast.error('No office ID available');
             setIsSubmitting(false);
             return;
         }
 
         const payload = new FormData();
-        payload.append('_method','PUT');
+        payload.append('_method', 'PUT');
         payload.append('office', formData.office);
 
         router.post(route('offices.update', office.id), payload, {
@@ -52,19 +53,24 @@ export function EditOfficeFormDialog({ isOpen, setIsOpen, office }: EditOfficeFo
                 reset();
                 onSuccess();
                 toast.success('Horayyy', {
-                    description: 'You have successfully added a new authority office.',
+                    description: 'You have successfully updated the authority office.',
                 });
+                setIsSubmitting(false);
             },
-            onError: (e) => {
+            onError: (errors) => {
                 onError();
-                for (const [field, message] of Object.entries(e)) {
-                    toast.error('Oppss, please try again', {
-                        description: `${message}`,
+                for (const [field, message] of Object.entries(errors)) {
+                    toast.error('Oops, please try again', {
+                        description: String(message),
                     });
                 }
+                setIsSubmitting(false);
             },
+            onFinish: () => {
+                setIsSubmitting(false);
+            }
         });
-    };
+    }, [isSubmitting, office?.id, reset]);
 
     return (
         <FormDialog

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import { FormDialog } from '@/pages/dialog/form-dialog';
 import { toast } from 'sonner';
@@ -55,13 +55,15 @@ export function EditIncidentReportDialog({
         }
     }, [report, isOpen]);
 
-    const handleUpdate = (formData: Record<string, any>, { onSuccess, onError }: { onSuccess: () => void; onError: () => void }) => {
+    const handleUpdate = useCallback((
+        formData: Record<string, any>,
+        { onSuccess, onError }: { onSuccess: () => void; onError: () => void }
+    ) => {
+        if (isSubmitting) return;
+
         setIsSubmitting(true);
-        console.log('handleUpdate called with:', formData);
-        console.log('Report ID:', report?.id);
 
         if (!report?.id) {
-            console.error('No report ID available');
             onError();
             toast.error('No report ID available');
             setIsSubmitting(false);
@@ -69,7 +71,6 @@ export function EditIncidentReportDialog({
         }
 
         const payload = new FormData();
-
         payload.append('_method', 'PUT');
         payload.append('incident_id', formData.incident_id);
         payload.append('reported_by', formData.reported_by);
@@ -85,20 +86,18 @@ export function EditIncidentReportDialog({
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
-                console.log('Update successful');
                 onSuccess();
                 toast.success('Incident report updated');
                 setIsOpen(false);
                 setIsSubmitting(false);
             },
             onError: (errors) => {
-                console.error('Update failed:', errors);
                 onError();
                 toast.error('Failed to update incident report');
                 setIsSubmitting(false);
             },
         });
-    }
+    }, [isSubmitting, report?.id, setIsOpen]);
 
     return (
         <FormDialog

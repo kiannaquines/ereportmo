@@ -70,7 +70,6 @@ function IncidentActionsCell({ offices, incident }: IncidentActionsCellProps) {
   const [selectedRow, setSelectedRow] = useState<IncidentsProps | undefined>();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-
   const handleDelete = useCallback(() => {
     setIsDeleting(true);
     router.delete(route('incidents.destroy', { incident: incident.id }), {
@@ -101,7 +100,6 @@ function IncidentActionsCell({ offices, incident }: IncidentActionsCellProps) {
     },
     [incident]
   );
-
 
   const openDeleteDialog = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -141,14 +139,13 @@ function IncidentActionsCell({ offices, incident }: IncidentActionsCellProps) {
 
       <DeleteIncidentAlertDialog isOpen={isDeleteDialogOpen} setIsOpen={setIsDeleteDialogOpen} handleAction={handleDelete} isDeleting={isDeleting} />
 
-      {selectedRow && (
-        <EditIncidentFormDialog
-          isOpen={isUpdateDialogOpen}
-          setIsOpen={setIsUpdateDialogOpen}
-          offices={offices}
-          incident={selectedRow}
-        />
-      )}
+      <EditIncidentFormDialog
+        isOpen={isUpdateDialogOpen}
+        setIsOpen={setIsUpdateDialogOpen}
+        offices={offices}
+        incident={selectedRow}
+      />
+
     </div>
   );
 

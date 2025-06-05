@@ -1,7 +1,7 @@
 import { FormDialog } from "@/pages/dialog/form-dialog";
 import { IncidentsProps, OfficeProps } from '@/types';
 import { router, useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner"
 
 export type EditIncidentFormDialogProps = {
@@ -16,28 +16,31 @@ export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }:
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { data, setData, reset } = useForm({
-        office: '',
+        office_id: '',
         incident: '',
     });
 
     useEffect(() => {
-        if (incident) {
+        if (incident && isOpen) {
             setData({
-                office: String(incident.office_id),
+                office_id: incident.office_id,
                 incident: incident.incident ?? '',
             });
         }
-        
+    }, [incident, isOpen, setData]);
+    
+    useEffect(() => {
         if (!isOpen) {
             reset();
         }
-    }, [isOpen]);
+    }, [isOpen, reset]);
 
-
-    const handleSubmit = (
+    const handleSubmit = useCallback((
         formData: Record<string, any>,
         { onSuccess, onError }: { onSuccess: () => void; onError: () => void }
     ) => {
+        if (isSubmitting) return;
+
         setIsSubmitting(true);
 
         if (!incident?.id) {
@@ -46,28 +49,40 @@ export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }:
             return;
         }
 
-        router.put(route('incidents.update', { incident: incident.id }), formData, {
-            onSuccess: () => {
+        const payload = new FormData();
+
+        payload.append('_method', 'PUT');
+        payload.append('office_id', formData.office_id);
+        payload.append('incident', formData.incident);
+
+        router.put(route('incidents.update',incident.id), payload, {
+            preserveScroll: true,
+            forceFormData: true,
+            onSuccess: (e) => {
                 toast.success('Incident updated successfully');
                 setIsOpen(false);
                 onSuccess();
             },
-            onError: () => {
-                toast.error('Failed to update incident');
+            onError: (e) => {
+                for (const [field, message] of Object.entries(e)) {
+                    toast.error('Failed to update incident', {
+                        description: String(message),
+                    });
+                }
                 onError();
             },
             onFinish: () => {
                 setIsSubmitting(false);
             }
         });
-    };
+    }, [incident?.id, isSubmitting, setIsOpen]);
 
     return (
         <FormDialog
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             title="Edit Incident"
-            isMultipart={false}
+            description="Edit incident dialog"
             disabled={isSubmitting}
             fields={[
                 {
@@ -75,7 +90,7 @@ export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }:
                     type: "select",
                     label: "Authority",
                     placeholder: "Select Authority",
-                    value: data.office,
+                    value: String(data.office_id),
                     options: offices?.map((office) => ({
                         label: office.office,
                         value: String(office.id),

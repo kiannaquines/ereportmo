@@ -143,13 +143,11 @@ function OfficeActionsCell({ office }: OfficeActionsCellProps) {
         isDeleting={isDeleting}
       />
 
-      {selectedRow && (
-        <EditOfficeFormDialog
-          isOpen={isUpdateDialogOpen}
-          setIsOpen={setIsUpdateDialogOpen}
-          office={selectedRow}
-        />
-      )}
+      <EditOfficeFormDialog
+        isOpen={isUpdateDialogOpen}
+        setIsOpen={setIsUpdateDialogOpen}
+        office={selectedRow}
+      />
     </div>
   );
 }
