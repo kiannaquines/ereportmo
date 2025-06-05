@@ -1,8 +1,8 @@
 import DataTable from '@/components/datatable/datatable';
-import { OfficeColumns } from '@/components/datatable/office/office-columns';
+import { getOfficeColumns } from '@/components/datatable/office/office-columns';
 import AppLayout from '@/layouts/app-layout';
 import { OfficeDataProps, type BreadcrumbItem } from '@/types';
-import { OfficeFormDialog } from './office-form-dialog';
+import { OfficeFormDialog } from './add-office-form-dialog';
 import { Head } from '@inertiajs/react';
 
 export type OfficeProps = {
@@ -24,7 +24,7 @@ export default function Office({ offices }: OfficeProps) {
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min p-4">
           <DataTable
             data={offices}
-            columns={OfficeColumns}
+            columns={getOfficeColumns()}
             filterColumn="office"
             filterPlaceholder="Filter by office..."
             tableTitle="Authorities"

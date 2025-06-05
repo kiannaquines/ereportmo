@@ -107,6 +107,7 @@ function ReportActionsCell({
       setDropdownOpen(false);
       setIsUpdateDialogOpen(true);
       setSelectedRow({
+        id: report.id,
         reported_by: report.source_id,
         incident_id: report.incident_id,
         description: report.description,

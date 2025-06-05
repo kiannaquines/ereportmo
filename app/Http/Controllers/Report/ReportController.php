@@ -100,19 +100,35 @@ class ReportController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $report = Report::findOrFail($id);
+
+        $validated = $request->validate([
+            'incident_id' => 'required|exists:incidents,id',
+            'reported_by' => 'required|exists:users,id',
+            'description' => 'nullable|string',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $report->incident_id = $validated['incident_id'];
+        $report->user_id = $validated['reported_by'];
+        $report->description = $validated['description'] ?? null;
+        $report->latitude = $validated['latitude'] ?? null;
+        $report->longitude = $validated['longitude'] ?? null;
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('incident-images', 'public');
+            $report->image = $path;
+        }
+
+        $report->save();
+
+        return back()->with('success', 'Incident report updated successfully.');
     }
 
     /**

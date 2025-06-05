@@ -54,8 +54,10 @@ export type Incidents = {
 };
 
 export type OfficeProps = {
-    id: string;
-    office: string;
+  id: string;
+  office: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export type ReportedIncidents = {
@@ -86,13 +88,6 @@ export type PageProps<T = {}> = T & {
     auth?: any;
     errors?: any;
 };
-
-export type Office = {
-    id: string;
-    office: string;
-    created_at: string;
-    updated_at: string;
-}
 
 
 export type IncidentsProps = {
@@ -125,7 +120,7 @@ export type FormField = {
 export type FormDialogProps = {
     title: string
     description?: string
-    isMultipart: boolean
+    isMultipart?: boolean
     fields: FormField[]
     onSubmit: (
         formData: Record<string, string | File | null>,

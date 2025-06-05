@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import { FormDialog } from '@/components/dialog/form-dialog';
 import { toast } from 'sonner';
@@ -7,7 +7,9 @@ import { ReportedByProps } from '@/types';
 export function truncate(text: string, maxLength: number): string {
     return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 }
+
 export type EditIncidentReport = {
+    id: string
     incident_id: string
     reported_by: string
     description: string
@@ -29,8 +31,10 @@ export function EditIncidentReportDialog({
     report,
 }: EditIncidentReportDialogProps) {
 
-    const { data, setData, reset, processing } = useForm({
-        image: null,
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const { data, setData } = useForm({
+        id: String(report?.id ?? ''),
         incident_id: report?.incident_id ?? '',
         reported_by: report?.reported_by ?? '',
         description: report?.description ?? '',
@@ -38,20 +42,66 @@ export function EditIncidentReportDialog({
         longitude: String(report?.longitude ?? ''),
     });
 
-    React.useEffect(() => {
-        setData({
-            image: null,
-            incident_id: report?.incident_id ?? '',
-            reported_by: report?.reported_by ?? '',
-            description: report?.description ?? '',
-            latitude: report?.latitude ?? '',
-            longitude: report?.longitude ?? '',
-        });
-    }, [report, setData]);
+    console.log('Form data:', data);
+    console.log('Is submitting:', isSubmitting);
+    console.log('Dialog open:', isOpen);
 
-    const handleUpdate = () => {
-        console.log(data)
-        console.log('Hello')
+    useEffect(() => {
+        if (report && isOpen) {
+            setData({
+                id: report.id,
+                incident_id: report.incident_id ?? '',
+                reported_by: report.reported_by ?? '',
+                description: report.description ?? '',
+                latitude: String(report.latitude ?? ''),
+                longitude: String(report.longitude ?? ''),
+            });
+        }
+    }, [report, isOpen]);
+
+    const handleUpdate = (formData: Record<string, any>, { onSuccess, onError }: { onSuccess: () => void; onError: () => void }) => {
+        setIsSubmitting(true);
+        console.log('handleUpdate called with:', formData);
+        console.log('Report ID:', report?.id);
+
+        if (!report?.id) {
+            console.error('No report ID available');
+            onError();
+            toast.error('No report ID available');
+            setIsSubmitting(false);
+            return;
+        }
+
+        const payload = new FormData();
+
+        payload.append('_method', 'PUT');
+        payload.append('incident_id', formData.incident_id);
+        payload.append('reported_by', formData.reported_by);
+        payload.append('description', formData.description || '');
+        payload.append('latitude', formData.latitude || '');
+        payload.append('longitude', formData.longitude || '');
+
+        if (formData.image instanceof File) {
+            payload.append('image', formData.image);
+        }
+
+        router.post(route('reports.update', report.id), payload, {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                console.log('Update successful');
+                onSuccess();
+                toast.success('Incident report updated');
+                setIsOpen(false);
+                setIsSubmitting(false);
+            },
+            onError: (errors) => {
+                console.error('Update failed:', errors);
+                onError();
+                toast.error('Failed to update incident report');
+                setIsSubmitting(false);
+            },
+        });
     }
 
     return (
@@ -61,6 +111,7 @@ export function EditIncidentReportDialog({
             title="Edit Reported Incident"
             description="Edit reported incident dialog"
             isMultipart={true}
+            submitLabel="Update Report"
             fields={[
                 {
                     id: 'reported_by',
@@ -113,7 +164,7 @@ export function EditIncidentReportDialog({
                     value: data.longitude ?? '',
                 },
             ]}
-            disabled={processing}
+            disabled={isSubmitting}
             onSubmit={handleUpdate}
         />
     );

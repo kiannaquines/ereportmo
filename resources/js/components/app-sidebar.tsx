@@ -27,7 +27,7 @@ const modulesPath: NavItem[] = [
         icon: MessageCircleWarning,
     },
     {
-        title: 'Offices',
+        title: 'Authorities',
         href: '/offices',
         type: 'Main Module',
         icon: Building,

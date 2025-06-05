@@ -49,19 +49,19 @@ class OfficeController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $office = Office::findOrFail($id);
+        $validated = $request->validate([
+            'office' => 'required|string|max:255'
+        ]);
+
+        $office->office = $validated['office'];
+        $office->save();
+
+        return back()->with('success', 'Authority name has been updated successfully');
     }
 
     /**
