@@ -10,6 +10,8 @@ import MonthlyIncidentsBarChart from "./chart/monthly-incidents-barchart";
 import DataTable from "./datatable/datatable";
 import { getReportedIncidentsColumns } from "./report/reported-incidents-columns";
 import DashboardCard from "./card/dashboard-card";
+import Incident from "./incident/incident"
+import { getReportedIncidentsColumnsForDashboard } from "./dashboard-reported-columns"
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: "Dashboard", href: "/dashboard" },
@@ -27,6 +29,8 @@ type ReportedIncidentsProps = {
     longitude: string;
     created_at: string;
     updated_at: string;
+    source_id: string;
+    incident_id: string;
 }
 
 type DashboardProps = {
@@ -75,14 +79,15 @@ export default function Dashboard({ reportedIncidents }: DashboardProps) {
                 </div>
 
                 <div className="w-full h-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-4 md:p-6 bg-background flex flex-col">
-                    {/* <DataTable
+                    <DataTable
                         data={reportedIncidents}
-                        columns={getReportedIncidentsColumns(reportedIncidents)}
+                        columns={getReportedIncidentsColumnsForDashboard(reportedIncidents)}
                         filterColumn="source"
                         filterPlaceholder="Filter by source..."
-                        tableTitle="Reported Incidents"
-                        tableDescription="This table displays reported incidents."
-                    /> */}
+                        tableTitle="Today's Reported Incidents"
+                        tableDescription="This table displays today's reported incidents."
+                        displayAddButton={false}
+                    />
                 </div>
             </div>
         </AppLayout>

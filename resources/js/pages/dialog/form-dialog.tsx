@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -41,6 +41,7 @@ export function FormDialog({
 
   const [formData, setFormData] = useState<Record<string, string | File | null>>(getInitialFormData())
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const [filePreviews, setFilePreviews] = useState<Record<string, string>>({})
 
@@ -49,9 +50,14 @@ export function FormDialog({
       setFormData(getInitialFormData())
       Object.values(filePreviews).forEach(URL.revokeObjectURL)
       setFilePreviews({})
+
+      inputRef.current?.focus()
+      inputRef.current?.setSelectionRange(
+        inputRef.current.value.length,
+        inputRef.current.value.length
+      )
     }
   }, [isOpen, fields])
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, type, value, files } = e.target as HTMLInputElement
@@ -170,9 +176,11 @@ export function FormDialog({
                   </>
                 ) : (
                   <Input
+                    ref={inputRef}
                     id={field.id}
                     name={field.id}
                     type={field.type || "text"}
+                    autoFocus={false}
                     placeholder={field.placeholder}
                     value={(formData[field.id] as string) || ""}
                     onChange={handleChange}

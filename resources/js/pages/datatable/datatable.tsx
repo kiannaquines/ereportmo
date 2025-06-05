@@ -52,6 +52,7 @@ type DataTableProps<T> = {
     tableDescription?: string;
     addButtonName?: string;
     renderAddDialog?: (props: DialogProps) => React.ReactNode;
+    displayAddButton?: boolean;
 };
 
 const DataTable = <T,>({
@@ -63,6 +64,7 @@ const DataTable = <T,>({
     tableDescription = "This table displays data with various functionalities such as sorting, filtering, and pagination.",
     addButtonName = "Add New Data",
     renderAddDialog,
+    displayAddButton = true,
 }: DataTableProps<T>) => {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -153,7 +155,9 @@ const DataTable = <T,>({
                     <p className="text-sm text-muted-foreground">{tableDescription}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button onClick={() => setIsAddDialogOpen(true)}>{addButtonName}</Button>
+                    {displayAddButton && (
+                        <Button onClick={() => setIsAddDialogOpen(true)}>{addButtonName}</Button>
+                    )}
 
                     {renderAddDialog && isAddDialogOpen && renderAddDialog({ isOpen: isAddDialogOpen, setIsOpen: setIsAddDialogOpen })}
                 </div>

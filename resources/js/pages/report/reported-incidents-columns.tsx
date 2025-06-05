@@ -141,11 +141,6 @@ function ReportActionsCell({
     setIsDeleteDialogOpen(true);
   }, []);
 
-  useEffect(() => {
-    console.log("Selected Row:", selectedRow?.id  + " " + selectedRow?.status);
-
-  }, [selectedRow]);
-
   return (
     <div className="flex justify-end">
       <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
