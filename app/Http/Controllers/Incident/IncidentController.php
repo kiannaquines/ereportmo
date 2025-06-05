@@ -52,33 +52,24 @@ class IncidentController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
         
+        $incident = Incident::findOrFail($id);
+
         $request->validate([
             'office_id' => 'required|string|max:255',
             'incident' => 'required|string|max:1000',
         ]);
 
-        dd($request->all());
+        $incident->office_id = $request->office_id;
+        $incident->incident = $request->incident;
 
-        // $incident = Incident::findOrFail($id);
-        // $incident->office_id = $request->office_id;
-        // $incident->incident = $request->incident;
+        $incident->save();
 
-        // $incident->save();
-
-        // return back()->with('success', 'You have successfully updated incident type.');
+        return back()->with('success', 'You have successfully updated incident type.');
     }
 
     /**

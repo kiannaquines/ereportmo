@@ -55,9 +55,8 @@ export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }:
         payload.append('office_id', formData.office_id);
         payload.append('incident', formData.incident);
 
-        router.put(route('incidents.update',incident.id), payload, {
+        router.post(route('incidents.update',incident.id), payload, {
             preserveScroll: true,
-            forceFormData: true,
             onSuccess: (e) => {
                 toast.success('Incident updated successfully');
                 setIsOpen(false);
