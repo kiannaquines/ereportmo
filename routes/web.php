@@ -25,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
     Route::delete('reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
     Route::put('reports/{id}', [ReportController::class, 'update'])->name('reports.update');
+    Route::put('reports/status/{id}', [ReportController::class, 'update_status'])->name('reports.status');
     // Office Routes
     Route::get('offices', [OfficeController::class, 'index'])->name('offices.index');
     Route::post('offices', [OfficeController::class, 'store'])->name('offices.store');

@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { FormDialogProps } from '@/types'
+import { toast } from "sonner"
 
 export function FormDialog({
   title,
@@ -50,6 +51,7 @@ export function FormDialog({
       setFilePreviews({})
     }
   }, [isOpen, fields])
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, type, value, files } = e.target as HTMLInputElement
@@ -100,6 +102,7 @@ export function FormDialog({
             resolve()
           },
           onError: () => {
+            toast.error("Form submission failed")
             reject(new Error("Form submission failed"))
           },
         })

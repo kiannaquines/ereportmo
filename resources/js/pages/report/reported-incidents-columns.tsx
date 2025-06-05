@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
+import { ArrowUpDown, Check, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ReportedIncidents, ReportProps } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
 import {
@@ -29,6 +29,7 @@ import {
   EditIncidentReportDialog,
   EditIncidentReportDialogProps,
 } from "@/pages/report/edit-report-form-dialog";
+import { EditIncidentStatusReport, EditIncidentStatusReportDialog } from "./edit-status-form-dialog";
 
 type DialogIsOpenProps = {
   isOpen: boolean;
@@ -83,6 +84,7 @@ function ReportActionsCell({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+  const [isUpdateStatusDialogOpen, setIsUpdateStatusDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] =
     useState<EditIncidentReportDialogProps["report"]>();
 
@@ -101,6 +103,8 @@ function ReportActionsCell({
     });
   }, [report.id]);
 
+  
+
   const openUpdateDialog = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -118,11 +122,29 @@ function ReportActionsCell({
     [report]
   );
 
+  const openUpdateStatusDialog = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      setDropdownOpen(false);
+      setIsUpdateStatusDialogOpen(true);
+      setSelectedRow({
+        id: report.id,
+        status: report.status ?? '',
+      });
+    },
+    [report]
+  );
+
   const openDeleteDialog = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setDropdownOpen(false);
     setIsDeleteDialogOpen(true);
   }, []);
+
+  useEffect(() => {
+    console.log("Selected Row:", selectedRow?.id  + " " + selectedRow?.status);
+
+  }, [selectedRow]);
 
   return (
     <div className="flex justify-end">
@@ -142,6 +164,10 @@ function ReportActionsCell({
           <DropdownMenuItem>
             <Eye className="mr-2 h-4 w-4" />
             View
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={openUpdateStatusDialog}	>
+            <Check className="mr-2 h-4 w-4" />
+            Status
           </DropdownMenuItem>
           <DropdownMenuItem onClick={openUpdateDialog}>
             <Edit className="mr-2 h-4 w-4" />
@@ -169,6 +195,11 @@ function ReportActionsCell({
         reportedBy={reportedBy}
         incidents={incidents}
         report={selectedRow}
+      />
+      <EditIncidentStatusReportDialog
+        isOpen={isUpdateStatusDialogOpen}
+        setIsOpen={setIsUpdateStatusDialogOpen}
+        report={selectedRow as EditIncidentStatusReport}
       />
     </div>
   );

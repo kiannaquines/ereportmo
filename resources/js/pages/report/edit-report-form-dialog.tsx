@@ -10,11 +10,12 @@ export function truncate(text: string, maxLength: number): string {
 
 export type EditIncidentReport = {
     id: string
-    incident_id: string
-    reported_by: string
-    description: string
-    latitude: string
-    longitude: string
+    incident_id?: string
+    reported_by?: string
+    status?: string
+    description?: string
+    latitude?: string
+    longitude?: string
 };
 
 export type EditIncidentReportDialogProps = ReportedByProps & {
@@ -93,7 +94,11 @@ export function EditIncidentReportDialog({
             },
             onError: (errors) => {
                 onError();
-                toast.error('Failed to update incident report');
+                for (const [field, message] of Object.entries(errors)) {
+                    toast.error('Failed to update incident report', {
+                        description: String(message),
+                    });
+                }
                 setIsSubmitting(false);
             },
         });
@@ -114,7 +119,7 @@ export function EditIncidentReportDialog({
                     label: 'Reported by',
                     placeholder: 'Select who reported the incident',
                     value: String(data.reported_by),
-                    options: reportedBy.map((user) => ({
+                    options: reportedBy?.map((user) => ({
                         label: user.name,
                         value: String(user.id),
                     })),
@@ -125,7 +130,7 @@ export function EditIncidentReportDialog({
                     label: 'Incident Type',
                     placeholder: 'Select what kind of incident',
                     value: String(data.incident_id),
-                    options: incidents.map((incident) => ({
+                    options: incidents?.map((incident) => ({
                         label: `${incident.office} - ${truncate(incident.incident, 25)}`,
                         value: String(incident.id),
                     })),

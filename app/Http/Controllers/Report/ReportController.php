@@ -123,6 +123,18 @@ class ReportController extends Controller
         return back()->with('success', 'Incident report updated successfully.');
     }
 
+    public function update_status(Request $request, string $id)
+    {
+        $report = Report::findOrFail($id);
+        $request->validate([
+            'status' => 'required|string|max:255|in:New,Assigned,In Progress,Resolved,Closed',
+        ]);
+        
+        $report->incident_response_status = $request->status;
+        $report->save();
+        return back()->with('success', 'Incident status updated successfully.');
+    }
+
     /**
      * Remove the specified resource from storage.
      */

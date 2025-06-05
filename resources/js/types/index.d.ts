@@ -142,8 +142,8 @@ export type IncidentsProps = {
 export type ReportedByProps = {
     isOpen?: boolean
     setIsOpen?: (open: boolean) => void
-    reportedBy: UserProps[]
-    incidents: IncidentsProps[]
+    reportedBy?: UserProps[]
+    incidents?: IncidentsProps[]
 }
 
 export type ReportedIncidentsProps = {
