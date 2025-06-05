@@ -1,5 +1,5 @@
 import DataTable from '../datatable/datatable';
-import { getOfficeColumns } from '../datatable/office/office-columns';
+import { getOfficeColumns } from './office-columns';
 import AppLayout from '@/layouts/app-layout';
 import { OfficeDataProps, type BreadcrumbItem } from '@/types';
 import { OfficeFormDialog } from './add-office-form-dialog';

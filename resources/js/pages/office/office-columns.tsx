@@ -118,14 +118,9 @@ function OfficeActionsCell({ office }: OfficeActionsCellProps) {
         <DropdownMenuContent align="end" className="w-40">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link
-              href={`/incidents/${office.id}`}
-              className="flex items-center cursor-pointer"
-            >
-              <Eye className="mr-2 h-4 w-4" />
-              View
-            </Link>
+          <DropdownMenuItem>
+            <Eye className="mr-2 h-4 w-4" />
+            View
           </DropdownMenuItem>
           <DropdownMenuItem onClick={openUpdateDialog}>
             <Edit className="mr-2 h-4 w-4" />
@@ -145,7 +140,7 @@ function OfficeActionsCell({ office }: OfficeActionsCellProps) {
         isOpen={isDeleteDialogOpen}
         setIsOpen={setIsDeleteDialogOpen}
         handleAction={handleDelete}
-        isDeleting={isDeleting} 
+        isDeleting={isDeleting}
       />
 
       {selectedRow && (

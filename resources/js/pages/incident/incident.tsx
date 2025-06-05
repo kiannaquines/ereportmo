@@ -2,7 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import DataTable from '../datatable/datatable';
-import { getIncidentColumns } from '../datatable/incident/incident-columns';
+import { getIncidentColumns } from './incident-columns';
 import { IncidentPageProps } from "@/types";
 import IncidentFormDialog from './add-incident-form-dialog';
 

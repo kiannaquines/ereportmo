@@ -16,18 +16,22 @@ export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }:
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { data, setData, reset } = useForm({
-        office_id: '',
+        office: '',
         incident: '',
     });
 
     useEffect(() => {
-        if (isOpen && incident) {
+        if (incident) {
             setData({
-                office_id: incident.office_id,
+                office: String(incident.office_id),
                 incident: incident.incident ?? '',
             });
         }
-    }, [isOpen, incident]);
+        
+        if (!isOpen) {
+            reset();
+        }
+    }, [isOpen]);
 
 
     const handleSubmit = (
@@ -37,11 +41,25 @@ export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }:
         setIsSubmitting(true);
 
         if (!incident?.id) {
-            console.log('eror id')
             toast.error('No incident ID available');
             setIsSubmitting(false);
             return;
         }
+
+        router.put(route('incidents.update', { incident: incident.id }), formData, {
+            onSuccess: () => {
+                toast.success('Incident updated successfully');
+                setIsOpen(false);
+                onSuccess();
+            },
+            onError: () => {
+                toast.error('Failed to update incident');
+                onError();
+            },
+            onFinish: () => {
+                setIsSubmitting(false);
+            }
+        });
     };
 
     return (
@@ -57,11 +75,11 @@ export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }:
                     type: "select",
                     label: "Authority",
                     placeholder: "Select Authority",
-                    value: String(data.office_id),
+                    value: data.office,
                     options: offices?.map((office) => ({
                         label: office.office,
                         value: String(office.id),
-                    })),
+                    })) ?? [],
                 },
                 {
                     id: "incident",

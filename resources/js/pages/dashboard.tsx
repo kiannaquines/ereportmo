@@ -5,11 +5,11 @@ import { DollarSign, TrendingUp, Users } from "lucide-react"
 
 import AppLayout from "@/layouts/app-layout"
 import { type BreadcrumbItem } from "@/types"
-import MonthlyIncidentsLineChart from "@/components/chart/monthly-incidents-linechart";
-import MonthlyIncidentsBarChart from "@/components/chart/monthly-incidents-barchart";
-import DataTable from "@/components/datatable/datatable"
-import { ReportedIncidentsColumns } from "@/components/datatable/report/reported-incidents-columns";
-import DashboardCard from "@/components/card/dashboard-card"
+import MonthlyIncidentsLineChart from "./chart/monthly-incidents-linechart";
+import MonthlyIncidentsBarChart from "./chart/monthly-incidents-barchart";
+import DataTable from "./datatable/datatable";
+import { getReportedIncidentsColumns } from "./report/reported-incidents-columns";
+import DashboardCard from "./card/dashboard-card";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: "Dashboard", href: "/dashboard" },
@@ -75,14 +75,14 @@ export default function Dashboard({ reportedIncidents }: DashboardProps) {
                 </div>
 
                 <div className="w-full h-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-4 md:p-6 bg-background flex flex-col">
-                    <DataTable
+                    {/* <DataTable
                         data={reportedIncidents}
-                        columns={ReportedIncidentsColumns}
+                        columns={getReportedIncidentsColumns(reportedIncidents)}
                         filterColumn="source"
                         filterPlaceholder="Filter by source..."
                         tableTitle="Reported Incidents"
                         tableDescription="This table displays reported incidents."
-                    />
+                    /> */}
                 </div>
             </div>
         </AppLayout>
