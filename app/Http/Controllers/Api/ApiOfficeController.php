@@ -9,7 +9,7 @@ use App\Models\Office;
 class ApiOfficeController extends Controller
 {
     /**
-     * Summary of getOffices
+     * Summary of get all offices
      * @param \Illuminate\Http\Request $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */

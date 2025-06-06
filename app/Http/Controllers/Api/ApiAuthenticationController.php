@@ -10,7 +10,7 @@ use App\Models\User;
 class ApiAuthenticationController extends Controller
 {
     /**
-     * Summary of api_register
+     * Summary of api register
      * @param \Illuminate\Http\Request $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
@@ -46,7 +46,7 @@ class ApiAuthenticationController extends Controller
     }
 
     /**
-     * Summary of api_login
+     * Summary of api login
      * @param \Illuminate\Http\Request $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
@@ -74,7 +74,7 @@ class ApiAuthenticationController extends Controller
     }
 
     /**
-     * Summary of api_logout
+     * Summary of api logout
      * @param \Illuminate\Http\Request $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */

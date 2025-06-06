@@ -45,7 +45,7 @@ class ApiReportIncidentController extends Controller
     }
 
     /**
-     * Summary of getMyReportedIncidents
+     * Summary of get all reported incidents by a specific user
      * @param \Illuminate\Http\Request $request
      * @return JsonResponse|mixed
      */
@@ -57,7 +57,7 @@ class ApiReportIncidentController extends Controller
     }
 
     /**
-     * Summary of getSpeficReportedIncident
+     * Summary of get specific reported incident
      * @param \Illuminate\Http\Request $request
      * @param string $id
      * @return JsonResponse|mixed

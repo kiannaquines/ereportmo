@@ -9,7 +9,7 @@ use App\Models\Incident;
 class ApiIncidentTypeController extends Controller
 {
     /**
-     * Summary of getIncidentTypes
+     * Summary of get all incident types
      * @param \Illuminate\Http\Request $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
