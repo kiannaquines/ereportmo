@@ -10,7 +10,9 @@ use Illuminate\Http\JsonResponse;
 class ApiReportIncidentController extends Controller
 {
     /**
-     * Store a new reported incident.
+     * Summary of store
+     * @param \Illuminate\Http\Request $request
+     * @return JsonResponse|mixed
      */
     public function store(Request $request): JsonResponse
     {
@@ -43,12 +45,30 @@ class ApiReportIncidentController extends Controller
     }
 
     /**
-     * Get all reported incidents by a specific user ID.
+     * Summary of getMyReportedIncidents
+     * @param \Illuminate\Http\Request $request
+     * @return JsonResponse|mixed
      */
     public function getMyReportedIncidents(Request $request): JsonResponse
     {
         $user = $request->user();
-        $reportedIncidents = Report::where('user_id', $user->id)->get();
+        $reportedIncidents = Report::where('user_id', $user->id)->with(['incident','user'])->get();
         return response()->json($reportedIncidents);
+    }
+
+    /**
+     * Summary of getSpeficReportedIncident
+     * @param \Illuminate\Http\Request $request
+     * @param string $id
+     * @return JsonResponse|mixed
+     */
+    public function getSpeficReportedIncident(Request $request, string $id): JsonResponse
+    {
+        $user = $request->user();
+        $reportedIncident = Report::where('user_id', $user->id)->with(['incident','user'])->first();
+        if (!$reportedIncident) {
+            return response()->json(['message' => 'Reported incident not found'], 404);
+        }
+        return response()->json($reportedIncident);
     }
 }

@@ -10,7 +10,9 @@ use App\Models\User;
 class ApiAuthenticationController extends Controller
 {
     /**
-     * Register a new user and return a Bearer token.
+     * Summary of api_register
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function api_register(Request $request)
     {
@@ -44,7 +46,9 @@ class ApiAuthenticationController extends Controller
     }
 
     /**
-     * Authenticate a user and return a Bearer token.
+     * Summary of api_login
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function api_login(Request $request)
     {
@@ -70,7 +74,9 @@ class ApiAuthenticationController extends Controller
     }
 
     /**
-     * Log out the user by revoking the current token.
+     * Summary of api_logout
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function api_logout(Request $request)
     {
