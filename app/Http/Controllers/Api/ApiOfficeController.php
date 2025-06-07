@@ -10,11 +10,12 @@ class ApiOfficeController extends Controller
 {
     /**
      * Summary of get all offices
-     * @param \Illuminate\Http\Request $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getOffices(Request $request){
-        $offices = Office::all();
-        return response()->json($offices);
+    public function getOffices(){
+        $offices = Office::select('id', 'office')->get();
+        return response()->json([
+            'offices' => $offices
+        ]);
     }
 }
