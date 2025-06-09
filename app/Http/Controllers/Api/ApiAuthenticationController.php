@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-
+use App\Models\Role;
 class ApiAuthenticationController extends Controller
 {
     /**
@@ -24,18 +24,18 @@ class ApiAuthenticationController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'municipality' => $request->municipality,
             'barangay' => $request->barangay,
             'office' => null,
-            'role' => 'user',
+            'role' => Role::where('role', 'user')->first()->id,
             'password' => bcrypt($request->password),
         ]);
 
         return response()->json([
-            'message' => 'Registration successful.',           
+            'message' => 'Registration successful, please wait for 3 seconds to be redirected to login page.',           
         ], 201);
     }
 

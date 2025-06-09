@@ -21,7 +21,7 @@ class ApiReportIncidentController extends Controller
         $validated = $request->validate([
             'incident_id' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
         ]);
@@ -32,7 +32,7 @@ class ApiReportIncidentController extends Controller
             $imagePath = $request->file('image')->store('reported_incidents', 'public');
         }
 
-        $incident = Report::create([
+       Report::create([
             'user_id' => $user->id,
             'incident_id' => $validated['incident_id'],
             'description' => $validated['description'],
@@ -41,7 +41,9 @@ class ApiReportIncidentController extends Controller
             'longitude' => $validated['longitude'],
         ]);
 
-        return response()->json($incident, 201);
+        return response()->json([
+            'message' => 'Incident reported successfully',
+        ], 201);
     }
 
     /**

@@ -18,9 +18,7 @@ class ReportController extends Controller
      */
     public function index()
     {
-        $roleId = Role::where('role', 'user')->value('id');
-
-        $reportedBy = User::where('role', $roleId)
+        $reportedBy = User::where('role', Role::where('role', 'user')->first()->id)
             ->select('id', 'name')
             ->get();
 

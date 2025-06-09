@@ -10,7 +10,6 @@ use App\Http\Controllers\Api\ApiOfficeController;
 Route::prefix('v1')->group(function () {
     Route::post('/register', [ApiAuthenticationController::class, 'api_register'])->name('api_register');
     Route::post('/login', [ApiAuthenticationController::class, 'api_login'])->name('api_login');
-    Route::get('/offices', [ApiOfficeController::class, 'getOffices']);
 });
 
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
@@ -19,4 +18,5 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('/my-reported-incidents', [ApiReportIncidentController::class, 'getMyReportedIncidents']);
     Route::get('/reported-incidents/{id}', [ApiReportIncidentController::class, 'getSpeficReportedIncident']);
     Route::get('/incident-types', [ApiIncidentTypeController::class, 'getIncidentTypes']);
+    Route::get('/offices', [ApiOfficeController::class, 'getOffices']);
 });

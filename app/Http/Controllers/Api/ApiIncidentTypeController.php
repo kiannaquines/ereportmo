@@ -15,6 +15,8 @@ class ApiIncidentTypeController extends Controller
      */
     public function getIncidentTypes(Request $request){
         $incidentTypes = Incident::with('office')->get();
-        return response()->json($incidentTypes);
+        return response()->json([
+            'types' => $incidentTypes,
+        ]);
     }
 }
