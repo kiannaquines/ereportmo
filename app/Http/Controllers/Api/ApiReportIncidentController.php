@@ -54,7 +54,7 @@ class ApiReportIncidentController extends Controller
     public function getMyReportedIncidents(Request $request): JsonResponse
     {
         $user = $request->user();
-        $reportedIncidents = Report::where('user_id', $user->id)->with(['incident','user'])->get();
+        $reportedIncidents = Report::where('user_id', $user->id)->orderBy('created_at', 'desc')->with(['incident','user'])->get();
         return response()->json($reportedIncidents);
     }
 
