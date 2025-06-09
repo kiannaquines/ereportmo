@@ -55,23 +55,51 @@ class DatabaseSeeder extends Seeder
 
         $incidents = [
             [
-                'incident' => 'Physical abuse (domestic violence, battery, assault)',
+                'incident' => 'Domestic violence',
                 'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
             ],
             [
-                'incident' => 'Sexual abuse (rape, harassment, molestation)',
+                'incident' => 'Battery',
                 'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
             ],
             [
-                'incident' => 'Psychological abuse (emotional/verbal abuse, threats, manipulation)',
+                'incident' => 'Assault',
                 'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
             ],
             [
-                'incident' => 'Economic abuse (withholding financial support, controlling resources)',
+                'incident' => 'Rape',
                 'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
             ],
             [
-                'incident' => 'Stalking or harassment (including online abuse or surveillance)',
+                'incident' => 'Harassment',
+                'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Molestation',
+                'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Emotional abuse',
+                'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Verbal abuse',
+                'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Threats',
+                'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Manipulation',
+                'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Economic abuse',
+                'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            ],
+            [
+                'incident' => 'Stalking or harassment',
                 'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
             ],
             [
@@ -79,11 +107,39 @@ class DatabaseSeeder extends Seeder
                 'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
             ],
             [
-                'incident' => 'Crimes (theft, robbery, murder, physical injury, illegal drugs, fraud)',
+                'incident' => 'Theft',
                 'office_id' => Office::where('office', 'PNP')->first()->id,
             ],
             [
-                'incident' => 'Traffic-related incidents (accidents, violations, hit-and-run)',
+                'incident' => 'Robbery',
+                'office_id' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Murder',
+                'office_id' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Physical injury',
+                'office_id' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Illegal drugs',
+                'office_id' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Fraud',
+                'office_id' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Hit-and-run',
+                'office_id' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Accidents',
+                'office_id' => Office::where('office', 'PNP')->first()->id,
+            ],
+            [
+                'incident' => 'Violations',
                 'office_id' => Office::where('office', 'PNP')->first()->id,
             ],
             [
@@ -95,23 +151,35 @@ class DatabaseSeeder extends Seeder
                 'office_id' => Office::where('office', 'PNP')->first()->id,
             ],
             [
-                'incident' => 'Domestic disputes (especially if they involve criminal acts)',
+                'incident' => 'Riots',
                 'office_id' => Office::where('office', 'PNP')->first()->id,
             ],
             [
-                'incident' => 'Child protection cases in collaboration with DSWD and VAWC units',
+                'incident' => 'Public disturbances',
                 'office_id' => Office::where('office', 'PNP')->first()->id,
             ],
             [
-                'incident' => 'Riots, public disturbances, and protests',
+                'incident' => 'Protests',
                 'office_id' => Office::where('office', 'PNP')->first()->id,
             ],
             [
-                'incident' => 'Emergency responses related to criminal activities',
-                'office_id' => Office::where('office', 'PNP')->first()->id,
+                'incident' => 'Earthquakes',
+                'office_id' => Office::where('office', 'MDRRMO')->first()->id,
             ],
             [
-                'incident' => 'Natural disasters (earthquakes, typhoons, floods, landslides)',
+                'incident' => 'Typhoons',
+                'office_id' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Floods',
+                'office_id' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Landslides',
+                'office_id' => Office::where('office', 'MDRRMO')->first()->id,
+            ],
+            [
+                'incident' => 'Volcanic eruptions',
                 'office_id' => Office::where('office', 'MDRRMO')->first()->id,
             ],
             [

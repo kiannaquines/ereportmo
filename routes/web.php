@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Incident\IncidentController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Office\OfficeController;
+use App\Http\Controllers\Generate\GenerateReportController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -31,6 +32,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('offices', [OfficeController::class, 'store'])->name('offices.store');
     Route::delete('offices/{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
     Route::put('offices/{id}', [OfficeController::class, 'update'])->name('offices.update');
+
+
+    // Report Routes
+    Route::get('report-incident', [GenerateReportController::class, 'generateIncidentReport'])->name('report.incident');
 });
 
 require __DIR__ . '/settings.php';
