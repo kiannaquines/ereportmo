@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -158,7 +158,6 @@ const DataTable = <T,>({
                     {displayAddButton && (
                         <Button onClick={() => setIsAddDialogOpen(true)}>{addButtonName}</Button>
                     )}
-
                     {renderAddDialog && isAddDialogOpen && renderAddDialog({ isOpen: isAddDialogOpen, setIsOpen: setIsAddDialogOpen })}
                 </div>
             </div>
@@ -229,8 +228,8 @@ const DataTable = <T,>({
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-20 text-center">
-                                    Oppsiee.... No results.
+                                <TableCell colSpan={columns.length} className="h-10 text-center">
+                                    No results found.
                                 </TableCell>
                             </TableRow>
                         )}
