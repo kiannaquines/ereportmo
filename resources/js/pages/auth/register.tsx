@@ -97,21 +97,37 @@ export default function Register({ offices }: OfficeProps) {
 
                     <div className="grid gap-2">
                         <Label htmlFor="municipality">Municipality</Label>
-                        <Input
-                            id="municipality"
-                            type="text"
-                            required
-                            autoFocus
-                            tabIndex={1}
-                            autoComplete="municipality"
+                        <Select
                             value={data.municipality}
-                            onChange={(e) => setData('municipality', e.target.value)}
-                            disabled={processing}
-                            placeholder="Municipality"
-                        />
+                            onValueChange={(value) => setData('municipality', value)}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Municipality" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Alamada">Alamada</SelectItem>
+                                <SelectItem value="Aleosan">Aleosan</SelectItem>
+                                <SelectItem value="Antipas">Antipas</SelectItem>
+                                <SelectItem value="Arakan">Arakan</SelectItem>
+                                <SelectItem value="Banisilan">Banisilan</SelectItem>
+                                <SelectItem value="Carmen">Carmen</SelectItem>
+                                <SelectItem value="Kabacan">Kabacan</SelectItem>
+                                <SelectItem value="Libungan">Libungan</SelectItem>
+                                <SelectItem value="Magpet">Magpet</SelectItem>
+                                <SelectItem value="Makilala">Makilala</SelectItem>
+                                <SelectItem value="Matalam">Matalam</SelectItem>
+                                <SelectItem value="M'lang">M'lang</SelectItem>
+                                <SelectItem value="Midsayap">Midsayap</SelectItem>
+                                <SelectItem value="Pigcawayan">Pigcawayan</SelectItem>
+                                <SelectItem value="Pikit">Pikit</SelectItem>
+                                <SelectItem value="President Roxas">President Roxas</SelectItem>
+                                <SelectItem value="Tulunan">Tulunan</SelectItem>
+                                <SelectItem value="Kidapawan City">Kidapawan City</SelectItem>
+                            </SelectContent>
+                        </Select>
                         <InputError message={errors.municipality} className="mt-2" />
                     </div>
-                    
+
                     <div className="grid gap-2">
                         <Label htmlFor="barangay">Barangay</Label>
                         <Input
@@ -140,7 +156,7 @@ export default function Register({ offices }: OfficeProps) {
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
                             disabled={processing}
-                            placeholder="email@example.com"
+                            placeholder="juan@gmail.com"
                         />
                         <InputError message={errors.email} />
                     </div>

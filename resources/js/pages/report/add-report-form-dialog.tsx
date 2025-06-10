@@ -67,10 +67,10 @@ export function AddIncidentReportDialog({ reportedBy, incidents, isOpen, setIsOp
                     label: "Reported by",
                     placeholder: "Select who reported the incident",
                     value: data.reported_by,
-                    options: reportedBy.map(user => ({
+                    options: reportedBy?.map(user => ({
                         label: user.name,
                         value: String(user.id),
-                    }))
+                    })) ?? []
                 },
                 {
                     id: "incident_id",
@@ -78,10 +78,10 @@ export function AddIncidentReportDialog({ reportedBy, incidents, isOpen, setIsOp
                     label: "Incident Type",
                     placeholder: "Select what kind of incident",
                     value: data.incident_id,
-                    options: incidents.map(incident => ({
+                    options: incidents?.map(incident => ({
                         label: `${incident.office} - ${truncate(incident.incident, 25)}`,
                         value: String(incident.id),
-                    }))
+                    })) ?? []
                 },
                 {
                     id: "image",

@@ -26,7 +26,7 @@ class User extends Authenticatable
         'office_id',
         'role',
         'password',
-    ]; 
+    ];  
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,5 +49,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the office that the user belongs to.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Office, User>
+     */
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id');
     }
 }

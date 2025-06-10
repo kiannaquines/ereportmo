@@ -32,7 +32,7 @@ class OfficeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'office' => 'required|string|max:255'
+            'office' => 'required|string|max:255|unique:offices,office'
         ]);
 
         Office::create($request->all());

@@ -188,3 +188,26 @@ export type ConfirmationDialogProps = {
     description: string
     path: string
 }
+
+export type RoleProps = {
+    id: string
+    role: string
+}
+
+export type AddUserFormDialogProp = {
+    offices: OfficeProps[]
+    roles: RoleProps[]
+}
+
+
+export type UsersDataProps = {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    municipality: string;
+    barangay: string;
+    office: string;
+    created_at: string;
+    updated_at: string;
+}

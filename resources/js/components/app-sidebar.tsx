@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { KeyRound, SunMoon, Gauge, MessageCircleWarning, CableCar, UserPen, Building, Printer } from 'lucide-react';
+import { KeyRound, SunMoon, Gauge, MessageCircleWarning, CableCar, UserPen, Building, Printer, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const modulesPath: NavItem[] = [
@@ -30,6 +30,12 @@ const modulesPath: NavItem[] = [
         href: route('offices.index'),
         type: 'Main Module',
         icon: Building,
+    },
+    {
+        title: 'Users',
+        href: route('admin.users.index'),
+        type: 'Main Module',
+        icon: Users,
     },
     {
         title: 'Profile',

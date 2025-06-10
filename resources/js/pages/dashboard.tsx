@@ -1,12 +1,12 @@
 "use client"
 
 import { Head } from "@inertiajs/react"
-import { ArrowUpNarrowWide, Calendar, DollarSign, TrendingUp, User, Users } from "lucide-react"
+import { ArrowUpNarrowWide, Calendar, Users } from "lucide-react"
 
 import AppLayout from "@/layouts/app-layout"
 import { type BreadcrumbItem } from "@/types"
 import MonthlyIncidentsLineChart from "./chart/monthly-incidents-linechart";
-import MonthlyIncidentsBarChart from "./chart/monthly-incidents-barchart";
+import MonthlyIncidentsBarChart from "./chart/municipality-incidents-barchart";
 import DataTable from "./datatable/datatable";
 import DashboardCard from "./card/dashboard-card";
 import { getReportedIncidentsColumnsForDashboard } from "./dashboard-reported-columns"

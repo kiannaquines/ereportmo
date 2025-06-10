@@ -5,6 +5,7 @@ use App\Http\Controllers\Incident\IncidentController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Office\OfficeController;
 use App\Http\Controllers\Generate\GenerateReportController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/auth.php';
@@ -42,4 +43,10 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::get('report-incident-visualize', [GenerateReportController::class, 'generateIncidentReportVisualize'])->name('report.incident.visualize');
+
+    // Users Routes
+    Route::get('users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::post('users', [UserController::class, 'store'])->name('admin.users.store');
+    Route::put('users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 });
