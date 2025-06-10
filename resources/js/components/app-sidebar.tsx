@@ -33,12 +33,6 @@ const modulesPath: NavItem[] = [
         icon: Building,
     },
     {
-        title: 'Generate Incident Report',
-        href: route('report.incident'),
-        type: 'Report Module',
-        icon: Printer,
-    },
-    {
         title: 'Profile',
         href: route('settings'),
         type: 'Settings',

@@ -36,4 +36,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Report Routes
     Route::get('report-incident', [GenerateReportController::class, 'generateIncidentReport'])->name('report.incident');
+
+    // Generate Report Incident Export Data
+    Route::get('report-incident-export', [GenerateReportController::class, 'generateIncidentReportExportData'])->name('report.incident.export');
+
+
+    Route::get('report-incident-visualize', [GenerateReportController::class, 'generateIncidentReportVisualize'])->name('report.incident.visualize');
 });

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Http;
 use App\Models\Report;
+use Spatie\Browsershot\Browsershot;
+use Spatie\LaravelPdf\Enums\Format;
 
 class GenerateReportController extends Controller
 {
@@ -37,27 +39,16 @@ class GenerateReportController extends Controller
         ]);
         return $response->json()['address'];
     }
-    public function generateIncidentReport(Request $request)
+
+    public function generateIncidentReportVisualize(Request $request)
     {
-        $reports = Report::with(['incident', 'user'])->get()->map(function ($report) {
-            return [
-                'id' => $report->id,
-                'user' => $report->user->name,
-                'latitude' => $report->latitude,
-                'longitude' => $report->longitude,
-                'location' => $this->getLocation($report->latitude, $report->longitude),
-                'description' => $report->description,
-                'incident' => $report->incident->incident,
-                'status' => $report->incident_response_status,
-            ];
-        })->values();
-        return Inertia::render('generate/report-incident', [
-            'reports' => $reports,
-        ]);
+        return view('report');
     }
 
     public function generateIncidentReportExportData(Request $request)
     {
-        // export data here
+        $template = view('report')->render();
+        Browsershot::html($template)->format('A4')->margins(4,4,4,4)->showBackground()->save(storage_path('app/reports/report.pdf'));
+        return response()->download(storage_path('app/reports/report.pdf'));
     }
 }
