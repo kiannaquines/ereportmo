@@ -1,16 +1,14 @@
 "use client"
 
 import { Head } from "@inertiajs/react"
-import { DollarSign, TrendingUp, Users } from "lucide-react"
+import { ArrowUpNarrowWide, Calendar, DollarSign, TrendingUp, User, Users } from "lucide-react"
 
 import AppLayout from "@/layouts/app-layout"
 import { type BreadcrumbItem } from "@/types"
 import MonthlyIncidentsLineChart from "./chart/monthly-incidents-linechart";
 import MonthlyIncidentsBarChart from "./chart/monthly-incidents-barchart";
 import DataTable from "./datatable/datatable";
-import { getReportedIncidentsColumns } from "./report/reported-incidents-columns";
 import DashboardCard from "./card/dashboard-card";
-import Incident from "./incident/incident"
 import { getReportedIncidentsColumnsForDashboard } from "./dashboard-reported-columns"
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -35,10 +33,14 @@ type ReportedIncidentsProps = {
 
 type DashboardProps = {
     reportedIncidents: ReportedIncidentsProps[];
+    totalNoOfUser: string
+    newUsersThisMonth: string
+    totalNoOfIncidents: string
+    totalNoOfReportedIncidents: string
 }
 
 
-export default function Dashboard({ reportedIncidents }: DashboardProps) {
+export default function Dashboard({ reportedIncidents, totalNoOfUser, newUsersThisMonth, totalNoOfIncidents, totalNoOfReportedIncidents }: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -46,29 +48,29 @@ export default function Dashboard({ reportedIncidents }: DashboardProps) {
                 <div className="grid auto-rows-min gap-4 md:grid-cols-4">
                     <DashboardCard
                         title="Total Registered Users"
-                        value="1,245"
+                        value={totalNoOfUser}
                         description="All-time registered users"
                         icon={Users}
                     />
 
                     <DashboardCard
                         title="New Users This Month"
-                        value="57"
-                        description="This week ↑ 8%"
-                        icon={TrendingUp}
+                        value={newUsersThisMonth}
+                        description="New users this month"
+                        icon={Calendar}
                     />
                     <DashboardCard
-                        title="Incidents"
-                        value="12,300"
-                        description="↑ 2,500 from last month"
-                        icon={DollarSign}
+                        title="Total Incident Types"
+                        value={totalNoOfIncidents}
+                        description="All-time incident types"
+                        icon={Users}
                     />
 
                     <DashboardCard
-                        title="Reported Incidents"
-                        value="12,300"
-                        description="↑ 2,500 from last month"
-                        icon={DollarSign}
+                        title="Total Reported Incidents"
+                        value={totalNoOfReportedIncidents}
+                        description="Total reported incidents"
+                        icon={ArrowUpNarrowWide}
                     />
 
                 </div>

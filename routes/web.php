@@ -6,11 +6,11 @@ use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Office\OfficeController;
 use App\Http\Controllers\Generate\GenerateReportController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
+require __DIR__ . '/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/api.php';
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -37,8 +37,3 @@ Route::middleware(['auth'])->group(function () {
     // Report Routes
     Route::get('report-incident', [GenerateReportController::class, 'generateIncidentReport'])->name('report.incident');
 });
-
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
-require __DIR__ . '/api.php';
-

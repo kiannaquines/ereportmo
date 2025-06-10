@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Incident;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Report;
+use App\Models\User;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $totalNoOfUsers = User::get()->count();
+        $newUsersThisMonth = User::whereMonth('created_at', Carbon::now()->month)->count();
+
+        $totalNoOfIncidents = Incident::get()->count();
+        $totalNoOfReportedIncidents = Report::get()->count();
+
         $reportedIncidents = Report::with('incident', 'user')
             ->whereDate('created_at', Carbon::today())
             ->get()
@@ -32,9 +40,12 @@ class DashboardController extends Controller
                     'updated_at' => $report->updated_at->format('Y-m-d H:i:s'),
                 ];
             });
-    
         return Inertia::render('dashboard', [
             'reportedIncidents' => $reportedIncidents,
+            'totalNoOfUser' => $totalNoOfUsers,
+            'newUsersThisMonth' => $newUsersThisMonth,
+            'totalNoOfIncidents' => $totalNoOfIncidents,
+            'totalNoOfReportedIncidents' => $totalNoOfReportedIncidents,
         ]);
     }
 
