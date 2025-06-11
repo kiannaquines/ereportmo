@@ -48,7 +48,7 @@ export default function Register({ offices }: OfficeProps) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('register'), {
+        post(route('store.register'), {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
@@ -201,7 +201,7 @@ export default function Register({ offices }: OfficeProps) {
 
                 <div className="text-muted-foreground text-center text-sm">
                     Already have an account?{' '}
-                    <TextLink href={route('login')} tabIndex={6}>
+                    <TextLink href={route('create.login')} tabIndex={6}>
                         Log in
                     </TextLink>
                 </div>
