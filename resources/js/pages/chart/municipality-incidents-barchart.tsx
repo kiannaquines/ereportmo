@@ -14,50 +14,59 @@ import {
     Legend,
 } from "recharts"
 
-const chartData = [
-    {
-        municipality: "Makialala",
-        "2023": 186,
-        "2024": 198,
-    },
-    {
-        municipality: "Matalam",
-        "2023": 305,
-        "2024": 312,
-    },
-    {
-        municipality: "Mlang",
-        "2023": 237,
-        "2024": 245,
-    },
-    {
-        municipality: "Kidapawan",
-        "2023": 73,
-        "2024": 85,
-    },
-    {
-        municipality: "Midsayap",
-        "2023": 209,
-        "2024": 220,
-    },
-    {
-        municipality: "Pigcawayan",
-        "2023": 214,
-        "2024": 235,
-    },
-    {
-        municipality: "Pikit",
-        "2023": 300,
-        "2024": 340,
-    },
-]
+type ChartInput = Record<string, { municipality: string; total: number }[]>
 
-const BarchartConfig = {
-    "2023": { label: "2023", color: "var(--chart-1)" },
-    "2024": { label: "2024", color: "var(--chart-2)" },
-} satisfies ChartConfig
+type MonthlyIncidentsBarChartProps = {
+    chartData: ChartInput
+}
 
-const MonthlyIncidentsBarChart = () => {
+const MonthlyIncidentsBarChart = ({ chartData }: MonthlyIncidentsBarChartProps) => {
+
+    console.log(chartData)
+
+    const chartData1 = [
+        {
+            municipality: "Makialala",
+            "2023": 186,
+            "2024": 198,
+        },
+        {
+            municipality: "Matalam",
+            "2023": 305,
+            "2024": 312,
+        },
+        {
+            municipality: "Mlang",
+            "2023": 237,
+            "2024": 245,
+        },
+        {
+            municipality: "Kidapawan",
+            "2023": 73,
+            "2024": 85,
+        },
+        {
+            municipality: "Midsayap",
+            "2023": 209,
+            "2024": 220,
+        },
+        {
+            municipality: "Pigcawayan",
+            "2023": 214,
+            "2024": 235,
+        },
+        {
+            municipality: "Pikit",
+            "2023": 300,
+            "2024": 340,
+        },
+    ]
+
+    const BarchartConfig = {
+        "2023": { label: "2023", color: "var(--chart-1)" },
+        "2024": { label: "2024", color: "var(--chart-2)" },
+    } satisfies ChartConfig
+
     return (
         <div className="w-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-6 bg-background h-96 flex flex-col">
             <div className="mb-4">
@@ -67,7 +76,7 @@ const MonthlyIncidentsBarChart = () => {
             <ChartContainer config={BarchartConfig} className="h-[calc(100%-56px)]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
-                        data={chartData}
+                        data={chartData1}
                         margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
                     >
                         <CartesianGrid strokeDasharray="4 4" />

@@ -43,7 +43,7 @@ class DashboardController extends Controller
                 ];
             });
 
-        $monthlyPerYearRawQuery = DB::table('reports')
+        $reportedIncidentRawData = DB::table('reports')
             ->select(
                 DB::raw("strftime('%Y', created_at) as year"),
                 DB::raw("strftime('%m', created_at) as month"),
@@ -60,13 +60,50 @@ class DashboardController extends Controller
                 $monthName = DateTime::createFromFormat('!m', $row->month)->format('F');
                 return [
                     'year' => $row->year,
-                    'month' => $row->month,
                     'month_name' => $monthName,
                     'total' => $row->total,
                 ];
             });
 
-        dd($monthlyPerYearRawQuery);
+        $topMunicipalityReportedIncidentRawData = DB::table('reports AS r')
+            ->join('users AS u', 'r.user_id', '=', 'u.id')
+            ->select(
+                DB::raw("strftime('%Y', r.created_at) AS year"),
+                DB::raw('u.municipality AS municipality'),
+                DB::raw("COUNT(*) AS total")
+            )
+            ->groupBy(
+                DB::raw("strftime('%Y', r.created_at)"),
+                DB::raw('u.municipality')
+            )
+            ->orderBy('year')
+            ->orderBy('municipality')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'year' => $row->year,
+                    'municipality' => $row->municipality,
+                    'total' => $row->total,
+                ];
+            });
+
+        $groupedReportedIncidentByYear = $reportedIncidentRawData->groupBy('year')->map(function ($items) {
+            return $items->map(function ($item) {
+                return [
+                    'month' => $item['month_name'],
+                    'total' => $item['total'],
+                ];
+            });
+        });
+
+        $groupedTopMunicipalityReportedIncidents = $topMunicipalityReportedIncidentRawData->groupBy('year')->map(function($items){
+            return $items->map(function($item){
+                return [
+                    'municipality' => $item['municipality'],
+                    'total'=> $item['total'],
+                ];
+            });
+        });
 
         return Inertia::render('dashboard', [
             'reportedIncidents' => $reportedIncidents,
@@ -74,6 +111,10 @@ class DashboardController extends Controller
             'newUsersThisMonth' => $newUsersThisMonth,
             'totalNoOfIncidents' => $totalNoOfIncidents,
             'totalNoOfReportedIncidents' => $totalNoOfReportedIncidents,
+
+            // grouped data
+            'monthlyIncidentData' => $groupedReportedIncidentByYear,
+            'topReportedMunicipality' => $groupedTopMunicipalityReportedIncidents
         ]);
     }
 

@@ -37,10 +37,12 @@ type DashboardProps = {
     newUsersThisMonth: string
     totalNoOfIncidents: string
     totalNoOfReportedIncidents: string
+    monthlyIncidentData: any
+    topReportedMunicipality: any
 }
 
 
-export default function Dashboard({ reportedIncidents, totalNoOfUser, newUsersThisMonth, totalNoOfIncidents, totalNoOfReportedIncidents }: DashboardProps) {
+export default function Dashboard({ reportedIncidents, totalNoOfUser, newUsersThisMonth, totalNoOfIncidents, totalNoOfReportedIncidents, monthlyIncidentData, topReportedMunicipality }: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -76,8 +78,8 @@ export default function Dashboard({ reportedIncidents, totalNoOfUser, newUsersTh
                 </div>
 
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                    <MonthlyIncidentsLineChart />
-                    <MonthlyIncidentsBarChart />
+                    <MonthlyIncidentsLineChart chartData={monthlyIncidentData} />
+                    <MonthlyIncidentsBarChart chartData={topReportedMunicipality}/>
                 </div>
 
                 <div className="w-full h-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-4 md:p-6 bg-background flex flex-col">
