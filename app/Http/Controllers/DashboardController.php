@@ -8,6 +8,8 @@ use Inertia\Inertia;
 use App\Models\Report;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class DashboardController extends Controller
 {
@@ -40,6 +42,32 @@ class DashboardController extends Controller
                     'updated_at' => $report->updated_at->format('Y-m-d H:i:s'),
                 ];
             });
+
+        $monthlyPerYearRawQuery = DB::table('reports')
+            ->select(
+                DB::raw("strftime('%Y', created_at) as year"),
+                DB::raw("strftime('%m', created_at) as month"),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy(
+                DB::raw("strftime('%Y', created_at)"),
+                DB::raw("strftime('%m', created_at)")
+            )
+            ->orderBy(DB::raw("strftime('%Y', created_at)"), 'desc')
+            ->orderBy(DB::raw("strftime('%m', created_at)"), 'asc')
+            ->get()
+            ->map(function ($row) {
+                $monthName = DateTime::createFromFormat('!m', $row->month)->format('F');
+                return [
+                    'year' => $row->year,
+                    'month' => $row->month,
+                    'month_name' => $monthName,
+                    'total' => $row->total,
+                ];
+            });
+
+        dd($monthlyPerYearRawQuery);
+
         return Inertia::render('dashboard', [
             'reportedIncidents' => $reportedIncidents,
             'totalNoOfUser' => $totalNoOfUsers,

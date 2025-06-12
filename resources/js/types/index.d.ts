@@ -199,6 +199,12 @@ export type AddUserFormDialogProp = {
     roles: RoleProps[]
 }
 
+export type EditUserFormDialogProp = {
+    offices: OfficeProps[]
+    roles: RoleProps[]
+    user: UsersDataProps
+}
+
 
 export type UsersDataProps = {
     id: string;
@@ -207,7 +213,10 @@ export type UsersDataProps = {
     password: string;
     municipality: string;
     barangay: string;
+    office_id: string;
     office: string;
+    role_id: string;
+    role: string;
     created_at: string;
     updated_at: string;
 }

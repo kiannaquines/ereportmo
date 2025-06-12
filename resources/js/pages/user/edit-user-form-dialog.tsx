@@ -1,43 +1,61 @@
 import { FormDialog } from "@/pages/dialog/form-dialog";
-import { AddUserFormDialogProp } from "@/types";
+import { EditUserFormDialogProp } from "@/types";
 import { useForm } from "@inertiajs/react";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
-function AddUserFormDialog({ offices, roles, isOpen, setIsOpen }: AddUserFormDialogProp & { isOpen: boolean, setIsOpen: (open: boolean) => void }) {
+function EditUserFormDialog({ offices, roles, user, isOpen, setIsOpen }: EditUserFormDialogProp & { isOpen: boolean, setIsOpen: (open: boolean) => void }) {
     const { data, setData, processing, reset } = useForm({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
         municipality: '',
+        office_id: '',
+        role_id: '',
         barangay: '',
-        office: '',
-        role: '',
     });
 
+    useEffect(() => {
+        if (user && isOpen) {
+            setData({
+                name: user.name,
+                email: user.email,
+                password: '',
+                password_confirmation: '',
+                municipality: user.municipality,
+                office_id: user.office_id,
+                role_id: user.role_id,
+                barangay: user.barangay,
+            });
+        }
+    }, [user, isOpen, setData]);
+    
     const handleSubmit = (
         formData: Record<string, any>,
         { onSuccess, onError }: { onSuccess: () => void; onError: () => void }
     ) => {
         const payload = new FormData();
+        payload.append('_method', 'PUT');
         payload.append('name', formData.name);
         payload.append('email', formData.email);
         payload.append('password', formData.password);
         payload.append('password_confirmation', formData.password_confirmation);
         payload.append('municipality', formData.municipality);
         payload.append('barangay', formData.barangay);
-        payload.append('office', formData.office);
-        payload.append('role', formData.role);
+        payload.append('office_id', formData.office_id);
+        payload.append('role_id', formData.role_id);
 
-        router.post(route('admin.users.store'), payload, {
+
+        router.post(route('admin.users.update', { id: user.id }), payload, {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
                 onSuccess();
                 reset();
                 toast.success('Horayyy', {
-                    description: 'You have successfully added a new user.',
+                    description: 'You have successfully updated a user.',
                 });
             },
             onError: (e) => {
@@ -49,9 +67,9 @@ function AddUserFormDialog({ offices, roles, isOpen, setIsOpen }: AddUserFormDia
                     password: formData.password,
                     password_confirmation: formData.password_confirmation,
                     municipality: formData.municipality,
-                    barangay: formData.barangay,
-                    office: formData.office,
-                    role: formData.role,
+                    office_id: formData.office_id,
+                    role_id: formData.role_id,
+                    barangay: formData.barangay,    
                 });
 
                 for (const [field, message] of Object.entries(e)) {
@@ -67,8 +85,8 @@ function AddUserFormDialog({ offices, roles, isOpen, setIsOpen }: AddUserFormDia
         <FormDialog
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            title="Add User"
-            description="Add a new user to the system."
+            title="Edit User"
+            description="Edit a user to the system."
             disabled={processing}
             fields={[
                 {
@@ -86,20 +104,21 @@ function AddUserFormDialog({ offices, roles, isOpen, setIsOpen }: AddUserFormDia
                     value: data.email,
                 },
                 {
-                    id: "office",
+                    id: "office_id",
                     type: "select",
                     label: "Office",
-                    value: data.office,
+                    value: String(data.office_id) ?? '',
+                    placeholder: "Select office",
                     options: offices?.map((office) => ({
                         label: office.office,
                         value: String(office.id),
                     })) ?? [],
                 },
                 {
-                    id: "role",
+                    id: "role_id",
                     type: "select",
                     label: "Role",
-                    value: data.role,
+                    value: String(data.role_id),
                     options: roles?.map((role) => ({
                         label: role.role.toUpperCase(),
                         value: String(role.id),
@@ -158,4 +177,4 @@ function AddUserFormDialog({ offices, roles, isOpen, setIsOpen }: AddUserFormDia
     );
 }
 
-export default AddUserFormDialog;
+export default EditUserFormDialog;

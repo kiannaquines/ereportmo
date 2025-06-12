@@ -80,7 +80,6 @@ function OfficeActionsCell({ office }: OfficeActionsCellProps) {
         toast.success("Office deleted successfully");
       },
       onError: (errors) => {
-        console.error('Delete error:', errors);
         toast.error("Failed to delete office");
       },
       onFinish: () => setIsDeleting(false)
@@ -118,10 +117,6 @@ function OfficeActionsCell({ office }: OfficeActionsCellProps) {
         <DropdownMenuContent align="end" className="w-40">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Eye className="mr-2 h-4 w-4" />
-            View
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={openUpdateDialog}>
             <Edit className="mr-2 h-4 w-4" />
             Edit

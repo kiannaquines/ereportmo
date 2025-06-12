@@ -20,12 +20,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { UsersDataProps } from "@/types";
+import { OfficeDataProps, RoleProps, UsersDataProps } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { router } from "@inertiajs/react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { EditIncidentFormDialog } from "@/pages/incident/edit-incident-form-dialog";
+import EditUserFormDialog from "./edit-user-form-dialog";
 
 type DialogIsOpenProps = {
   isOpen: boolean
@@ -60,9 +61,11 @@ function DeleteUserAlertDialog({ isOpen, setIsOpen, handleAction, isDeleting }: 
 
 interface UserActionsCellProps {
   user: UsersDataProps
+  offices: OfficeDataProps[]
+  roles: RoleProps[]
 }
 
-function UserActionsCell({ user }: UserActionsCellProps) {
+function UserActionsCell({ user, offices, roles }: UserActionsCellProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -70,8 +73,23 @@ function UserActionsCell({ user }: UserActionsCellProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleDelete = useCallback(() => {
-
-  }, []);
+    setIsDeleting(true);
+    router.delete(route('admin.users.destroy', { id: user.id }), {
+      onSuccess: () => {
+        setIsDeleting(false);
+        setIsDeleteDialogOpen(false);
+        toast.success('Horayyy', {
+          description: 'You have successfully deleted a user.',
+        });
+      },
+      onError: () => {
+        setIsDeleting(false);
+        toast.error('Oppss, please try again', {
+          description: 'Failed to delete user.',
+        });
+      },
+    });
+  }, [user.id, setIsDeleting]);
 
 
   const openUpdateDialog = useCallback(
@@ -79,15 +97,16 @@ function UserActionsCell({ user }: UserActionsCellProps) {
       e.preventDefault();
       setDropdownOpen(false);
       setIsUpdateDialogOpen(true);
+      setSelectedRow(user);
     },
-    []
+    [setDropdownOpen, setIsUpdateDialogOpen, user]
   );
 
   const openDeleteDialog = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setDropdownOpen(false)
     setIsDeleteDialogOpen(true)
-  }, []);
+  }, [setDropdownOpen, setIsDeleteDialogOpen]);
 
   return (
     <div className="flex justify-end">
@@ -101,10 +120,6 @@ function UserActionsCell({ user }: UserActionsCellProps) {
         <DropdownMenuContent align="end" className="w-40">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Eye className="mr-2 h-4 w-4" />
-            View
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={openUpdateDialog}>
             <Edit className="mr-2 h-4 w-4" />
             Edit
@@ -120,6 +135,7 @@ function UserActionsCell({ user }: UserActionsCellProps) {
       </DropdownMenu>
 
       <DeleteUserAlertDialog isOpen={isDeleteDialogOpen} setIsOpen={setIsDeleteDialogOpen} handleAction={handleDelete} isDeleting={isDeleting} />
+      <EditUserFormDialog offices={offices} roles={roles} user={user} isOpen={isUpdateDialogOpen} setIsOpen={setIsUpdateDialogOpen} />
     </div>
   );
 
@@ -127,9 +143,11 @@ function UserActionsCell({ user }: UserActionsCellProps) {
 
 type UserColumnProps = {
   users: UsersDataProps[]
+  offices: OfficeDataProps[]
+  roles: RoleProps[]
 }
 
-export function getUserColumns(users: UserColumnProps["users"]): ColumnDef<UsersDataProps>[] {
+export function getUserColumns(users: UserColumnProps["users"], offices: UserColumnProps["offices"], roles: UserColumnProps["roles"]): ColumnDef<UsersDataProps>[] {
   return [
     {
       id: "select",
@@ -237,7 +255,7 @@ export function getUserColumns(users: UserColumnProps["users"]): ColumnDef<Users
       enableHiding: false,
       cell: ({ row }) => {
         return (
-          <UserActionsCell user={row.original} />
+          <UserActionsCell user={row.original} offices={offices} roles={roles} />
         )
       },
     },

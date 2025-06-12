@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { RoleProps, type BreadcrumbItem } from '@/types';
+import { OfficeDataProps, RoleProps, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import DataTable from '../datatable/datatable';
 import { getUserColumns } from './users-column';
@@ -15,7 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 type UserPageProps = {
     users: UsersDataProps[]
-    offices: OfficeProps[]
+    offices: OfficeDataProps[]
     roles: RoleProps[]
 }
 
@@ -27,7 +27,7 @@ export default function User({ users, offices, roles }: UserPageProps) {
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min p-4">
                     <DataTable
                         data={users}
-                        columns={getUserColumns(users)}
+                        columns={getUserColumns(users, offices, roles)}
                         filterColumn="name"
                         filterPlaceholder="Filter by name..."
                         tableTitle="Users"

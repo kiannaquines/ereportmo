@@ -24,6 +24,8 @@ class UserController extends Controller
                     'municipality' => $user->municipality,
                     'barangay' => $user->barangay,
                     'office' => $user->office->office ?? Str::upper('Public User'),
+                    'office_id' => $user->office_id,
+                    'role_id' => $user->role,
                     'created_at' => $user->created_at->format('Y-m-d H:i:s'),
                     'updated_at' => $user->updated_at->format('Y-m-d H:i:s'),
                 ];
@@ -75,14 +77,37 @@ class UserController extends Controller
         return back()->with('success', 'User created successfully.');
     }
 
-    public function edit(User $user)
+    public function update(Request $request, string $id)
     {
-        return view('users.edit', compact('user'));
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'password' => 'nullable|string|min:8',
+            'password_confirmation' => 'nullable|string|min:8|same:password',
+            'municipality' => 'required|string|max:255',
+            'barangay' => 'required|string|max:255',
+            'office_id' => 'required|string|max:255',
+            'role_id' => 'required|string|max:255',
+        ]);
+        $user = User::find($id);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
+            'municipality' => $request->municipality,
+            'barangay' => $request->barangay,
+            'office_id' => $request->office_id,
+            'role' => $request->role_id,
+        ]);
+
+        return back()->with('success', 'User updated successfully.');
     }
 
-    public function update(Request $request, User $user)
+    public function destroy(string $id)
     {
-        $user->update($request->all());
-        return redirect()->route('users.index');
+        $user = User::find($id);
+        $user->delete();
+        return back()->with('success', 'User deleted successfully.');
     }
 }
