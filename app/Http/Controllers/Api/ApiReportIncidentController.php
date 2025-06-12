@@ -32,7 +32,7 @@ class ApiReportIncidentController extends Controller
             $imagePath = $request->file('image')->store('reported_incidents', 'public');
         }
 
-       Report::create([
+        Report::create([
             'user_id' => $user->id,
             'incident_id' => $validated['incident_id'],
             'description' => $validated['description'],
@@ -54,7 +54,7 @@ class ApiReportIncidentController extends Controller
     public function getMyReportedIncidents(Request $request): JsonResponse
     {
         $user = $request->user();
-        $reportedIncidents = Report::where('user_id', $user->id)->orderBy('created_at', 'desc')->with(['incident','user'])->get();
+        $reportedIncidents = Report::where('user_id', $user->id)->orderBy('created_at', 'desc')->with(['incident', 'user'])->get();
         return response()->json($reportedIncidents);
     }
 
@@ -67,10 +67,36 @@ class ApiReportIncidentController extends Controller
     public function getSpeficReportedIncident(Request $request, string $id): JsonResponse
     {
         $user = $request->user();
-        $reportedIncident = Report::where('user_id', $user->id)->with(['incident','user'])->first();
+        $reportedIncident = Report::where('user_id', $user->id)->with(['incident', 'user'])->first();
         if (!$reportedIncident) {
             return response()->json(['message' => 'Reported incident not found'], 404);
         }
         return response()->json($reportedIncident);
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param string $id
+     * @return JsonResponse|mixed
+     */
+    public function deleteReportedIncident(Request $request, string $id)
+    {
+        $user = $request->user();
+
+        $report = Report::where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$report) {
+            return response()->json([
+                'message' => 'Report not found or does not belong to the user.',
+            ], 404);
+        }
+
+        $report->delete();
+
+        return response()->json([
+            'message' => 'Report deleted successfully.',
+        ]);
     }
 }
