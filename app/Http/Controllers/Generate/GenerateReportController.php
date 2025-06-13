@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Generate;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Http;
-use App\Models\Report;
 use Spatie\Browsershot\Browsershot;
-use Spatie\LaravelPdf\Enums\Format;
+use Illuminate\Support\Facades\DB;
+use App\Models\Report;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class GenerateReportController extends Controller
 {
@@ -40,15 +40,145 @@ class GenerateReportController extends Controller
         return $response->json()['address'];
     }
 
+    private function queries()
+    {
+        $topMunicipalitiesReportedIncidents = DB::table('reports AS r')
+            ->join('users AS u', 'r.user_id', '=', 'u.id')
+            ->select(
+                DB::raw('u.municipality AS municipality'),
+                DB::raw('COUNT(*) AS total')
+            )
+            ->groupBy(
+                DB::raw('u.municipality')
+            )
+            ->orderBy('total', 'desc')
+            ->orderBy('municipality')
+            ->limit(10)
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'municipality' => $row->municipality,
+                    'total' => $row->total
+                ];
+            });
+
+
+        $incidentStatus = DB::table('reports AS r')
+            ->select(
+                DB::raw('r.incident_response_status AS status'),
+                DB::raw('COUNT(*) AS total')
+            )->groupBy(DB::raw('r.incident_response_status'))
+            ->orderBy('status')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'status' => $row->status,
+                    'total' => $row->total
+                ];
+            });
+
+        $allTimeIncidentReport = DB::table('reports AS r')
+            ->join('users AS u', 'r.user_id', '=', 'u.id')
+            ->select(
+                DB::raw('u.municipality AS municipality'),
+                DB::raw('COUNT(*) AS total')
+            )->groupBy(
+                DB::raw('u.municipality')
+            )->orderBy(
+                DB::raw('municipality')
+            )->get()
+            ->map(function ($row) {
+                return [
+                    'municipality' => $row->municipality,
+                    'total' => $row->total
+                ];
+            });
+        
+        //  total number of incident reported summary table
+        $totalIncidentReported = Report::count();
+        
+        // incident total per incident type summary table
+        $groupedIncidentTypes = DB::table('reports as r')
+        ->join('incidents as i', 'r.incident_id', '=', 'i.id')
+        ->select(
+            DB::raw('i.incident as incident'),
+            DB::raw('COUNT(*) AS total')
+        )->groupBy(
+            DB::raw('i.incident')
+        )->orderBy('incident')
+        ->orderBy('total')->get()->map(function($row) {
+            return [
+                'incident' => $row->incident,
+                'total' => $row->total,
+            ];
+        });
+
+        // status section in the summary table
+        $statusSummaryTable = DB::table('reports AS r')
+        ->select(
+            DB::raw('r.incident_response_status AS status'),
+            DB::raw('COUNT(*) AS total')
+        )->groupBy(
+            DB::raw('r.incident_response_status')
+        )->orderBy('status')->orderBy('status')->get()->map(function($row){
+            return [
+                'status' => $row->status,
+                'total' => $row->total
+            ];
+        });
+
+        $locationSummaryTable = DB::table('reports AS r')
+        ->join('users AS u','r.user_id','=','u.id')
+        ->select(DB::raw('u.municipality AS municipality'),DB::raw('COUNT(*) AS total'))->groupBy(DB::raw('u.municipality'))
+        ->orderBy('municipality')
+        ->get()->map(function($row) {
+            return [
+                'municipality' => $row->municipality,
+                'total' => $row->total,
+            ];
+        });
+
+        return [
+            'locationSummaryTable' => $locationSummaryTable,
+            'statusSummaryTable' => $statusSummaryTable,
+            'groupedIncidentTypes' => $groupedIncidentTypes,
+            'overallreport' => $totalIncidentReported,
+            'alltimedata' => $allTimeIncidentReport,
+            'incidentStatus' => $incidentStatus,
+            'topMunicipalitiesReportedIncidents' => $topMunicipalitiesReportedIncidents
+        ];
+    }
+
     public function generateIncidentReportVisualize(Request $request)
     {
-        return view('report');
+        $queries = $this->queries();
+
+        return view('report', [
+            'locationSummaryTable' => $queries['locationSummaryTable'],
+            'statusSummaryTable' => $queries['statusSummaryTable'],
+            'groupedIncidentTypes' => $queries['groupedIncidentTypes'],
+            'overallreport' => $queries['overallreport'],
+            'alltimedata' => $queries['alltimedata'],
+            'incidentStatus' => $queries['incidentStatus'],
+            'topMunicipalitiesReportedIncidents' => $queries['topMunicipalitiesReportedIncidents'],
+        ]);
     }
 
     public function generateIncidentReportExportData(Request $request)
     {
-        $template = view('report')->render();
-        Browsershot::html($template)->format('A4')->margins(4,4,4,4)->showBackground()->save(storage_path('app/reports/report.pdf'));
-        return response()->download(storage_path('app/reports/report.pdf'));
+        $queries = $this->queries();
+
+        $template = view('report', [
+            'locationSummaryTable' => $queries['locationSummaryTable'],
+            'statusSummaryTable' => $queries['statusSummaryTable'],
+            'groupedIncidentTypes' => $queries['groupedIncidentTypes'],
+            'overallreport' => $queries['overallreport'],
+            'alltimedata' => $queries['alltimedata'],
+            'incidentStatus' => $queries['incidentStatus'],
+            'topMunicipalitiesReportedIncidents' => $queries['topMunicipalitiesReportedIncidents'],
+        ])->render();
+
+        Browsershot::html(html: $template)->format('A4')->margins(top: 5, right: 5, bottom: 5, left: 5)->showBackground()->save(targetPath: storage_path(path:'app/reports/report.pdf'));
+        return response()->download(file: storage_path(path: 'app/reports/report.pdf'));
     }
 }

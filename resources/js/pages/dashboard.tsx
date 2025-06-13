@@ -1,10 +1,10 @@
 "use client"
 
-import { Head } from "@inertiajs/react"
+import { Head, usePage } from "@inertiajs/react"
 import { ArrowUpNarrowWide, Calendar, Users } from "lucide-react"
 
 import AppLayout from "@/layouts/app-layout"
-import { type BreadcrumbItem } from "@/types"
+import { PageProps, type BreadcrumbItem } from "@/types"
 import MonthlyIncidentsLineChart from "./chart/monthly-incidents-linechart";
 import MonthlyIncidentsBarChart from "./chart/municipality-incidents-barchart";
 import DataTable from "./datatable/datatable";
@@ -31,18 +31,35 @@ type ReportedIncidentsProps = {
     incident_id: string;
 }
 
-type DashboardProps = {
-    reportedIncidents: ReportedIncidentsProps[];
-    totalNoOfUser: string
-    newUsersThisMonth: string
-    totalNoOfIncidents: string
-    totalNoOfReportedIncidents: string
+
+export type DashboardPageProps = PageProps<{
+    reportedIncidents: ReportedIncidentsProps[]
+    totalNoOfUser: number
+    newUsersThisMonth: number
+    totalNoOfIncidents: number
+    totalNoOfReportedIncidents: number
     monthlyIncidentData: any
     topReportedMunicipality: any
-}
+}>
 
+export default function Dashboard() {
 
-export default function Dashboard({ reportedIncidents, totalNoOfUser, newUsersThisMonth, totalNoOfIncidents, totalNoOfReportedIncidents, monthlyIncidentData, topReportedMunicipality }: DashboardProps) {
+    const props = usePage<DashboardPageProps>().props
+    const {
+        auth,
+        flash,
+        name,
+        reportedIncidents,
+        totalNoOfUser,
+        newUsersThisMonth,
+        totalNoOfIncidents,
+        totalNoOfReportedIncidents,
+        monthlyIncidentData,
+        topReportedMunicipality,
+    } = props
+
+    console.log(auth)
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -79,7 +96,7 @@ export default function Dashboard({ reportedIncidents, totalNoOfUser, newUsersTh
 
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <MonthlyIncidentsLineChart chartData={monthlyIncidentData} />
-                    <MonthlyIncidentsBarChart chartData={topReportedMunicipality}/>
+                    <MonthlyIncidentsBarChart chartData={topReportedMunicipality} />
                 </div>
 
                 <div className="w-full h-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-4 md:p-6 bg-background flex flex-col">

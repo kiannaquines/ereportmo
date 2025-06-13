@@ -19,6 +19,5 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('/reported-incidents/{id}', [ApiReportIncidentController::class, 'getSpeficReportedIncident']);
     Route::get('/incident-types', [ApiIncidentTypeController::class, 'getIncidentTypes']);
     Route::get('/offices', [ApiOfficeController::class, 'getOffices']);
-
     Route::delete('/report-incident/{id}',[ApiReportIncidentController::class,'deleteReportedIncident']);
 });

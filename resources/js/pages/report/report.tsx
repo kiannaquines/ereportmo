@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon, PrinterCheck, SlidersHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -82,10 +82,9 @@ export default function Report({ reportedBy, reportedIncidents, incidents }: Rep
                                     </PopoverContent>
                                 </Popover>
 
-                                <div className="flex flex-col gap-4">
+                                <div className="flex flex-row gap-4">
                                     <Button variant={`outline`} onClick={() => {
                                         if (dateFrom && dateTo) {
-
                                             if (dateFrom > dateTo) {
                                                 toast.error("Date from must be less than date to")
                                             } else {
@@ -94,7 +93,17 @@ export default function Report({ reportedBy, reportedIncidents, incidents }: Rep
                                         } else {
                                             toast.error("Please select date from and date to")
                                         }
-                                    }}>Generate Report</Button>
+                                    }}>
+                                        <SlidersHorizontal />
+                                        Export by Date Range
+                                    </Button>
+
+                                    <Button variant={`outline`} onClick={() => {
+                                        window.location.href = route('report.incident.export')
+                                    }}>
+                                        <PrinterCheck/>
+                                        All Report
+                                    </Button>
                                 </div>
                             </div>
                         </div>

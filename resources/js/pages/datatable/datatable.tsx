@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Plus, Search } from "lucide-react";
 import {
     Pagination,
     PaginationContent,
@@ -156,7 +156,7 @@ const DataTable = <T,>({
                 </div>
                 <div className="flex items-center gap-2">
                     {displayAddButton && (
-                        <Button onClick={() => setIsAddDialogOpen(true)}>{addButtonName}</Button>
+                        <Button onClick={() => setIsAddDialogOpen(true)}>{addButtonName} <Plus/> </Button>
                     )}
                     {renderAddDialog && isAddDialogOpen && renderAddDialog({ isOpen: isAddDialogOpen, setIsOpen: setIsAddDialogOpen })}
                 </div>

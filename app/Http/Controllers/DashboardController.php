@@ -77,7 +77,6 @@ class DashboardController extends Controller
                 DB::raw('u.municipality')
             )
             ->orderBy('year')
-            ->orderBy('municipality')
             ->get()
             ->map(function ($row) {
                 return [

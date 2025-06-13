@@ -1,10 +1,11 @@
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
+import { SharedData, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { KeyRound, SunMoon, Gauge, MessageCircleWarning, CableCar, UserPen, Building, Printer, Users } from 'lucide-react';
 import AppLogo from './app-logo';
+import { usePage } from '@inertiajs/react'
 
 const modulesPath: NavItem[] = [
     {
@@ -14,13 +15,13 @@ const modulesPath: NavItem[] = [
         icon: Gauge,
     },
     {
-        title: 'Incidents',
+        title: 'Incident Types',
         href: route('incidents.index'),
         type: 'Main Module',
         icon: CableCar,
     },
     {
-        title: 'Reports',
+        title: 'Reported Incidents',
         href: route('reports.index'),
         type: 'Main Module',
         icon: MessageCircleWarning,
@@ -58,6 +59,15 @@ const modulesPath: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage<SharedData>().props
+    const role = auth.user.role
+    const visibleModules = modulesPath.filter(item => {
+        if (role === "1") return true;
+
+        const adminOnly = ["Users","Authorities"];
+        return !adminOnly.includes(item.title);
+    });
+
     return (
         <Sidebar collapsible="icon" variant="sidebar">
             <SidebarHeader>
@@ -73,7 +83,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={modulesPath} />
+                <NavMain items={visibleModules} />
             </SidebarContent>
 
             <SidebarFooter>
