@@ -65,10 +65,10 @@ class ReportController extends Controller
         $request->validate([
             'reported_by' => 'required|string|max:255',
             'incident_id' => 'required|string|max:1000',
-            'description' => 'nullable|string|max:255',
-            'latitude' => 'nullable|string|max:255',
-            'longitude' => 'nullable|string|max:255',
-            'image' => 'nullable|image|max:2048',
+            'description' => 'required|string|max:255',
+            'latitude' => 'required|string|max:255',
+            'longitude' => 'required|string|max:255',
+            'image' => 'required|image|max:2048',
         ]);
 
         $imagePath = null;

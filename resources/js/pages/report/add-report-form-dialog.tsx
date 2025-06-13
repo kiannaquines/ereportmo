@@ -14,7 +14,7 @@ export type AddIncidentReportDialogProps = ReportedByProps & {
 
 export function AddIncidentReportDialog({ reportedBy, incidents, isOpen, setIsOpen }: AddIncidentReportDialogProps) {
 
-    const { data, reset, processing } = useForm({
+    const { data, setData, reset, processing } = useForm({
         reported_by: '',
         incident_id: '',
         image: null,
@@ -28,11 +28,11 @@ export function AddIncidentReportDialog({ reportedBy, incidents, isOpen, setIsOp
 
         payload.append('reported_by', formData.reported_by);
         payload.append('incident_id', formData.incident_id);
+        payload.append('latitude', formData.latitude);
+        payload.append('longitude', formData.longitude);
 
         if (formData.image) payload.append('image', formData.image);
         if (formData.description) payload.append('description', formData.description);
-        if (formData.latitude) payload.append('latitude', formData.latitude);
-        if (formData.longitude) payload.append('longitude', formData.longitude);
 
         router.post(route('reports.store'), payload, {
             onSuccess: () => {
@@ -44,6 +44,14 @@ export function AddIncidentReportDialog({ reportedBy, incidents, isOpen, setIsOp
             },
             onError: (e) => {
                 onError();
+                setData({
+                    reported_by: formData.reported_by,
+                    incident_id: formData.incident_id,
+                    image: null,
+                    description: formData.description ?? null,
+                    latitude: formData.latitude ?? null,
+                    longitude: formData.longitude ?? null
+                })
                 for (const [field, message] of Object.entries(e)) {
                     toast.error('Oppss, please try again', {
                         description: `${message}`,
@@ -99,14 +107,14 @@ export function AddIncidentReportDialog({ reportedBy, incidents, isOpen, setIsOp
                 {
                     id: "latitude",
                     type: "text",
-                    label: "Latitude (Optional)",
+                    label: "Latitude",
                     placeholder: "Enter latitude",
                     value: data.latitude,
                 },
                 {
                     id: "longitude",
                     type: "text",
-                    label: "Longitude (Optional)",
+                    label: "Longitude",
                     placeholder: "Enter longitude",
                     value: data.longitude,
                 }

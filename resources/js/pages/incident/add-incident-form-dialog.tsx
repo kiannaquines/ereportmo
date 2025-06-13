@@ -5,7 +5,7 @@ import { toast } from "sonner"
 
 
 function IncidentFormDialog({ offices, isOpen, setIsOpen }: IncidentFormDialogProp & { isOpen: boolean, setIsOpen: (open: boolean) => void }) {
-    const { data, processing, errors, reset } = useForm({
+    const { data, setData, processing, errors, reset } = useForm({
         office_id: '',
         incident: '',
     });
@@ -22,6 +22,7 @@ function IncidentFormDialog({ offices, isOpen, setIsOpen }: IncidentFormDialogPr
             },
             {
                 preserveScroll: true,
+                preserveState: true,
                 onSuccess: () => {
                     reset();
                     onSuccess();
@@ -31,6 +32,11 @@ function IncidentFormDialog({ offices, isOpen, setIsOpen }: IncidentFormDialogPr
                 },
                 onError: (e) => {
                     onError();
+                    
+                    setData({
+                        office_id: formData.office_id,
+                        incident: formData.incident,
+                    });
 
                     for (const [field, message] of Object.entries(e)) {
                         toast.error('Oppss, please try again', {

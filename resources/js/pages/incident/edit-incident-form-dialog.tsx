@@ -63,15 +63,16 @@ export function EditIncidentFormDialog({ isOpen, setIsOpen, incident, offices }:
                 onSuccess();
             },
             onError: (e) => {
+                onError();
+                setData({
+                    office_id: formData.office_id,
+                    incident: formData.incident,
+                });
                 for (const [field, message] of Object.entries(e)) {
                     toast.error('Failed to update incident', {
                         description: String(message),
                     });
                 }
-                onError();
-            },
-            onFinish: () => {
-                setIsSubmitting(false);
             }
         });
     }, [incident?.id, isSubmitting, setIsOpen]);
