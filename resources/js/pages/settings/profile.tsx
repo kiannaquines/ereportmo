@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -64,16 +65,34 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                         <div className="grid gap-2">
                             <Label htmlFor="municipality">Municipality</Label>
-
-                            <Input
-                                id="municipality"
-                                className="mt-1 block w-full"
+                            <Select
                                 value={data.municipality}
-                                onChange={(e) => setData('municipality', e.target.value)}
-                                required
-                                autoComplete="municipality"
-                                placeholder="Municipality"
-                            />
+                                onValueChange={(value) => setData('municipality', value)}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Municipality" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Alamada">Alamada</SelectItem>
+                                    <SelectItem value="Aleosan">Aleosan</SelectItem>
+                                    <SelectItem value="Antipas">Antipas</SelectItem>
+                                    <SelectItem value="Arakan">Arakan</SelectItem>
+                                    <SelectItem value="Banisilan">Banisilan</SelectItem>
+                                    <SelectItem value="Carmen">Carmen</SelectItem>
+                                    <SelectItem value="Kabacan">Kabacan</SelectItem>
+                                    <SelectItem value="Libungan">Libungan</SelectItem>
+                                    <SelectItem value="Magpet">Magpet</SelectItem>
+                                    <SelectItem value="Makilala">Makilala</SelectItem>
+                                    <SelectItem value="Matalam">Matalam</SelectItem>
+                                    <SelectItem value="M'lang">M'lang</SelectItem>
+                                    <SelectItem value="Midsayap">Midsayap</SelectItem>
+                                    <SelectItem value="Pigcawayan">Pigcawayan</SelectItem>
+                                    <SelectItem value="Pikit">Pikit</SelectItem>
+                                    <SelectItem value="President Roxas">President Roxas</SelectItem>
+                                    <SelectItem value="Tulunan">Tulunan</SelectItem>
+                                    <SelectItem value="Kidapawan City">Kidapawan City</SelectItem>
+                                </SelectContent>
+                            </Select>
 
                             <InputError className="mt-2" message={errors.municipality} />
                         </div>

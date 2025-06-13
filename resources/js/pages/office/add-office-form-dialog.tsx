@@ -30,6 +30,9 @@ export function OfficeFormDialog({ isOpen, setIsOpen }: OfficeFormDialogProps) {
             },
             onError: (e) => {
                 onError();
+                setData({
+                    office: formData.office,
+                })
                 for (const [field, message] of Object.entries(e)) {
                     toast.error('Oppss, please try again', {
                         description: `${message}`,
