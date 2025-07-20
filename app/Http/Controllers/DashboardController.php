@@ -45,16 +45,16 @@ class DashboardController extends Controller
 
         $reportedIncidentRawData = DB::table('reports')
             ->select(
-                DB::raw("strftime('%Y', created_at) as year"),
-                DB::raw("strftime('%m', created_at) as month"),
-                DB::raw('COUNT(*) as total')
+                DB::raw("YEAR(created_at) as year"),
+                DB::raw("MONTH(created_at) as month"),
+                DB::raw("COUNT(*) as total")
             )
             ->groupBy(
-                DB::raw("strftime('%Y', created_at)"),
-                DB::raw("strftime('%m', created_at)")
+                DB::raw("YEAR(created_at)"),
+                DB::raw("MONTH(created_at)")
             )
-            ->orderBy(DB::raw("strftime('%Y', created_at)"), 'desc')
-            ->orderBy(DB::raw("strftime('%m', created_at)"), 'asc')
+            ->orderBy(DB::raw("YEAR(created_at)"), 'desc')
+            ->orderBy(DB::raw("MONTH(created_at)"), 'asc')
             ->get()
             ->map(function ($row) {
                 $monthName = DateTime::createFromFormat('!m', $row->month)->format('F');
@@ -68,15 +68,15 @@ class DashboardController extends Controller
         $topMunicipalityReportedIncidentRawData = DB::table('reports AS r')
             ->join('users AS u', 'r.user_id', '=', 'u.id')
             ->select(
-                DB::raw("strftime('%Y', r.created_at) AS year"),
+                DB::raw("YEAR(r.created_at) AS year"),
                 DB::raw('u.municipality AS municipality'),
                 DB::raw("COUNT(*) AS total")
             )
             ->groupBy(
-                DB::raw("strftime('%Y', r.created_at)"),
+                DB::raw("YEAR(r.created_at)"),
                 DB::raw('u.municipality')
             )
-            ->orderBy('year')
+            ->orderBy(DB::raw("YEAR(r.created_at)"), 'asc')
             ->get()
             ->map(function ($row) {
                 return [
@@ -95,11 +95,11 @@ class DashboardController extends Controller
             });
         });
 
-        $groupedTopMunicipalityReportedIncidents = $topMunicipalityReportedIncidentRawData->groupBy('year')->map(function($items){
-            return $items->map(function($item){
+        $groupedTopMunicipalityReportedIncidents = $topMunicipalityReportedIncidentRawData->groupBy('year')->map(function ($items) {
+            return $items->map(function ($item) {
                 return [
                     'municipality' => $item['municipality'],
-                    'total'=> $item['total'],
+                    'total' => $item['total'],
                 ];
             });
         });
@@ -115,20 +115,5 @@ class DashboardController extends Controller
             'monthlyIncidentData' => $groupedReportedIncidentByYear,
             'topReportedMunicipality' => $groupedTopMunicipalityReportedIncidents
         ]);
-    }
-
-    public function store(Request $request)
-    {
-        // Logic to store a new report
-    }
-
-    public function update(Request $request, $id)
-    {
-        // Update logic here
-    }
-
-    public function destroy($id)
-    {
-        // Delete logic here
     }
 }

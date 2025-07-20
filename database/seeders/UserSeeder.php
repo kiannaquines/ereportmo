@@ -16,11 +16,11 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'Kian Naquines',
-            'email' => 'kiannaquines@ereportmo.com',
+            'email' => 'kurt@ereportmo.com',
             'email_verified_at' => now(),
             'municipality' => 'Makilala',
-            'barangay' => 'New Cebu',
-            'password' => Hash::make('kiannaquines@ereportmo.com'),
+            'barangay' => 'Kisante',
+            'password' => Hash::make('kurt@ereportmo.com'),
             'office_id' => null,
             'role' => Role::where('role', 'user')->first()->id,
         ]);
