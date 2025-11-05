@@ -49,6 +49,8 @@ export interface User {
 export type OfficeProps = {
   id: string;
   office: string;
+  location: string;
+  status: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -172,6 +174,8 @@ export type ReportProps = {
 export type OfficeDataProps = {
     id: string;
     office: string;
+    location: string;
+    status: string;
     created_at: string;
     updated_at: string;
 };

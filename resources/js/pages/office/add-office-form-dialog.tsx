@@ -10,6 +10,8 @@ export type OfficeFormDialogProps = {
 export function OfficeFormDialog({ isOpen, setIsOpen }: OfficeFormDialogProps) {
     const { data, setData, processing, reset } = useForm({
         office: '',
+        location: '',
+        status: '',
     });
 
     const handleSubmit = (
@@ -18,6 +20,9 @@ export function OfficeFormDialog({ isOpen, setIsOpen }: OfficeFormDialogProps) {
     ) => {
         const payload = new FormData();
         payload.append('office', formData.office);
+        payload.append('location', formData.location);
+        payload.append('status', formData.status);
+
 
         router.post(route('offices.store'), payload, {
             preserveScroll: true,
@@ -32,6 +37,8 @@ export function OfficeFormDialog({ isOpen, setIsOpen }: OfficeFormDialogProps) {
                 onError();
                 setData({
                     office: formData.office,
+                    location: formData.location,
+                    status: formData.status,
                 })
                 for (const [field, message] of Object.entries(e)) {
                     toast.error('Oppss, please try again', {
@@ -56,6 +63,30 @@ export function OfficeFormDialog({ isOpen, setIsOpen }: OfficeFormDialogProps) {
                     type: 'text',
                     placeholder: 'Enter office name',
                     value: data.office,
+                },
+                  {
+                    id: 'location',
+                    label: 'Location',
+                    type: 'text',
+                    placeholder: 'Enter office Location',
+                    value: data.location,
+                },
+                {
+                    id: 'status',
+                    label: 'Office Status',
+                    type: 'select',
+                    placeholder: 'Select office status',
+                    value: data.status,
+                    options: [
+                        {
+                            label: 'ON',
+                            value: 'ON'
+                        },
+                        {
+                            label: 'OFF',
+                            value: 'OFF'
+                        }
+                    ],
                 },
             ]}
             onSubmit={handleSubmit}

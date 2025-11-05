@@ -19,6 +19,8 @@ class OfficeController extends Controller
                 return [
                     'id' => $office->id,
                     'office' => $office->office,
+                    'location' => $office->location,
+                    'status' => $office->status,
                     'created_at' => $office->created_at->format('Y-m-d H:i:s'),
                     'updated_at' => $office->updated_at->format('Y-m-d H:i:s'),
                 ];
@@ -32,7 +34,9 @@ class OfficeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'office' => 'required|string|max:255|unique:offices,office'
+            'office' => 'required|string|max:255|unique:offices,office',
+            'location' => 'required|string|max:255',
+            'status' => 'required|string|max:255|in:ON,OFF'
         ]);
 
         Office::create($request->all());
@@ -47,10 +51,15 @@ class OfficeController extends Controller
     {
         $office = Office::findOrFail($id);
         $validated = $request->validate([
-            'office' => 'required|string|max:255'
+            'office' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'status' => 'required|string|max:255|in:ON,OFF'
         ]);
 
         $office->office = $validated['office'];
+        $office->location = $validated['location'];
+        $office->status = $validated['status'];
+
         $office->save();
 
         return back()->with('success', 'Authority name has been updated successfully');

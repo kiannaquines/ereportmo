@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
         foreach ($offices as $office) {
             Office::create([
                 'office' => $office,
+                'location' => 'Kabacan',
+                'status' => 'ON'
             ]);
         }
         $roles = [
