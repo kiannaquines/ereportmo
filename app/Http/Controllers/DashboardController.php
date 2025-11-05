@@ -13,8 +13,9 @@ use DateTime;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $selectedYear = $request->input('year', now()->year);
         $totalNoOfUsers = User::get()->count();
         $newUsersThisMonth = User::whereMonth('created_at', Carbon::now()->month)->count();
 
@@ -104,6 +105,70 @@ class DashboardController extends Controller
             });
         });
 
+        // === Monthly Incidents ===
+        $monthlyIncidentData = Report::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->whereYear('created_at', $selectedYear)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->map(fn($row) => [
+                'month' => Carbon::create()->month($row->month)->format('F'),
+                'total' => $row->total,
+            ]);
+
+        // === Weekly Incidents ===
+        $weeklyIncidentData = Report::selectRaw('WEEK(created_at, 1) as week, COUNT(*) as total')
+            ->whereYear('created_at', $selectedYear)
+            ->groupBy('week')
+            ->orderBy('week')
+            ->get()
+            ->map(function ($row) use ($selectedYear) {
+                $start = Carbon::now()->setISODate($selectedYear, $row->week)->startOfWeek();
+                $end = $start->copy()->endOfWeek();
+                return [
+                    'week' => "Week {$row->week} ({$start->format('M d')} - {$end->format('M d')})",
+                    'total' => $row->total,
+                ];
+            });
+
+        // === Top Municipality Monthly ===
+        $topMunicipalityMonthly = Report::join('users', 'reports.user_id', '=', 'users.id')
+            ->selectRaw('MONTH(reports.created_at) as month, users.municipality, COUNT(*) as total')
+            ->whereYear('reports.created_at', $selectedYear)
+            ->groupBy('month', 'users.municipality')
+            ->get()
+            ->groupBy('month')
+            ->map(fn($group) => $group->sortByDesc('total')->first())
+            ->map(fn($item) => [
+                'month' => Carbon::create()->month($item->month)->format('F'),
+                'municipality' => $item->municipality ?? 'Unknown',
+                'total' => $item->total,
+            ])->values();
+
+        // === Top Municipality Weekly ===
+        $topMunicipalityWeekly = Report::join('users', 'reports.user_id', '=', 'users.id')
+            ->selectRaw('WEEK(reports.created_at, 1) as week, users.municipality, COUNT(*) as total')
+            ->whereYear('reports.created_at', $selectedYear)
+            ->groupBy('week', 'users.municipality')
+            ->get()
+            ->groupBy('week')
+            ->map(fn($group) => $group->sortByDesc('total')->first())
+            ->map(function ($item) use ($selectedYear) {
+                $start = Carbon::now()->setISODate($selectedYear, $item->week)->startOfWeek();
+                $end = $start->copy()->endOfWeek();
+                return [
+                    'week' => "Week {$item->week} ({$start->format('M d')} - {$end->format('M d')})",
+                    'municipality' => $item->municipality ?? 'Unknown',
+                    'total' => $item->total,
+                ];
+            })->values();
+
+        // Available years
+        $availableYears = Report::selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+
         return Inertia::render('dashboard', [
             'reportedIncidents' => $reportedIncidents,
             'totalNoOfUser' => $totalNoOfUsers,
@@ -111,9 +176,17 @@ class DashboardController extends Controller
             'totalNoOfIncidents' => $totalNoOfIncidents,
             'totalNoOfReportedIncidents' => $totalNoOfReportedIncidents,
 
-            // grouped data
+            // Old (all years)
             'monthlyIncidentData' => $groupedReportedIncidentByYear,
-            'topReportedMunicipality' => $groupedTopMunicipalityReportedIncidents
+            'topReportedMunicipality' => $groupedTopMunicipalityReportedIncidents,
+
+            // New (selected year)
+            'monthIncidentData' => $monthlyIncidentData,
+            'weeklyIncidentData' => $weeklyIncidentData,
+            'topMunicipalityMonthly' => $topMunicipalityMonthly,
+            'topMunicipalityWeekly' => $topMunicipalityWeekly,
+            'selectedYear' => $selectedYear,
+            'availableYears' => $availableYears,
         ]);
     }
 }
