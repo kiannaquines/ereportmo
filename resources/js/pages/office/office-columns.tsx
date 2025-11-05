@@ -93,7 +93,9 @@ function OfficeActionsCell({ office }: OfficeActionsCellProps) {
       setIsUpdateDialogOpen(true);
       setSelectedRow({
         id: office.id,
-        office: office.office
+        office: office.office,
+        location: office.location,
+        status: office.status
       });
     },
     [office]
@@ -181,6 +183,36 @@ export function getOfficeColumns(): ColumnDef<OfficeProps>[] {
       ),
       cell: ({ row }) => (
         <Badge variant={'outline'}>{row.getValue("office")}</Badge>
+      ),
+    },
+     {
+      accessorKey: "location",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Location
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <Badge variant={'outline'}>{row.getValue("location")}</Badge>
+      ),
+    },
+     {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <Badge variant={'outline'}>{row.getValue("status")}</Badge>
       ),
     },
     {

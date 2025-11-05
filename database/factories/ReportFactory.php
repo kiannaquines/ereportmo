@@ -24,7 +24,7 @@ class ReportFactory extends Factory
             'user_id' => User::inRandomOrder()->value('id'),
             'incident_id' => Incident::inRandomOrder()->value('id'),
             'image' => $this->faker->imageUrl(),
-            'description' => $this->faker->paragraph(),
+            'description' => substr($this->faker->paragraph(), 0, 30),
             'incident_response_status' => $this->faker->randomElement(['New', 'Assigned', 'In Progress', 'Resolved', 'Closed']),
             'latitude' => $this->faker->latitude(),
             'longitude' => $this->faker->longitude(),

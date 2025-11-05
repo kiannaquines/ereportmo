@@ -18,13 +18,17 @@ export function EditOfficeFormDialog({ isOpen, setIsOpen, office }: EditOfficeFo
     const { data, setData, reset } = useForm({
         id: '',
         office: '',
+        location: '',
+        status: '',
     });
 
     useEffect(() => {
         if (office && isOpen) {
             setData({
                 id: office?.id,
-                office: String(office?.office ?? '')
+                office: String(office?.office ?? ''),
+                location: String(office?.location ?? ''),
+                status: String(office?.status ?? '')
             });
         }
     }, [office, isOpen]);
@@ -46,6 +50,8 @@ export function EditOfficeFormDialog({ isOpen, setIsOpen, office }: EditOfficeFo
         const payload = new FormData();
         payload.append('_method', 'PUT');
         payload.append('office', formData.office);
+        payload.append('location', formData.location);
+        payload.append('status', formData.status);
 
         router.post(route('offices.update', office.id), payload, {
             preserveScroll: true,
@@ -86,6 +92,30 @@ export function EditOfficeFormDialog({ isOpen, setIsOpen, office }: EditOfficeFo
                     type: 'text',
                     placeholder: 'Enter office name',
                     value: data.office,
+                },
+                {
+                    id: 'location',
+                    label: 'Location',
+                    type: 'text',
+                    placeholder: 'Enter office Location',
+                    value: data.location,
+                },
+                {
+                    id: 'status',
+                    label: 'Office Status',
+                    type: 'select',
+                    placeholder: 'Select office status',
+                    value: data.status,
+                    options: [
+                        {
+                            label: 'ON',
+                            value: 'ON'
+                        },
+                        {
+                            label: 'OFF',
+                            value: 'OFF'
+                        }
+                    ],
                 },
             ]}
             onSubmit={handleUpdate}

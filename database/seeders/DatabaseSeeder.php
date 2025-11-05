@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
         foreach ($offices as $office) {
             Office::create([
                 'office' => $office,
+                'location' => 'Kabacan',
+                'status' => 'ON'
             ]);
         }
         $roles = [
@@ -218,5 +220,7 @@ class DatabaseSeeder extends Seeder
                 'office_id' => $incident['office_id'],
             ]);
         }
+        // $this->call(UserSeeder::class);
+        // $this->call(ReportSeeder::class);
     }
 }
