@@ -42,16 +42,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
        
-        User::create([
-            'name' => 'Kurt Lugagay',
-            'email' => 'kurth@ereportmo.com',
-            'municipality' => 'Makilala',
-            'barangay' => 'Kisante',
-            'role' => Role::where('role', 'admin')->first()->id,
-            'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
-            'password' => Hash::make('kurth@ereportmo.com'),
-        ]);
-
+        $this->call(UserSeeder::class);
 
         $incidents = [
             [
@@ -218,5 +209,8 @@ class DatabaseSeeder extends Seeder
                 'office_id' => $incident['office_id'],
             ]);
         }
+
+        $this->call(ReportSeeder::class);
+
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Office;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
@@ -14,6 +15,16 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        User::create([
+            'name' => 'Kurt Lugagay',
+            'email' => 'kurth@ereportmo.com',
+            'municipality' => 'Makilala',
+            'barangay' => 'Kisante',
+            'role' => Role::where('role', 'admin')->first()->id,
+            'office_id' => Office::where('office', 'MSWDO (VAWC)')->first()->id,
+            'password' => Hash::make('kurth@ereportmo.com'),
+        ]);
+        
         User::create([
             'name' => 'Kian Naquines',
             'email' => 'kurt@ereportmo.com',
