@@ -1,6 +1,7 @@
 import {
   LineChart,
   Line,
+  Area,
   CartesianGrid,
   XAxis,
   YAxis,
@@ -85,6 +86,14 @@ const MonthlyIncidentsLineChart = ({ chartData }: MonthlyIncidentsLineChartProps
             data={incidentLineChartData}
             margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
           >
+            <defs>
+              {Object.keys(incidentLineChartDataConfig).map((year, idx) => (
+                <linearGradient key={year} id={`gradient-${year}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={incidentLineChartDataConfig[year].color} stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor={incidentLineChartDataConfig[year].color} stopOpacity={0}/>
+                </linearGradient>
+              ))}
+            </defs>
             <CartesianGrid strokeDasharray="4 4" />
             <XAxis
               dataKey="month"
@@ -105,6 +114,16 @@ const MonthlyIncidentsLineChart = ({ chartData }: MonthlyIncidentsLineChartProps
                 incidentLineChartDataConfig[value as keyof typeof incidentLineChartDataConfig]?.label || value
               }
             />
+            {Object.keys(incidentLineChartDataConfig).map((year) => (
+              <Area
+                key={`area-${year}`}
+                type="monotone"
+                dataKey={year}
+                stroke="none"
+                fill={`url(#gradient-${year})`}
+                fillOpacity={1}
+              />
+            ))}
             {Object.keys(incidentLineChartDataConfig).map((year) => (
               <Line
                 key={year}

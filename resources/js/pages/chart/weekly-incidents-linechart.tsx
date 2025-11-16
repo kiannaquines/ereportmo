@@ -9,6 +9,7 @@ import {
 import {
     LineChart,
     Line,
+    Area,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -52,6 +53,12 @@ export default function WeeklyIncidentsLineChart({
                     data={chartData}
                     margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
                 >
+                    <defs>
+                        <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={chartConfig.total.color} stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor={chartConfig.total.color} stopOpacity={0}/>
+                        </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="4 4" />
                     <XAxis
                         dataKey={chartData[0]?.week ? "week" : "month"}
@@ -63,6 +70,12 @@ export default function WeeklyIncidentsLineChart({
                     <ChartTooltip
                         cursor={{ strokeDasharray: "4 4" }}
                         content={<ChartTooltipContent indicator="line" />}
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="total"
+                        stroke="none"
+                        fill="url(#colorTotal)"
                     />
                     <Line
                         type="monotone"
