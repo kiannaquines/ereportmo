@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Incident;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Report;
@@ -15,17 +16,64 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
         $selectedYear = $request->input('year', Report::max(DB::raw('YEAR(created_at)')));
-        // $selectedYear = $request->input('year', now()->year);
-        $totalNoOfUsers = User::get()->count();
-        $newUsersThisMonth = User::whereMonth('created_at', Carbon::now()->month)->count();
+        $selectedPeriod = $request->input('period', 'all'); // 'all', 'weekly', 'monthly'
+        
+        // Check user's role - Admin users should see ALL data regardless of office
+        $userRole = Role::find($user->role);
+        $isAdmin = $userRole && $userRole->role === 'admin';
+        
+        // Check if user has specific office (PNP, MDRRMO, MSWDO) and is NOT admin
+        $userOffice = $user->office;
+        $isOfficeUser = !$isAdmin && $userOffice && in_array($userOffice->office, ['PNP', 'MDRRMO', 'MSWDO (VAWC)']);
+        
+        // Base queries with office filtering if applicable
+        $baseUserQuery = User::query();
+        $baseReportQuery = Report::query();
+        $baseIncidentQuery = Incident::query();
+        
+        // Apply office filtering ONLY for non-admin office users
+        if ($isOfficeUser) {
+            $baseReportQuery->whereHas('incident', function($q) use ($userOffice) {
+                $q->where('office_id', $userOffice->id);
+            });
+            $baseIncidentQuery->where('office_id', $userOffice->id);
+            
+            // Also filter by user's municipality if they have one
+            if ($user->municipality) {
+                $baseReportQuery->whereHas('user', function($q) use ($user) {
+                    $q->where('municipality', $user->municipality);
+                });
+            }
+        }
+        
+        // $selectedYear = $request->input('year', now()->year)
+        $totalNoOfUsers = (clone $baseUserQuery)->count();
+        $newUsersThisMonth = (clone $baseUserQuery)->whereMonth('created_at', Carbon::now()->month)->count();
 
-        $totalNoOfIncidents = Incident::get()->count();
-        $totalNoOfReportedIncidents = Report::get()->count();
+        $totalNoOfIncidents = (clone $baseIncidentQuery)->count();
+        $totalNoOfReportedIncidents = (clone $baseReportQuery)->count();
 
-        $reportedIncidents = Report::with('incident', 'user')
-            ->whereDate('created_at', Carbon::today())
-            ->get()
+        // Filtered counts based on period
+        $periodFilteredUsers = clone $baseUserQuery;
+        $periodFilteredReports = clone $baseReportQuery;
+        
+        if ($selectedPeriod === 'weekly') {
+            $periodFilteredUsers->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+            $periodFilteredReports->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($selectedPeriod === 'monthly') {
+            $periodFilteredUsers->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year);
+            $periodFilteredReports->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year);
+        }
+        
+        $periodTotalUsers = $periodFilteredUsers->count();
+        $periodTotalReports = $periodFilteredReports->count();
+
+        $reportedIncidentsQuery = (clone $baseReportQuery)->with('incident', 'user')
+            ->whereDate('created_at', Carbon::today());
+            
+        $reportedIncidents = $reportedIncidentsQuery->get()
             ->map(function ($report) {
                 return [
                     'id' => $report->id,
@@ -45,18 +93,28 @@ class DashboardController extends Controller
                 ];
             });
 
-        $reportedIncidentRawData = DB::table('reports')
+        $reportedIncidentRawDataQuery = DB::table('reports');
+        if ($isOfficeUser) {
+            $reportedIncidentRawDataQuery->join('incidents', 'reports.incident_id', '=', 'incidents.id')
+                ->where('incidents.office_id', $userOffice->id);
+            if ($user->municipality) {
+                $reportedIncidentRawDataQuery->join('users', 'reports.user_id', '=', 'users.id')
+                    ->where('users.municipality', $user->municipality);
+            }
+        }
+        
+        $reportedIncidentRawData = $reportedIncidentRawDataQuery
             ->select(
-                DB::raw("YEAR(created_at) as year"),
-                DB::raw("MONTH(created_at) as month"),
+                DB::raw("YEAR(reports.created_at) as year"),
+                DB::raw("MONTH(reports.created_at) as month"),
                 DB::raw("COUNT(*) as total")
             )
             ->groupBy(
-                DB::raw("YEAR(created_at)"),
-                DB::raw("MONTH(created_at)")
+                DB::raw("YEAR(reports.created_at)"),
+                DB::raw("MONTH(reports.created_at)")
             )
-            ->orderBy(DB::raw("YEAR(created_at)"), 'desc')
-            ->orderBy(DB::raw("MONTH(created_at)"), 'asc')
+            ->orderBy(DB::raw("YEAR(reports.created_at)"), 'desc')
+            ->orderBy(DB::raw("MONTH(reports.created_at)"), 'asc')
             ->get()
             ->map(function ($row) {
                 $monthName = DateTime::createFromFormat('!m', $row->month)->format('F');
@@ -67,8 +125,18 @@ class DashboardController extends Controller
                 ];
             });
 
-        $topMunicipalityReportedIncidentRawData = DB::table('reports AS r')
-            ->join('users AS u', 'r.user_id', '=', 'u.id')
+        $topMunicipalityQuery = DB::table('reports AS r')
+            ->join('users AS u', 'r.user_id', '=', 'u.id');
+        
+        if ($isOfficeUser) {
+            $topMunicipalityQuery->join('incidents AS i', 'r.incident_id', '=', 'i.id')
+                ->where('i.office_id', $userOffice->id);
+            if ($user->municipality) {
+                $topMunicipalityQuery->where('u.municipality', $user->municipality);
+            }
+        }
+        
+        $topMunicipalityReportedIncidentRawData = $topMunicipalityQuery
             ->select(
                 DB::raw("YEAR(r.created_at) AS year"),
                 DB::raw('u.municipality AS municipality'),
@@ -107,7 +175,8 @@ class DashboardController extends Controller
         });
 
         // === Monthly Incidents ===
-        $monthlyIncidentData = Report::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+        $monthlyIncidentDataQuery = clone $baseReportQuery;
+        $monthlyIncidentData = $monthlyIncidentDataQuery->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
             ->whereYear('created_at', $selectedYear)
             ->groupBy('month')
             ->orderBy('month')
@@ -118,7 +187,8 @@ class DashboardController extends Controller
             ]);
 
         // === Weekly Incidents ===
-        $weeklyIncidentData = Report::selectRaw('WEEK(created_at, 1) as week, COUNT(*) as total')
+        $weeklyIncidentDataQuery = clone $baseReportQuery;
+        $weeklyIncidentData = $weeklyIncidentDataQuery->selectRaw('WEEK(created_at, 1) as week, COUNT(*) as total')
             ->whereYear('created_at', $selectedYear)
             ->groupBy('week')
             ->orderBy('week')
@@ -133,7 +203,16 @@ class DashboardController extends Controller
             });
 
         // === Top Municipality Monthly ===
-        $topMunicipalityMonthly = Report::join('users', 'reports.user_id', '=', 'users.id')
+        $topMunicipalityMonthlyQuery = Report::join('users', 'reports.user_id', '=', 'users.id');
+        if ($isOfficeUser) {
+            $topMunicipalityMonthlyQuery->join('incidents', 'reports.incident_id', '=', 'incidents.id')
+                ->where('incidents.office_id', $userOffice->id);
+            if ($user->municipality) {
+                $topMunicipalityMonthlyQuery->where('users.municipality', $user->municipality);
+            }
+        }
+        
+        $topMunicipalityMonthly = $topMunicipalityMonthlyQuery
             ->selectRaw('MONTH(reports.created_at) as month, users.municipality, COUNT(*) as total')
             ->whereYear('reports.created_at', $selectedYear)
             ->groupBy('month', 'users.municipality')
@@ -157,7 +236,16 @@ class DashboardController extends Controller
             ->values();
 
         // === Top Municipality Weekly ===
-        $topMunicipalityWeekly = Report::join('users', 'reports.user_id', '=', 'users.id')
+        $topMunicipalityWeeklyQuery = Report::join('users', 'reports.user_id', '=', 'users.id');
+        if ($isOfficeUser) {
+            $topMunicipalityWeeklyQuery->join('incidents', 'reports.incident_id', '=', 'incidents.id')
+                ->where('incidents.office_id', $userOffice->id);
+            if ($user->municipality) {
+                $topMunicipalityWeeklyQuery->where('users.municipality', $user->municipality);
+            }
+        }
+        
+        $topMunicipalityWeekly = $topMunicipalityWeeklyQuery
             ->selectRaw('WEEK(reports.created_at, 1) as week, users.municipality, COUNT(*) as total')
             ->whereYear('reports.created_at', $selectedYear)
             ->groupBy('week', 'users.municipality')
@@ -179,7 +267,8 @@ class DashboardController extends Controller
             })->values();
 
         // Available years
-        $availableYears = Report::selectRaw('YEAR(created_at) as year')
+        $availableYearsQuery = clone $baseReportQuery;
+        $availableYears = $availableYearsQuery->selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderBy('year', 'desc')
             ->pluck('year');
@@ -190,6 +279,17 @@ class DashboardController extends Controller
             'newUsersThisMonth' => $newUsersThisMonth,
             'totalNoOfIncidents' => $totalNoOfIncidents,
             'totalNoOfReportedIncidents' => $totalNoOfReportedIncidents,
+            
+            // Period filtered stats
+            'periodTotalUsers' => $periodTotalUsers,
+            'periodTotalReports' => $periodTotalReports,
+            'selectedPeriod' => $selectedPeriod,
+            
+            // User office context
+            'isAdmin' => $isAdmin,
+            'userOffice' => $userOffice ? $userOffice->office : null,
+            'userMunicipality' => $user->municipality,
+            'isOfficeUser' => $isOfficeUser,
 
             // Old (all years)
             'monthlyIncidentData' => $groupedReportedIncidentByYear,

@@ -7,7 +7,23 @@
     <title>Summary Data</title>
     @vite('resources/css/app.css')
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
+        // Track chart export completion for PDF generation
+        window.chartsReady = false;
+        let chartsExported = 0;
+        const totalCharts = 7;
+
+        function checkAllChartsExported() {
+            chartsExported++;
+            console.log(`Chart ${chartsExported}/${totalCharts} exported`);
+            if (chartsExported >= totalCharts) {
+                window.chartsReady = true;
+                console.log('All charts exported successfully!');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
 
             const chart1 = Highcharts.chart('all-year-data', {
@@ -39,25 +55,23 @@
                 null,
                 function (chart) {
                     const svg = chart.getSVGForLocalExport();
-                    document.getElementById('all-year-data-image').value = btoa(svg); // base64 encode
+                    document.getElementById('all-year-data-image').value = btoa(svg);
+                    checkAllChartsExported();
                 }
             );
 
-
-           >
-                document.addEventListener('DOMContentLoaded', () => {
-
-                    const statusChart = Highcharts.chart('status-chart', {
-                        chart: {
-                            type: 'pie',
-                            animation: false,
-                            events: {
-                                load: function () {
-                                    this.series.forEach(s => s.update({ animation: false }, false));
-                                }
-                            }
-                        },
-                        title: { text: 'Incident Status Distribution' },
+            // Status Chart
+            const statusChart = Highcharts.chart('status-chart', {
+                chart: {
+                    type: 'pie',
+                    animation: false,
+                    events: {
+                        load: function () {
+                            this.series.forEach(s => s.update({ animation: false }, false));
+                        }
+                    }
+                },
+                title: { text: 'Incident Status Distribution' },
                         subtitle: { text: 'Incident status as of {{ date("F d, Y") }}' },
                         plotOptions: {
                             pie: {
@@ -85,6 +99,7 @@
                     statusChart.exportChartLocal({ type: 'image/png' }, null, function (chart) {
                         const svg = chart.getSVGForLocalExport();
                         document.getElementById('status-chart-image').value = btoa(svg);
+                        checkAllChartsExported();
                     });
 
 
@@ -126,7 +141,8 @@
                     // Export chart as PNG and store it in hidden input
                     chart2.exportChartLocal({ type: 'image/png' }, null, function (chart) {
                         const svg = chart.getSVGForLocalExport();
-                        document.getElementById('incident-per-municipality-image').value = btoa(svg); // base64 encode
+                        document.getElementById('incident-per-municipality-image').value = btoa(svg);
+                        checkAllChartsExported();
                     });
 
 
@@ -153,6 +169,7 @@
                     monthlyChart.exportChartLocal({ type: 'image/png' }, null, function (chart) {
                         const svg = chart.getSVGForLocalExport();
                         document.getElementById('monthly-reports-image').value = btoa(svg);
+                        checkAllChartsExported();
                     });
 
                     // Weekly Reports Chart
@@ -178,10 +195,11 @@
                     weeklyChart.exportChartLocal({ type: 'image/png' }, null, function (chart) {
                         const svg = chart.getSVGForLocalExport();
                         document.getElementById('weekly-reports-image').value = btoa(svg);
+                        checkAllChartsExported();
                     });
 
                     // Top Municipality per Month (Bar)
-                    Highcharts.chart('top-municipality-monthly-chart', {
+                    const topMunicipalityMonthlyChart = Highcharts.chart('top-municipality-monthly-chart', {
                         chart: { type: 'bar', animation: false },
                         title: { text: null },
                         xAxis: { categories: @json($topMunicipalityMonthly->pluck('month')) },
@@ -199,8 +217,15 @@
                         credits: { enabled: false }
                     });
 
+                    // Export Top Municipality Monthly Chart
+                    topMunicipalityMonthlyChart.exportChartLocal({ type: 'image/png' }, null, function (chart) {
+                        const svg = chart.getSVGForLocalExport();
+                        document.getElementById('top-municipality-monthly-image').value = btoa(svg);
+                        checkAllChartsExported();
+                    });
+
                     // Top Municipality per Week (Bar)
-                    Highcharts.chart('top-municipality-weekly-chart', {
+                    const topMunicipalityWeeklyChart = Highcharts.chart('top-municipality-weekly-chart', {
                         chart: { type: 'bar', animation: false },
                         title: { text: null },
                         xAxis: { categories: @json($topMunicipalityWeekly->pluck('week')) },
@@ -216,6 +241,13 @@
                         }],
                         tooltip: { enabled: false },
                         credits: { enabled: false }
+                    });
+
+                    // Export Top Municipality Weekly Chart
+                    topMunicipalityWeeklyChart.exportChartLocal({ type: 'image/png' }, null, function (chart) {
+                        const svg = chart.getSVGForLocalExport();
+                        document.getElementById('top-municipality-weekly-image').value = btoa(svg);
+                        checkAllChartsExported();
                     });
 
 
@@ -322,6 +354,15 @@
             </table>
         </div>
     </div>
+
+    <!-- Hidden inputs to store base64-encoded chart images for PDF generation -->
+    <input type="hidden" id="all-year-data-image" />
+    <input type="hidden" id="status-chart-image" />
+    <input type="hidden" id="incident-per-municipality-image" />
+    <input type="hidden" id="monthly-reports-image" />
+    <input type="hidden" id="weekly-reports-image" />
+    <input type="hidden" id="top-municipality-monthly-image" />
+    <input type="hidden" id="top-municipality-weekly-image" />
 
 </body>
 

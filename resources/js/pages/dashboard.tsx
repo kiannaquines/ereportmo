@@ -42,6 +42,13 @@ export type DashboardPageProps = PageProps<{
     newUsersThisMonth: number;
     totalNoOfIncidents: number;
     totalNoOfReportedIncidents: number;
+    periodTotalUsers: number;
+    periodTotalReports: number;
+    selectedPeriod: 'all' | 'weekly' | 'monthly';
+    isAdmin: boolean;
+    userOffice: string | null;
+    userMunicipality: string | null;
+    isOfficeUser: boolean;
     monthlyIncidentData: any;
     topReportedMunicipality: any;
     monthIncidentData: { month: string; total: number }[];
@@ -61,6 +68,13 @@ export default function Dashboard() {
         newUsersThisMonth,
         totalNoOfIncidents,
         totalNoOfReportedIncidents,
+        periodTotalUsers,
+        periodTotalReports,
+        selectedPeriod: initialPeriod,
+        isAdmin,
+        userOffice,
+        userMunicipality,
+        isOfficeUser,
         monthlyIncidentData,
         topReportedMunicipality,
         monthIncidentData,
@@ -72,19 +86,77 @@ export default function Dashboard() {
     } = props;
 
     const [selectedYear, setSelectedYear] = useState(initialYear);
+    const [selectedPeriod, setSelectedPeriod] = useState(initialPeriod);
 
     const handleYearChange = (year: string) => {
         const y = parseInt(year);
         setSelectedYear(y);
-        router.get(route('dashboard'), { year: y }, { preserveState: true, replace: true });
+        router.get(route('dashboard'), { year: y, period: selectedPeriod }, { preserveState: true, replace: true });
+    };
+
+    const handlePeriodChange = (period: string) => {
+        setSelectedPeriod(period as 'all' | 'weekly' | 'monthly');
+        router.get(route('dashboard'), { year: selectedYear, period }, { preserveState: true, replace: true });
+    };
+
+    const getPeriodLabel = () => {
+        switch (selectedPeriod) {
+            case 'weekly':
+                return 'This Week';
+            case 'monthly':
+                return 'This Month';
+            default:
+                return 'All-time';
+        }
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
-                {/* Year Filter */}
-                <div className="flex justify-end">
+                {/* Office User Notice */}
+                {isOfficeUser && !isAdmin && userOffice && (
+                    <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
+                        <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                            Viewing statistics for: <span className="font-bold">{userOffice}</span>
+                            {userMunicipality && (
+                                <>
+                                    {' '}
+                                    - <span className="font-bold">{userMunicipality}</span>
+                                </>
+                            )}
+                        </p>
+                        <p className="mt-1 text-xs text-blue-700 dark:text-blue-300">
+                            The dashboard shows data filtered specifically for your office and location.
+                        </p>
+                    </div>
+                )}
+                
+                {/* Admin Notice */}
+                {isAdmin && (
+                    <div className="rounded-lg border bg-green-50 p-4 dark:bg-green-950">
+                        <p className="text-sm font-medium text-green-900 dark:text-green-100">
+                            <span className="font-bold">Administrator View</span> - Viewing All System Data
+                        </p>
+                        <p className="mt-1 text-xs text-green-700 dark:text-green-300">
+                            You're viewing complete statistics across all offices (PNP, MDRRMO, MSWDO) and all locations.
+                        </p>
+                    </div>
+                )}
+                
+                {/* Filters */}
+                <div className="flex justify-end gap-4">
+                    <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
+                        <SelectTrigger className="w-48">
+                            <SelectValue>{getPeriodLabel()}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Time</SelectItem>
+                            <SelectItem value="weekly">This Week</SelectItem>
+                            <SelectItem value="monthly">This Month</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    
                     <Select value={selectedYear.toString()} onValueChange={handleYearChange}>
                         <SelectTrigger className="w-48">
                             <SelectValue>{selectedYear}</SelectValue>
@@ -101,13 +173,18 @@ export default function Dashboard() {
 
                 {/* Stats Cards */}
                 <div className="grid auto-rows-min gap-4 md:grid-cols-4">
-                    <DashboardCard title="Total Registered Users" value={totalNoOfUser} description="All-time" icon={Users} />
+                    <DashboardCard 
+                        title="Total Registered Users" 
+                        value={selectedPeriod === 'all' ? totalNoOfUser : periodTotalUsers} 
+                        description={getPeriodLabel()} 
+                        icon={Users} 
+                    />
                     <DashboardCard title="New Users This Month" value={newUsersThisMonth} description="This month" icon={Calendar} />
                     <DashboardCard title="Total Incident Types" value={totalNoOfIncidents} description="All-time" icon={Users} />
                     <DashboardCard
                         title="Total Reported Incidents"
-                        value={totalNoOfReportedIncidents}
-                        description="All-time"
+                        value={selectedPeriod === 'all' ? totalNoOfReportedIncidents : periodTotalReports}
+                        description={getPeriodLabel()}
                         icon={ArrowUpNarrowWide}
                     />
                 </div>

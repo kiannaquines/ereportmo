@@ -261,8 +261,22 @@ class GenerateReportController extends Controller
             ->noSandbox()
             ->setNodeBinary('/home/heist/.nvm/versions/node/v24.8.0/bin/node')
             ->setNpmBinary('/home/heist/.nvm/versions/node/v24.8.0/bin/npm')
-            ->delay(5000) // Wait 5 seconds for charts to render
-    ->timeout(120) // Increase timeout to 2 minutes
+            ->waitUntilNetworkIdle()
+            ->evaluateBeforePrinting('
+                // Wait for all 7 charts to be exported
+                new Promise((resolve) => {
+                    const checkReady = () => {
+                        if (window.chartsReady === true) {
+                            console.log("All charts ready for PDF generation");
+                            resolve();
+                        } else {
+                            setTimeout(checkReady, 100);
+                        }
+                    };
+                    checkReady();
+                });
+            ')
+            ->timeout(120) // Increase timeout to 2 minutes
             ->format('A4')
             ->showBackground()
             ->save(storage_path('app/reports/report.pdf'));
