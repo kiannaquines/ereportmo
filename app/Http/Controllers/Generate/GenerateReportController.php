@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Generate;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Spatie\Browsershot\Browsershot;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Models\Report;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -254,34 +254,172 @@ class GenerateReportController extends Controller
         $from = $request->input('from');
         $to = $request->input('to');
 
-        $queries = $this->queries($from, $to); // Your filtered data
-        $template = view('report', $queries)->render();
+        $queries = $this->queries($from, $to);
+        
+        // Generate chart URLs using QuickChart.io (free Highcharts-compatible API)
+        $chartUrls = $this->generateChartUrls($queries);
+        
+        // Merge chart URLs with query data
+        $data = array_merge($queries, $chartUrls, [
+            'date_from' => $from,
+            'date_to' => $to,
+        ]);
 
-        Browsershot::html($template)
-            ->noSandbox()
-            ->setNodeBinary('/home/heist/.nvm/versions/node/v24.8.0/bin/node')
-            ->setNpmBinary('/home/heist/.nvm/versions/node/v24.8.0/bin/npm')
-            ->waitUntilNetworkIdle()
-            ->evaluateBeforePrinting('
-                // Wait for all 7 charts to be exported
-                new Promise((resolve) => {
-                    const checkReady = () => {
-                        if (window.chartsReady === true) {
-                            console.log("All charts ready for PDF generation");
-                            resolve();
-                        } else {
-                            setTimeout(checkReady, 100);
-                        }
-                    };
-                    checkReady();
-                });
-            ')
-            ->timeout(120) // Increase timeout to 2 minutes
-            ->format('A4')
-            ->showBackground()
-            ->save(storage_path('app/reports/report.pdf'));
+        // Generate PDF using DomPDF (no Browsershot needed!)
+        $pdf = Pdf::loadView('report-pdf', $data)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true); // Allow external chart images
 
+        return $pdf->download('incident-report-' . now()->format('Y-m-d') . '.pdf');
+    }
 
-        return response()->download(storage_path('app/reports/report.pdf'));
+    /**
+     * Generate chart image URLs using QuickChart.io API
+     */
+    private function generateChartUrls($queries)
+    {
+        $baseUrl = 'https://quickchart.io/chart';
+
+        // Chart 1: All-Time Bar Chart
+        $chart1Config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => collect($queries['alltimedata'])->pluck('municipality')->toArray(),
+                'datasets' => [[
+                    'label' => 'Reports',
+                    'data' => collect($queries['alltimedata'])->pluck('total')->toArray(),
+                    'backgroundColor' => '#3b82f6',
+                ]]
+            ],
+            'options' => [
+                'indexAxis' => 'y',
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text' => 'All-Time Incident Reports'
+                    ],
+                    'legend' => ['display' => false]
+                ]
+            ]
+        ];
+
+        // Chart 2: Pie Chart - Status Distribution
+        $statusData = collect($queries['incidentStatus'])->map(fn($row) => ['name' => $row['status'], 'y' => (int) $row['total']]);
+        $chart2Config = [
+            'type' => 'pie',
+            'data' => [
+                'labels' => $statusData->pluck('name')->toArray(),
+                'datasets' => [[
+                    'data' => $statusData->pluck('y')->toArray(),
+                    'backgroundColor' => ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                ]]
+            ],
+            'options' => [
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Incident Status Distribution'
+                    ]
+                ]
+            ]
+        ];
+
+        // Chart 3: Column Chart - Top Municipalities
+        $chart3Config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => collect($queries['topMunicipalitiesReportedIncidents'])->pluck('municipality')->toArray(),
+                'datasets' => [[
+                    'label' => 'Incidents',
+                    'data' => collect($queries['topMunicipalitiesReportedIncidents'])->pluck('total')->toArray(),
+                    'backgroundColor' => '#3b82f6',
+                ]]
+            ],
+            'options' => [
+                'plugins' => [
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Top 10 Municipalities'
+                    ],
+                    'legend' => ['display' => false]
+                ]
+            ]
+        ];
+
+        // Chart 4: Line Chart - Monthly Reports
+        $chart4Config = [
+            'type' => 'line',
+            'data' => [
+                'labels' => $queries['monthlyReports']->pluck('month')->toArray(),
+                'datasets' => [[
+                    'label' => 'Reports',
+                    'data' => $queries['monthlyReports']->pluck('total')->toArray(),
+                    'borderColor' => '#3b82f6',
+                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
+                    'fill' => true,
+                ]]
+            ]
+        ];
+
+        // Chart 5: Line Chart - Weekly Reports
+        $chart5Config = [
+            'type' => 'line',
+            'data' => [
+                'labels' => $queries['weeklyReports']->pluck('week')->toArray(),
+                'datasets' => [[
+                    'label' => 'Reports',
+                    'data' => $queries['weeklyReports']->pluck('total')->toArray(),
+                    'borderColor' => '#10b981',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                    'fill' => true,
+                ]]
+            ]
+        ];
+
+        // Chart 6: Bar Chart - Top Municipality Monthly
+        $chart6Config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $queries['topMunicipalityMonthly']->pluck('month')->toArray(),
+                'datasets' => [[
+                    'label' => 'Reports',
+                    'data' => $queries['topMunicipalityMonthly']->pluck('total')->toArray(),
+                    'backgroundColor' => '#f59e0b',
+                ]]
+            ],
+            'options' => [
+                'indexAxis' => 'y',
+                'plugins' => ['legend' => ['display' => false]]
+            ]
+        ];
+
+        // Chart 7: Bar Chart - Top Municipality Weekly
+        $chart7Config = [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $queries['topMunicipalityWeekly']->pluck('week')->toArray(),
+                'datasets' => [[
+                    'label' => 'Reports',
+                    'data' => $queries['topMunicipalityWeekly']->pluck('total')->toArray(),
+                    'backgroundColor' => '#8b5cf6',
+                ]]
+            ],
+            'options' => [
+                'indexAxis' => 'y',
+                'plugins' => ['legend' => ['display' => false]]
+            ]
+        ];
+
+        // Generate URLs
+        return [
+            'chart1Url' => $baseUrl . '?c=' . urlencode(json_encode($chart1Config)) . '&width=700&height=400',
+            'chart2Url' => $baseUrl . '?c=' . urlencode(json_encode($chart2Config)) . '&width=500&height=400',
+            'chart3Url' => $baseUrl . '?c=' . urlencode(json_encode($chart3Config)) . '&width=700&height=400',
+            'chart4Url' => $baseUrl . '?c=' . urlencode(json_encode($chart4Config)) . '&width=700&height=300',
+            'chart5Url' => $baseUrl . '?c=' . urlencode(json_encode($chart5Config)) . '&width=700&height=300',
+            'chart6Url' => $baseUrl . '?c=' . urlencode(json_encode($chart6Config)) . '&width=700&height=300',
+            'chart7Url' => $baseUrl . '?c=' . urlencode(json_encode($chart7Config)) . '&width=700&height=300',
+        ];
     }
 }
