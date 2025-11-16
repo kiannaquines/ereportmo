@@ -1,7 +1,7 @@
 'use client';
 
 import { ChartContainer, ChartTooltip, type ChartConfig } from '@/components/ui/chart';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Cell } from 'recharts';
 
 type TopMunicipalityMonthlyBarProps = {
     chartData: {
@@ -17,6 +17,15 @@ const chartConfig: ChartConfig = {
         color: 'var(--chart-2)',
     },
 };
+
+// Gradient colors for bars
+const barColors = [
+    'var(--chart-1)',
+    'var(--chart-2)', 
+    'var(--chart-3)',
+    'var(--chart-4)',
+    'var(--chart-5)',
+];
 
 export default function TopMunicipalityMonthlyBar({ chartData }: TopMunicipalityMonthlyBarProps) {
     const hasData = chartData && chartData.length > 0
@@ -36,32 +45,51 @@ export default function TopMunicipalityMonthlyBar({ chartData }: TopMunicipality
         <div className="w-full">
             <ChartContainer config={chartConfig} className="h-80 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }} barSize={24}>
-                        <CartesianGrid strokeDasharray="4 4" />
+                    <BarChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 0 }}>
+                        <defs>
+                            {barColors.map((color, idx) => (
+                                <linearGradient key={idx} id={`barGradient${idx}`} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor={color} stopOpacity={0.9}/>
+                                    <stop offset="100%" stopColor={color} stopOpacity={0.6}/>
+                                </linearGradient>
+                            ))}
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.3} />
 
                         {/* X-Axis: Short label with municipality */}
-                        <XAxis dataKey="month" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} tickMargin={10} />
+                        <XAxis 
+                            dataKey="month" 
+                            tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} 
+                            tickLine={false} 
+                            axisLine={false} 
+                            tickMargin={8} 
+                        />
 
-                        <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickMargin={10} />
+                        <YAxis 
+                            tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} 
+                            tickLine={false} 
+                            axisLine={false} 
+                            tickMargin={8} 
+                        />
 
                         {/* Enhanced Tooltip */}
                         <ChartTooltip
-                            cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                            cursor={{ fill: 'hsl(var(--muted) / 0.1)' }}
                             content={({ active, payload }) => {
                                 if (active && payload && payload.length > 0) {
                                     const data = payload[0].payload;
 
                                     return (
-                                        <div className="bg-background rounded-lg border p-3 shadow-sm">
-                                            <div className="mb-1 text-sm font-medium">{data.month}</div>
+                                        <div className="bg-background rounded-lg border shadow-lg p-3">
+                                            <div className="mb-2 text-sm font-semibold">{data.month}</div>
                                             <div className="text-muted-foreground space-y-1 text-xs">
-                                                <div className="flex justify-between gap-4">
+                                                <div className="flex justify-between gap-6">
                                                     <span>Municipality:</span>
-                                                    <span className="text-foreground font-medium">{data.municipality}</span>
+                                                    <span className="text-foreground font-semibold">{data.municipality}</span>
                                                 </div>
-                                                <div className="flex justify-between gap-4">
+                                                <div className="flex justify-between gap-6">
                                                     <span>Reports:</span>
-                                                    <span className="text-foreground font-medium">{data.total}</span>
+                                                    <span className="text-foreground font-semibold">{data.total}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -71,7 +99,11 @@ export default function TopMunicipalityMonthlyBar({ chartData }: TopMunicipality
                             }}
                         />
 
-                        <Bar dataKey="total" fill={chartConfig.total.color} radius={[6, 6, 0, 0]} maxBarSize={48} />
+                        <Bar dataKey="total" radius={[8, 8, 0, 0]} maxBarSize={60}>
+                            {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={`url(#barGradient${index % barColors.length})`} />
+                            ))}
+                        </Bar>
                     </BarChart>
                 </ResponsiveContainer>
             </ChartContainer>

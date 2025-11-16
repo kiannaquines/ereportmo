@@ -60,25 +60,16 @@ const IncidentsPerMunicipalityPieChart = ({
     const hasData = Object.keys(chartData).length > 0 && pieData.length > 0
 
     return (
-        <div className="w-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-6 bg-background h-96 flex flex-col">
-            <div className="mb-4">
-                <h2 className="text-lg font-semibold">Incidents per Municipality</h2>
-                <p className="text-sm text-muted-foreground">
-                    {hasData 
-                        ? "Distribution of reported incidents across municipalities (combined by year)."
-                        : "No data available"}
-                </p>
-            </div>
-
+        <div className="w-full relative overflow-hidden bg-background h-80 flex flex-col">
             {!hasData ? (
-                <div className="flex h-[calc(100%-56px)] items-center justify-center">
+                <div className="flex h-full items-center justify-center">
                     <div className="text-center">
                         <p className="text-muted-foreground text-sm">No municipality data available.</p>
                         <p className="text-muted-foreground mt-1 text-xs">Try selecting a different year or period.</p>
                     </div>
                 </div>
             ) : (
-            <ChartContainer config={chartConfig} className="h-[calc(100%-56px)]">
+            <ChartContainer config={chartConfig} className="h-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <ChartTooltip

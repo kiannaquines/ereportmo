@@ -7,8 +7,7 @@ import {
     type ChartConfig,
 } from "@/components/ui/chart"
 import {
-    LineChart,
-    Line,
+    AreaChart,
     Area,
     XAxis,
     YAxis,
@@ -49,14 +48,14 @@ export default function WeeklyIncidentsLineChart({
             className="h-80 w-full" // fits nicely inside your card
         >
             <ResponsiveContainer width="100%" height="100%">
-                <LineChart
+                <AreaChart
                     data={chartData}
                     margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
                 >
                     <defs>
                         <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor={chartConfig.total.color} stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor={chartConfig.total.color} stopOpacity={0}/>
+                            <stop offset="5%" stopColor={chartConfig.total.color} stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor={chartConfig.total.color} stopOpacity={0.1}/>
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="4 4" />
@@ -69,19 +68,15 @@ export default function WeeklyIncidentsLineChart({
                     <YAxis axisLine={false} tickLine={false} tickMargin={10} />
                     <ChartTooltip
                         cursor={{ strokeDasharray: "4 4" }}
-                        content={<ChartTooltipContent indicator="line" />}
+                        content={<ChartTooltipContent indicator="dot" />}
                     />
                     <Area
                         type="monotone"
                         dataKey="total"
-                        stroke="none"
-                        fill="url(#colorTotal)"
-                    />
-                    <Line
-                        type="monotone"
-                        dataKey="total"
                         stroke={chartConfig.total.color}
                         strokeWidth={2.5}
+                        fill="url(#colorTotal)"
+                        fillOpacity={1}
                         dot={{
                             r: 4,
                             fill: "#ffffff", // white center (hollow look)
@@ -95,7 +90,7 @@ export default function WeeklyIncidentsLineChart({
                             strokeWidth: 2,
                         }}
                     />
-                </LineChart>
+                </AreaChart>
             </ResponsiveContainer>
         </ChartContainer>
     )

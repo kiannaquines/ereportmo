@@ -62,17 +62,21 @@ class DashboardController extends Controller
         // Filtered counts based on period
         $periodFilteredUsers = clone $baseUserQuery;
         $periodFilteredReports = clone $baseReportQuery;
+        $periodFilteredIncidents = clone $baseIncidentQuery;
         
         if ($selectedPeriod === 'weekly') {
             $periodFilteredUsers->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
             $periodFilteredReports->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+            $periodFilteredIncidents->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
         } elseif ($selectedPeriod === 'monthly') {
             $periodFilteredUsers->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year);
             $periodFilteredReports->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year);
+            $periodFilteredIncidents->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year);
         }
         
         $periodTotalUsers = $periodFilteredUsers->count();
         $periodTotalReports = $periodFilteredReports->count();
+        $periodTotalIncidents = $periodFilteredIncidents->count();
 
         $reportedIncidentsQuery = (clone $baseReportQuery)->with('incident', 'user')
             ->whereDate('created_at', Carbon::today());
@@ -107,6 +111,14 @@ class DashboardController extends Controller
             }
         }
         
+        // Apply period filter
+        if ($selectedPeriod === 'weekly') {
+            $reportedIncidentRawDataQuery->whereBetween('reports.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($selectedPeriod === 'monthly') {
+            $reportedIncidentRawDataQuery->whereMonth('reports.created_at', Carbon::now()->month)
+                ->whereYear('reports.created_at', Carbon::now()->year);
+        }
+        
         $reportedIncidentRawData = $reportedIncidentRawDataQuery
             ->select(
                 DB::raw("YEAR(reports.created_at) as year"),
@@ -138,6 +150,14 @@ class DashboardController extends Controller
             if ($user->municipality) {
                 $topMunicipalityQuery->where('u.municipality', $user->municipality);
             }
+        }
+        
+        // Apply period filter
+        if ($selectedPeriod === 'weekly') {
+            $topMunicipalityQuery->whereBetween('r.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($selectedPeriod === 'monthly') {
+            $topMunicipalityQuery->whereMonth('r.created_at', Carbon::now()->month)
+                ->whereYear('r.created_at', Carbon::now()->year);
         }
         
         $topMunicipalityReportedIncidentRawData = $topMunicipalityQuery
@@ -180,6 +200,15 @@ class DashboardController extends Controller
 
         // === Monthly Incidents ===
         $monthlyIncidentDataQuery = clone $baseReportQuery;
+        
+        // Apply period filter
+        if ($selectedPeriod === 'weekly') {
+            $monthlyIncidentDataQuery->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($selectedPeriod === 'monthly') {
+            $monthlyIncidentDataQuery->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year);
+        }
+        
         $monthlyIncidentData = $monthlyIncidentDataQuery->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
             ->whereYear('created_at', $selectedYear)
             ->groupBy('month')
@@ -192,6 +221,15 @@ class DashboardController extends Controller
 
         // === Weekly Incidents ===
         $weeklyIncidentDataQuery = clone $baseReportQuery;
+        
+        // Apply period filter
+        if ($selectedPeriod === 'weekly') {
+            $weeklyIncidentDataQuery->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($selectedPeriod === 'monthly') {
+            $weeklyIncidentDataQuery->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year);
+        }
+        
         $weeklyIncidentData = $weeklyIncidentDataQuery->selectRaw('WEEK(created_at, 1) as week, COUNT(*) as total')
             ->whereYear('created_at', $selectedYear)
             ->groupBy('week')
@@ -214,6 +252,14 @@ class DashboardController extends Controller
             if ($user->municipality) {
                 $topMunicipalityMonthlyQuery->where('users.municipality', $user->municipality);
             }
+        }
+        
+        // Apply period filter
+        if ($selectedPeriod === 'weekly') {
+            $topMunicipalityMonthlyQuery->whereBetween('reports.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($selectedPeriod === 'monthly') {
+            $topMunicipalityMonthlyQuery->whereMonth('reports.created_at', Carbon::now()->month)
+                ->whereYear('reports.created_at', Carbon::now()->year);
         }
         
         $topMunicipalityMonthly = $topMunicipalityMonthlyQuery
@@ -247,6 +293,14 @@ class DashboardController extends Controller
             if ($user->municipality) {
                 $topMunicipalityWeeklyQuery->where('users.municipality', $user->municipality);
             }
+        }
+        
+        // Apply period filter
+        if ($selectedPeriod === 'weekly') {
+            $topMunicipalityWeeklyQuery->whereBetween('reports.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($selectedPeriod === 'monthly') {
+            $topMunicipalityWeeklyQuery->whereMonth('reports.created_at', Carbon::now()->month)
+                ->whereYear('reports.created_at', Carbon::now()->year);
         }
         
         $topMunicipalityWeekly = $topMunicipalityWeeklyQuery
@@ -287,6 +341,7 @@ class DashboardController extends Controller
             // Period filtered stats
             'periodTotalUsers' => $periodTotalUsers,
             'periodTotalReports' => $periodTotalReports,
+            'periodTotalIncidents' => $periodTotalIncidents,
             'selectedPeriod' => $selectedPeriod,
             
             // User office context

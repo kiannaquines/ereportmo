@@ -1,6 +1,5 @@
 import {
-  LineChart,
-  Line,
+  AreaChart,
   Area,
   CartesianGrid,
   XAxis,
@@ -65,35 +64,21 @@ const MonthlyIncidentsLineChart = ({ chartData }: MonthlyIncidentsLineChartProps
   const hasData = Object.keys(chartData).length > 0 && incidentLineChartData.length > 0
 
   return (
-    <div className="w-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-6 bg-background h-96 flex flex-col">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">Monthly Incidents Reported</h2>
-        <p className="text-sm text-muted-foreground">
-          {hasData ? `Incident trends over ${Object.keys(chartData).join("–")}` : "No data available"}
-        </p>
-      </div>
+    <div className="w-full relative overflow-hidden bg-background h-80 flex flex-col">
       {!hasData ? (
-        <div className="flex h-[calc(100%-56px)] items-center justify-center">
+        <div className="flex h-full items-center justify-center">
           <div className="text-center">
             <p className="text-muted-foreground text-sm">No incident data available for the selected period.</p>
             <p className="text-muted-foreground mt-1 text-xs">Try selecting a different year or period.</p>
           </div>
         </div>
       ) : (
-        <ChartContainer config={incidentLineChartDataConfig} className="h-[calc(100%-56px)]">
+        <ChartContainer config={incidentLineChartDataConfig} className="h-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
+          <AreaChart
             data={incidentLineChartData}
             margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
           >
-            <defs>
-              {Object.keys(incidentLineChartDataConfig).map((year, idx) => (
-                <linearGradient key={year} id={`gradient-${year}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={incidentLineChartDataConfig[year].color} stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={incidentLineChartDataConfig[year].color} stopOpacity={0}/>
-                </linearGradient>
-              ))}
-            </defs>
             <CartesianGrid strokeDasharray="4 4" />
             <XAxis
               dataKey="month"
@@ -103,7 +88,10 @@ const MonthlyIncidentsLineChart = ({ chartData }: MonthlyIncidentsLineChartProps
               tickFormatter={(v) => v.slice(0, 3)}
             />
             <YAxis axisLine={false} tickLine={false} tickMargin={10} />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
+            <ChartTooltip 
+              cursor={{ strokeDasharray: "4 4" }} 
+              content={<ChartTooltipContent indicator="dot" />} 
+            />
             <Legend
               verticalAlign="top"
               className="text-sm"
@@ -116,31 +104,17 @@ const MonthlyIncidentsLineChart = ({ chartData }: MonthlyIncidentsLineChartProps
             />
             {Object.keys(incidentLineChartDataConfig).map((year) => (
               <Area
-                key={`area-${year}`}
-                type="monotone"
-                dataKey={year}
-                stroke="none"
-                fill={`url(#gradient-${year})`}
-                fillOpacity={1}
-              />
-            ))}
-            {Object.keys(incidentLineChartDataConfig).map((year) => (
-              <Line
                 key={year}
                 type="monotone"
                 dataKey={year}
+                stackId="1"
                 stroke={incidentLineChartDataConfig[year].color}
-                strokeWidth={3}
-                dot={{
-                  r: 4,
-                  stroke: incidentLineChartDataConfig[year].color,
-                  strokeWidth: 2,
-                  fill: "#fff",
-                }}
-                activeDot={{ r: 6 }}
+                fill={incidentLineChartDataConfig[year].color}
+                fillOpacity={0.6}
+                strokeWidth={2}
               />
             ))}
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
       )}

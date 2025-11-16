@@ -44,6 +44,7 @@ export type DashboardPageProps = PageProps<{
     totalNoOfReportedIncidents: number;
     periodTotalUsers: number;
     periodTotalReports: number;
+    periodTotalIncidents: number;
     selectedPeriod: 'all' | 'weekly' | 'monthly';
     isAdmin: boolean;
     userOffice: string | null;
@@ -70,6 +71,7 @@ export default function Dashboard() {
         totalNoOfReportedIncidents,
         periodTotalUsers,
         periodTotalReports,
+        periodTotalIncidents,
         selectedPeriod: initialPeriod,
         isAdmin,
         userOffice,
@@ -179,8 +181,18 @@ export default function Dashboard() {
                         description={getPeriodLabel()} 
                         icon={Users} 
                     />
-                    <DashboardCard title="New Users This Month" value={newUsersThisMonth} description="This month" icon={Calendar} />
-                    <DashboardCard title="Total Incident Types" value={totalNoOfIncidents} description="All-time" icon={Users} />
+                    <DashboardCard 
+                        title="New Users This Month" 
+                        value={newUsersThisMonth} 
+                        description="This month" 
+                        icon={Calendar} 
+                    />
+                    <DashboardCard 
+                        title="Total Incident Types" 
+                        value={selectedPeriod === 'all' ? totalNoOfIncidents : periodTotalIncidents} 
+                        description={getPeriodLabel()} 
+                        icon={Users} 
+                    />
                     <DashboardCard
                         title="Total Reported Incidents"
                         value={selectedPeriod === 'all' ? totalNoOfReportedIncidents : periodTotalReports}
@@ -191,8 +203,24 @@ export default function Dashboard() {
 
                 {/* Old Charts (All Years) */}
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                    <MonthlyIncidentsLineChart chartData={monthlyIncidentData} />
-                    <MonthlyIncidentsBarChart chartData={topReportedMunicipality} />
+                    <div className="bg-card rounded-xl border p-4">
+                        <div className="mb-4">
+                            <h2 className="text-lg font-semibold">Monthly Incidents Reported</h2>
+                            <p className="text-sm text-muted-foreground">
+                                {getPeriodLabel()} - Incident trends across all years
+                            </p>
+                        </div>
+                        <MonthlyIncidentsLineChart chartData={monthlyIncidentData} />
+                    </div>
+                    <div className="bg-card rounded-xl border p-4">
+                        <div className="mb-4">
+                            <h2 className="text-lg font-semibold">Incidents per Municipality</h2>
+                            <p className="text-sm text-muted-foreground">
+                                {getPeriodLabel()} - Top reporting municipalities by year
+                            </p>
+                        </div>
+                        <MonthlyIncidentsBarChart chartData={topReportedMunicipality} />
+                    </div>
                 </div>
 
                 {/* New Charts (Selected Year) */}
@@ -200,7 +228,7 @@ export default function Dashboard() {
                     <div className="bg-card rounded-xl border p-4">
                         <h3 className="text-lg font-semibold">Monthly Reports ({selectedYear})</h3>
                         <p className="text-muted-foreground mb-1 mb-2 text-sm">
-                            Displays the total number of reported incidents for each month of the selected year.
+                            {getPeriodLabel()} - Total incidents for each month of {selectedYear}
                         </p>
                         <WeeklyIncidentsLineChart chartData={monthIncidentData} />
                     </div>
@@ -208,22 +236,22 @@ export default function Dashboard() {
                     <div className="bg-card rounded-xl border p-4">
                         <h3 className="text-lg font-semibold">Weekly Reports ({selectedYear})</h3>
                         <p className="text-muted-foreground mb-1 mb-2 text-sm">
-                            Shows the weekly distribution of reported incidents throughout the selected year.
+                            {getPeriodLabel()} - Weekly distribution of incidents in {selectedYear}
                         </p>
                         <WeeklyIncidentsLineChart chartData={weeklyIncidentData} />
                     </div>
 
                     <div className="bg-card rounded-xl border p-4">
-                        <h3 className="text-lg font-semibold">Top Municipality per Month {selectedYear}</h3>
+                        <h3 className="text-lg font-semibold">Top Municipality per Month ({selectedYear})</h3>
                         <p className="text-muted-foreground mb-2 text-sm">
-                            The municipality with the most reported incidents each month in {selectedYear}.
+                            {getPeriodLabel()} - Municipality with most incidents each month in {selectedYear}
                         </p>
                         <TopMunicipalityMonthlyBar chartData={topMunicipalityMonthly} />
                     </div>
                     <div className="bg-card rounded-xl border p-4">
-                        <h3 className="text-lg font-semibold">Top Municipality per Week {selectedYear}</h3>
+                        <h3 className="text-lg font-semibold">Top Municipality per Week ({selectedYear})</h3>
                         <p className="text-muted-foreground mb-2 text-sm">
-                            The municipality with the most reported incidents each week in {selectedYear}.
+                            {getPeriodLabel()} - Municipality with most incidents each week in {selectedYear}
                         </p>
                         <TopMunicipalityWeeklyBar chartData={topMunicipalityWeekly} />
                     </div>

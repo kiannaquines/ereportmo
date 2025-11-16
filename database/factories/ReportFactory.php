@@ -26,11 +26,9 @@ class ReportFactory extends Factory
             'image' => $this->faker->imageUrl(),
             'description' => $this->faker->text(100),
             'incident_response_status' => $this->faker->randomElement(['New', 'Assigned', 'In Progress', 'Resolved', 'Closed']),
-            'latitude' => $this->faker->latitude(),
-            'longitude' => $this->faker->longitude(),
-            'created_at' => Carbon::createFromTimestamp(
-                $this->faker->dateTimeBetween('2022-01-01', '2022-12-31')->getTimestamp()
-            ),
+            'latitude' => $this->faker->latitude(6.5, 7.5), // North Cotabato area coordinates
+            'longitude' => $this->faker->longitude(124.5, 125.5), // North Cotabato area coordinates
+            // created_at will be set by the seeder for better control
         ];
     }
 }
