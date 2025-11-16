@@ -3,7 +3,6 @@
 import {
     ChartContainer,
     ChartTooltip,
-    ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
 import {
@@ -30,16 +29,18 @@ const transformIntoPieData = (chartData: ChartInput) => {
         }
     }
 
-    return Object.entries(mergedMap).map(([municipality, total]) => ({
-        name: municipality,
-        value: total,
-    }))
+    return Object.entries(mergedMap)
+        .map(([municipality, total]) => ({
+            name: municipality,
+            value: total,
+        }))
+        .sort((a, b) => b.value - a.value) // Sort by value descending
 }
 
 const generateChartConfig = (): ChartConfig => {
     const colors = [
-        "var(--chart-2)",
         "var(--chart-1)",
+        "var(--chart-2)",
         "var(--chart-3)",
         "var(--chart-4)",
         "var(--chart-5)",
@@ -51,6 +52,45 @@ const generateChartConfig = (): ChartConfig => {
         return acc
     }, {} as ChartConfig)
 }
+
+// Gradient colors for pie slices
+const pieColors = [
+    'var(--chart-1)',
+    'var(--chart-2)',
+    'var(--chart-3)',
+    'var(--chart-4)',
+    'var(--chart-5)',
+];
+
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+}: any) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    // Only show label if percentage is >= 5%
+    if (percent < 0.05) return null;
+
+    return (
+        <text
+            x={x}
+            y={y}
+            fill="white"
+            textAnchor={x > cx ? 'start' : 'end'}
+            dominantBaseline="central"
+            className="font-semibold text-xs drop-shadow-lg"
+        >
+            {`${(percent * 100).toFixed(0)}%`}
+        </text>
+    );
+};
 
 const IncidentsPerMunicipalityPieChart = ({
     chartData,
@@ -72,15 +112,34 @@ const IncidentsPerMunicipalityPieChart = ({
             <ChartContainer config={chartConfig} className="h-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
+                        <defs>
+                            {pieColors.map((color, idx) => (
+                                <radialGradient key={idx} id={`pieGradient${idx}`}>
+                                    <stop offset="0%" stopColor={color} stopOpacity={1}/>
+                                    <stop offset="100%" stopColor={color} stopOpacity={0.7}/>
+                                </radialGradient>
+                            ))}
+                        </defs>
                         <ChartTooltip
                             cursor={{ fill: "transparent" }}
                             content={({ active, payload }) => {
                                 if (active && payload && payload.length) {
-                                    const data = payload[0]
+                                    const data = payload[0].payload
+                                    const percentage = ((data.value / pieData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)
                                     return (
-                                        <ChartTooltipContent indicator="dot" label={data.name}>
-                                            <div className="text-xs">{`${data.value} reports`}</div>
-                                        </ChartTooltipContent>
+                                        <div className="rounded-lg border bg-background p-3 shadow-lg">
+                                            <div className="font-semibold text-sm mb-2">{data.name}</div>
+                                            <div className="space-y-1 text-xs text-muted-foreground">
+                                                <div className="flex justify-between gap-6">
+                                                    <span>Reports:</span>
+                                                    <span className="font-semibold text-foreground">{data.value}</span>
+                                                </div>
+                                                <div className="flex justify-between gap-6">
+                                                    <span>Percentage:</span>
+                                                    <span className="font-semibold text-foreground">{percentage}%</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     )
                                 }
                                 return null
@@ -90,24 +149,35 @@ const IncidentsPerMunicipalityPieChart = ({
                         <Legend
                             verticalAlign="bottom"
                             iconType="circle"
-                            height={36}
-                            wrapperStyle={{ fontSize: "12px" }}
+                            height={40}
+                            wrapperStyle={{ 
+                                fontSize: "11px",
+                                paddingTop: "10px",
+                            }}
+                            formatter={(value, entry: any) => {
+                                const percentage = ((entry.payload.value / pieData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(0)
+                                return `${value} (${percentage}%)`
+                            }}
                         />
 
                         <Pie
                             data={pieData}
-                            dataKey="value"
-                            nameKey="name"
-                            outerRadius="80%"
+                            cx="50%"
+                            cy="45%"
                             labelLine={false}
-                            label={({ name, value }) => `${name} (${value})`}
+                            label={renderCustomizedLabel}
+                            outerRadius={90}
+                            innerRadius={50}
+                            dataKey="value"
+                            paddingAngle={2}
                             isAnimationActive
                         >
-                            {pieData.map((_, i) => (
+                            {pieData.map((_, index) => (
                                 <Cell
-                                    key={`cell-${i}`}
-                                    fill={`var(--chart-${(i % 6) + 1})`}
-                                    stroke="transparent"
+                                    key={`cell-${index}`}
+                                    fill={`url(#pieGradient${index % pieColors.length})`}
+                                    stroke="hsl(var(--background))"
+                                    strokeWidth={2}
                                 />
                             ))}
                         </Pie>
