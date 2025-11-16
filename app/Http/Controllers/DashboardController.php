@@ -45,10 +45,14 @@ class DashboardController extends Controller
                 $baseReportQuery->whereHas('user', function($q) use ($user) {
                     $q->where('municipality', $user->municipality);
                 });
+                
+                // Filter users by municipality for non-admin office users
+                $baseUserQuery->where('municipality', $user->municipality);
             }
         }
         
         // $selectedYear = $request->input('year', now()->year)
+        // Cards statistics now filtered based on user role
         $totalNoOfUsers = (clone $baseUserQuery)->count();
         $newUsersThisMonth = (clone $baseUserQuery)->whereMonth('created_at', Carbon::now()->month)->count();
 

@@ -29,6 +29,19 @@ const chartConfig: ChartConfig = {
 export default function WeeklyIncidentsLineChart({
     chartData,
 }: WeeklyIncidentsLineChartProps) {
+    const hasData = chartData && chartData.length > 0
+
+    if (!hasData) {
+        return (
+            <div className="flex h-80 w-full items-center justify-center bg-muted/10">
+                <div className="text-center">
+                    <p className="text-muted-foreground text-sm">No data available for the selected period.</p>
+                    <p className="text-muted-foreground mt-1 text-xs">Try selecting a different year or period.</p>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <ChartContainer
             config={chartConfig}

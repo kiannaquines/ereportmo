@@ -8,14 +8,28 @@ use Illuminate\Support\Facades\Http;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Models\Report;
+use App\Models\Role;
+use App\Models\User;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class GenerateReportController extends Controller
 {
-    private function queries($from = null, $to = null)
+    private function queries($from = null, $to = null, $user = null)
     {
+        // Determine user role and office filtering (same logic as DashboardController)
+        $isAdmin = false;
+        $userOffice = null;
+        $isOfficeUser = false;
+        
+        if ($user) {
+            $userRole = Role::find($user->role);
+            $isAdmin = $userRole && $userRole->role === 'admin';
+            $userOffice = $user->office;
+            $isOfficeUser = !$isAdmin && $userOffice && in_array($userOffice->office, ['PNP', 'MDRRMO', 'MSWDO (VAWC)']);
+        }
+
         // Base query for reports with users and incidents
-        $baseQuery = function ($query) use ($from, $to) {
+        $baseQuery = function ($query) use ($from, $to, $isOfficeUser, $userOffice, $user) {
             $query->from('reports AS r')
                 ->join('users AS u', 'r.user_id', '=', 'u.id')
                 ->join('incidents AS i', 'r.incident_id', '=', 'i.id');
@@ -24,6 +38,16 @@ class GenerateReportController extends Controller
                 $query->whereDate('r.created_at', '>=', $from);
             if ($to)
                 $query->whereDate('r.created_at', '<=', $to);
+
+            // Apply office filtering for non-admin office users
+            if ($isOfficeUser && $userOffice) {
+                $query->where('i.office_id', $userOffice->id);
+                
+                // Also filter by municipality if user has one
+                if ($user && $user->municipality) {
+                    $query->where('u.municipality', $user->municipality);
+                }
+            }
 
             return $query;
         };
@@ -47,13 +71,11 @@ class GenerateReportController extends Controller
             });
 
         // 2. Incident Status Distribution
-        $incidentStatus = DB::table('reports AS r')
+        $incidentStatus = $baseQuery(DB::table('reports AS r'))
             ->select(
                 DB::raw('r.incident_response_status AS status'),
                 DB::raw('COUNT(*) AS total')
             )
-            ->when($from, fn($q) => $q->whereDate('r.created_at', '>=', $from))
-            ->when($to, fn($q) => $q->whereDate('r.created_at', '<=', $to))
             ->groupBy(DB::raw('r.incident_response_status'))
             ->orderBy('status')
             ->get()
@@ -81,8 +103,7 @@ class GenerateReportController extends Controller
             });
 
         // 4. Total number of incident reported
-        $totalIncidentReported = Report::when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
-            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+        $totalIncidentReported = $baseQuery(DB::table('reports as r'))
             ->count();
 
         // 5. Incident total per incident type
@@ -103,13 +124,11 @@ class GenerateReportController extends Controller
             });
 
         // 6. Status section in summary table
-        $statusSummaryTable = DB::table('reports AS r')
+        $statusSummaryTable = $baseQuery(DB::table('reports AS r'))
             ->select(
                 DB::raw('r.incident_response_status AS status'),
                 DB::raw('COUNT(*) AS total')
             )
-            ->when($from, fn($q) => $q->whereDate('r.created_at', '>=', $from))
-            ->when($to, fn($q) => $q->whereDate('r.created_at', '<=', $to))
             ->groupBy(DB::raw('r.incident_response_status'))
             ->orderBy('status')
             ->get()
@@ -139,10 +158,8 @@ class GenerateReportController extends Controller
         // === NEW CHARTS: Monthly, Weekly, Top per Month, Top per Week ===
 
         // 8. Monthly Reports (Line Chart)
-        $monthlyReports = DB::table('reports')
-            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") AS ym, COUNT(*) AS total')
-            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
-            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+        $monthlyReports = $baseQuery(DB::table('reports AS r'))
+            ->selectRaw('DATE_FORMAT(r.created_at, "%Y-%m") AS ym, COUNT(*) AS total')
             ->groupBy('ym')
             ->orderBy('ym')
             ->get()
@@ -154,10 +171,8 @@ class GenerateReportController extends Controller
             });
 
         // 9. Weekly Reports (Line Chart)
-        $weeklyReports = DB::table('reports')
-            ->selectRaw('YEARWEEK(created_at, 1) AS yw, COUNT(*) AS total')
-            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
-            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+        $weeklyReports = $baseQuery(DB::table('reports AS r'))
+            ->selectRaw('YEARWEEK(r.created_at, 1) AS yw, COUNT(*) AS total')
             ->groupBy('yw')
             ->orderBy('yw')
             ->get()
@@ -173,11 +188,8 @@ class GenerateReportController extends Controller
             });
 
         // 10. Top Municipality per Month (Bar Chart)
-        $topMunicipalityMonthly = DB::table('reports AS r')
-            ->join('users AS u', 'r.user_id', '=', 'u.id')
+        $topMunicipalityMonthly = $baseQuery(DB::table('reports AS r'))
             ->selectRaw('MONTH(r.created_at) AS m, u.municipality, COUNT(*) AS total')
-            ->when($from, fn($q) => $q->whereDate('r.created_at', '>=', $from))
-            ->when($to, fn($q) => $q->whereDate('r.created_at', '<=', $to))
             ->groupBy('m', 'u.municipality')
             ->get()
             ->groupBy('m')
@@ -194,11 +206,8 @@ class GenerateReportController extends Controller
             ->values();
 
         // 11. Top Municipality per Week (Bar Chart)
-        $topMunicipalityWeekly = DB::table('reports AS r')
-            ->join('users AS u', 'r.user_id', '=', 'u.id')
+        $topMunicipalityWeekly = $baseQuery(DB::table('reports AS r'))
             ->selectRaw('YEARWEEK(r.created_at, 1) AS yw, u.municipality, COUNT(*) AS total')
-            ->when($from, fn($q) => $q->whereDate('r.created_at', '>=', $from))
-            ->when($to, fn($q) => $q->whereDate('r.created_at', '<=', $to))
             ->groupBy('yw', 'u.municipality')
             ->get()
             ->groupBy('yw')
@@ -243,8 +252,9 @@ class GenerateReportController extends Controller
     {
         $from = $request->input('from');
         $to = $request->input('to');
+        $user = $request->user(); // Get authenticated user
 
-        $queries = $this->queries($from, $to); // Pass dates
+        $queries = $this->queries($from, $to, $user); // Pass user for filtering
 
         return view('report', $queries); // Pass all data directly
     }
@@ -253,16 +263,27 @@ class GenerateReportController extends Controller
     {
         $from = $request->input('from');
         $to = $request->input('to');
+        $user = $request->user(); // Get authenticated user
 
-        $queries = $this->queries($from, $to);
+        $queries = $this->queries($from, $to, $user); // Pass user for filtering
         
         // Generate chart URLs using QuickChart.io (free Highcharts-compatible API)
         $chartUrls = $this->generateChartUrls($queries);
+        
+        // Add user context info (similar to dashboard)
+        $userRole = Role::find($user->role);
+        $isAdmin = $userRole && $userRole->role === 'admin';
+        $userOffice = $user->office;
         
         // Merge chart URLs with query data
         $data = array_merge($queries, $chartUrls, [
             'date_from' => $from,
             'date_to' => $to,
+            'generated_by' => $user->name,
+            'user_role' => $userRole ? $userRole->role : 'User',
+            'is_admin' => $isAdmin,
+            'user_office' => $userOffice ? $userOffice->office : null,
+            'user_municipality' => $user->municipality,
         ]);
 
         // Generate PDF using DomPDF (no Browsershot needed!)

@@ -61,16 +61,25 @@ const generateChartConfig = (chartData: ChartInput): ChartConfig => {
 const MonthlyIncidentsLineChart = ({ chartData }: MonthlyIncidentsLineChartProps) => {
   const incidentLineChartData = transformIntoChartData(chartData)
   const incidentLineChartDataConfig = generateChartConfig(chartData)
+  const hasData = Object.keys(chartData).length > 0 && incidentLineChartData.length > 0
 
   return (
     <div className="w-full border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border p-6 bg-background h-96 flex flex-col">
       <div className="mb-4">
         <h2 className="text-lg font-semibold">Monthly Incidents Reported</h2>
         <p className="text-sm text-muted-foreground">
-          Incident trends over {Object.keys(chartData).join("–")}
+          {hasData ? `Incident trends over ${Object.keys(chartData).join("–")}` : "No data available"}
         </p>
       </div>
-      <ChartContainer config={incidentLineChartDataConfig} className="h-[calc(100%-56px)]">
+      {!hasData ? (
+        <div className="flex h-[calc(100%-56px)] items-center justify-center">
+          <div className="text-center">
+            <p className="text-muted-foreground text-sm">No incident data available for the selected period.</p>
+            <p className="text-muted-foreground mt-1 text-xs">Try selecting a different year or period.</p>
+          </div>
+        </div>
+      ) : (
+        <ChartContainer config={incidentLineChartDataConfig} className="h-[calc(100%-56px)]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={incidentLineChartData}
@@ -115,6 +124,7 @@ const MonthlyIncidentsLineChart = ({ chartData }: MonthlyIncidentsLineChartProps
           </LineChart>
         </ResponsiveContainer>
       </ChartContainer>
+      )}
     </div>
   )
 }
