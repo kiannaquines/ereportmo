@@ -15,7 +15,8 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedYear = $request->input('year', now()->year);
+        $selectedYear = $request->input('year', Report::max(DB::raw('YEAR(created_at)')));
+        // $selectedYear = $request->input('year', now()->year);
         $totalNoOfUsers = User::get()->count();
         $newUsersThisMonth = User::whereMonth('created_at', Carbon::now()->month)->count();
 
@@ -139,11 +140,21 @@ class DashboardController extends Controller
             ->get()
             ->groupBy('month')
             ->map(fn($group) => $group->sortByDesc('total')->first())
-            ->map(fn($item) => [
-                'month' => Carbon::create()->month($item->month)->format('F'),
-                'municipality' => $item->municipality ?? 'Unknown',
-                'total' => $item->total,
-            ])->values();
+            ->map(function ($item) use ($selectedYear) {
+                $monthName = Carbon::create()->month($item->month)->format('M'); // e.g. Jan, Feb
+                $municipality = $item->municipality ?? 'Unknown';
+
+                $label = "{$monthName}";
+
+                return [
+                    'month' => $label,
+                    'municipality' => $municipality,
+                    'total' => $item->total,
+                    'month_number' => $item->month, 
+                ];
+            })
+            ->sortBy('month_number')
+            ->values();
 
         // === Top Municipality Weekly ===
         $topMunicipalityWeekly = Report::join('users', 'reports.user_id', '=', 'users.id')
@@ -156,8 +167,12 @@ class DashboardController extends Controller
             ->map(function ($item) use ($selectedYear) {
                 $start = Carbon::now()->setISODate($selectedYear, $item->week)->startOfWeek();
                 $end = $start->copy()->endOfWeek();
+
+                // Short label: W45 (Nov 03-09) – Cebu City
+                $label = "W{$item->week} ({$start->format('M d')}-{$end->format('d')}) – {$item->municipality}";
+
                 return [
-                    'week' => "Week {$item->week} ({$start->format('M d')} - {$end->format('M d')})",
+                    'week' => $label,
                     'municipality' => $item->municipality ?? 'Unknown',
                     'total' => $item->total,
                 ];

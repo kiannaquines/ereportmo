@@ -1,12 +1,12 @@
 'use client';
 
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, type ChartConfig } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 type TopMunicipalityMonthlyBarProps = {
     chartData: {
-        month: string;
-        municipality: string;
+        month: string; // e.g. "Jan – Cebu City"
+        municipality: string; // e.g. "Cebu City"
         total: number;
     }[];
 };
@@ -25,17 +25,33 @@ export default function TopMunicipalityMonthlyBar({ chartData }: TopMunicipality
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }} barSize={24}>
                         <CartesianGrid strokeDasharray="4 4" />
-                        <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickMargin={10} />
+
+                        {/* X-Axis: Short label with municipality */}
+                        <XAxis dataKey="month" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} tickMargin={10} />
+
                         <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickMargin={10} />
+
+                        {/* Enhanced Tooltip */}
                         <ChartTooltip
-                            cursor={{ fill: 'transparent' }}
-                            content={({ active, payload, label }) => {
-                                if (active && payload && payload.length) {
-                                    const value = payload[0].value;
+                            cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                            content={({ active, payload }) => {
+                                if (active && payload && payload.length > 0) {
+                                    const data = payload[0].payload;
+
                                     return (
-                                        <ChartTooltipContent indicator="dashed" label={label}>
-                                            <div className="text-xs">{`${value} reports`}</div>
-                                        </ChartTooltipContent>
+                                        <div className="bg-background rounded-lg border p-3 shadow-sm">
+                                            <div className="mb-1 text-sm font-medium">{data.month}</div>
+                                            <div className="text-muted-foreground space-y-1 text-xs">
+                                                <div className="flex justify-between gap-4">
+                                                    <span>Municipality:</span>
+                                                    <span className="text-foreground font-medium">{data.municipality}</span>
+                                                </div>
+                                                <div className="flex justify-between gap-4">
+                                                    <span>Reports:</span>
+                                                    <span className="text-foreground font-medium">{data.total}</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     );
                                 }
                                 return null;

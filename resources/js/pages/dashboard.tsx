@@ -121,32 +121,32 @@ export default function Dashboard() {
                 {/* New Charts (Selected Year) */}
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <div className="bg-card rounded-xl border p-4">
-                        <h3 className="mb-1 text-lg font-semibold">Monthly Reports ({selectedYear})</h3>
-                        <p className="text-muted-foreground mb-2 text-sm">
+                        <h3 className="text-lg font-semibold">Monthly Reports ({selectedYear})</h3>
+                        <p className="text-muted-foreground mb-1 mb-2 text-sm">
                             Displays the total number of reported incidents for each month of the selected year.
                         </p>
                         <WeeklyIncidentsLineChart chartData={monthIncidentData} />
                     </div>
 
                     <div className="bg-card rounded-xl border p-4">
-                        <h3 className="mb-1 text-lg font-semibold">Weekly Reports ({selectedYear})</h3>
-                        <p className="text-muted-foreground mb-2 text-sm">
+                        <h3 className="text-lg font-semibold">Weekly Reports ({selectedYear})</h3>
+                        <p className="text-muted-foreground mb-1 mb-2 text-sm">
                             Shows the weekly distribution of reported incidents throughout the selected year.
                         </p>
                         <WeeklyIncidentsLineChart chartData={weeklyIncidentData} />
                     </div>
 
                     <div className="bg-card rounded-xl border p-4">
-                        <h3 className="mb-2 text-lg font-semibold">Top Municipality per Month</h3>
+                        <h3 className="text-lg font-semibold">Top Municipality per Month {selectedYear}</h3>
                         <p className="text-muted-foreground mb-2 text-sm">
-                            Displays the municipalities with the highest number of reported incidents for each month.
+                            The municipality with the most reported incidents each month in {selectedYear}.
                         </p>
                         <TopMunicipalityMonthlyBar chartData={topMunicipalityMonthly} />
                     </div>
                     <div className="bg-card rounded-xl border p-4">
-                        <h3 className="mb-1 text-lg font-semibold">Top Municipalities (Weekly – {new Date().getFullYear()})</h3>
+                        <h3 className="text-lg font-semibold">Top Municipality per Week {selectedYear}</h3>
                         <p className="text-muted-foreground mb-2 text-sm">
-                            Shows the top municipalities with the highest number of reported incidents each week.
+                            The municipality with the most reported incidents each week in {selectedYear}.
                         </p>
                         <TopMunicipalityWeeklyBar chartData={topMunicipalityWeekly} />
                     </div>
