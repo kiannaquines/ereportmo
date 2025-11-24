@@ -34,14 +34,14 @@ class OfficeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'office' => 'required|string|max:255|unique:offices,office',
+            'office' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'status' => 'required|string|max:255|in:ON,OFF'
         ]);
 
         Office::create($request->all());
 
-        return redirect()->route('offices.store')->with('success', 'You have successfully added you office autority.');
+        return redirect()->route('offices.index')->with('success', 'You have successfully added your office authority.');
     }
 
     /**
