@@ -6,10 +6,15 @@ use App\Http\Controllers\Api\ApiReportIncidentController;
 use App\Http\Controllers\Api\ApiAuthenticationController;
 use App\Http\Controllers\Api\ApiIncidentTypeController;
 use App\Http\Controllers\Api\ApiOfficeController;
+use App\Http\Controllers\Api\OfficeLocationController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [ApiAuthenticationController::class, 'api_register'])->name('api_register');
     Route::post('/login', [ApiAuthenticationController::class, 'api_login'])->name('api_login');
+    // Public endpoint: distinct locations per office where office status is ON
+    Route::get('/offices/locations', [OfficeLocationController::class, 'index']);
+    // Public endpoint: list of distinct locations (strings) where office status is ON
+    Route::get('/locations', [OfficeLocationController::class, 'distinct']);
 });
 
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
